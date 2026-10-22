@@ -55,20 +55,11 @@ cancelar()
 finalizar()
 }
 
-class ValoracionPublicacion {
-int idValoracion
+class Valoracion {
+Usuario emisor  
 int puntuacion
 String comentario
 Date fecha
-registrar()
-}
-
-class ValoracionCliente {
-int idValoracion
-int puntuacion
-String comentario
-Date fecha
-registrar()
 }
 class RepoUsuarios {
 array Usuario
@@ -105,10 +96,10 @@ RepoUsuarios "1" --> "0.._" Usuario
 
 Cliente "1" --> "0.._" Alquiler
 Publicacion "1" --> "0.._" Alquiler : se alquila en
-Propietario "1" --> "0.._" ValoracionPublicacion : autor
-Alquiler "1" --> "0..1" ValoracionPublicacion : recibe
-Cliente "1" --> "0.._" ValoracionCliente : cliente valorado
-Propietario "1" --> "0.._" ValoracionCliente : propietario evaluador
-Alquiler "1" --> "0..1" ValoracionCliente : genera
+Propietario "1" --> "0.._" Valoracion : autor
+Alquiler "1" --> "0..1" Valoracion : recibe
+Cliente "1" --> "0.._" Valoracion : cliente valorado
+Propietario "1" --> "0.._" Valoracion : propietario evaluador
+Alquiler "1" --> "0..1" Valoracion : genera
 Usuario "1" --> "0.._" Reporte : reportante
 Publicacion "1" --> "0..\*" Reporte : reportada
