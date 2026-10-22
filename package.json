@@ -1,7 +1,7 @@
 {
-  "name": "template-ldaw-2026-proyfinal",
+  "name": "template-pdaw-2026-proyfinal-g10",
   "version": "1.0.0",
-  "description": "Plantilla para el proyecto final LDAW 2026",
+  "description": "Plantilla para el proyecto final PDAW 2026",
   "main": "index.js",
   "type": "module",
   "scripts": {
