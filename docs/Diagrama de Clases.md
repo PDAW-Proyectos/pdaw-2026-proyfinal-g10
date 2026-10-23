@@ -5,6 +5,26 @@ config:
 
 classDiagram
 
+class Vehiculo {
+String tipo
+String patente
+String marca
+String modelo
+int anio
+}
+
+class Propiedad {
+String tipo
+Direccion direccion
+}
+
+class Direccion {
+String calle
+int altura
+String Piso
+String Departamento
+}
+
 class Producto {
 int idProducto
 string nombre
@@ -98,7 +118,10 @@ consultarEstado()
 
 Usuario <|-- Propietario
 Usuario <|-- Cliente
+Producto <|-- Vehiculo
+Producto <|-- Propiedad
 Reporte --> Usuario
+Propiedad --> "1" Direccion
 Propietario --> "0..1" Producto : tiene
 Propietario --> "0..1" Publicacion : tiene
 RepoPublicaciones --> "0.._" Publicacion
