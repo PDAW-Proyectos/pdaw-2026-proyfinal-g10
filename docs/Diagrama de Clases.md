@@ -5,6 +5,14 @@ config:
 
 classDiagram
 
+class Producto {
+int idProducto
+string nombre
+int promedioValoracion
+Imagen imagen
+
+}
+
 class Usuario {
 int idUsuario
 String nombre
@@ -19,7 +27,8 @@ consultarHistorial()
 }
 class Propietario {
 string tipo
-RepoPublicaciones
+[Publicacion] publicaciones
+[Producto] productos
 
 }
 class Cliente {
@@ -62,19 +71,19 @@ String comentario
 Date fecha
 }
 class RepoUsuarios {
-array Usuario
+[Usuario] usuarios
 buscarPorEmail()
 buscarUsuarioActivo()
-cargarDesde(datos)
+cargarDesdeJSON(datos)
 agregarUsuario(nombre,correo,contraseña)
 agregarCliente(nombre,correo,contraseña)
 agregarProveedor(nombre,correo,contraseña)
 }
 class RepoPublicaciones {
-Array Publicacion
+[Publicacion] publicaciones
 buscarPorId()
 buscarPublicacionActivo()
-cargarDesde(datos)
+cargarDesdeJSON(datos)
 }
 
 class Reporte {
@@ -90,9 +99,10 @@ consultarEstado()
 Usuario <|-- Propietario
 Usuario <|-- Cliente
 Reporte --> Usuario
-Propietario "1" --> "1" RepoPublicaciones
-RepoPublicaciones "1" --> "0.._" Publicacion
-RepoUsuarios "1" --> "0.._" Usuario
+Propietario --> "0..1" Producto : tiene
+Propietario --> "0..1" Publicacion : tiene
+RepoPublicaciones --> "0.._" Publicacion
+RepoUsuarios --> "0.._" Usuario
 
 Cliente "1" --> "0.._" Alquiler
 Publicacion "1" --> "0.._" Alquiler : se alquila en
