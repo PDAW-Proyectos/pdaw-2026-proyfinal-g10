@@ -4,6 +4,6 @@ export class Propietario extends Usuario {
   constructor(nombre, correo, contrasena) {
     super(nombre, correo, contrasena);
     this.tipo = "Propietario";
-    this.publicaciones = [];
+    this.publicaciones = []; // Array para almacenar las publicaciones del propietario
   }
 }
