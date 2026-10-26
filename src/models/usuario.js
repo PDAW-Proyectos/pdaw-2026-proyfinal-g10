@@ -1,4 +1,5 @@
 import Validator from "validator";
+import { Reporte } from "./Reporte.js";
 export class Usuario {
   constructor(nombre, correo, contrasena) {
     if(!nombre) throw new Error("El nombre es obligatorio");
@@ -16,5 +17,10 @@ export class Usuario {
 
   mostrarPerfil() {
     return ("Nombre: " + this.nombre + " Correo: " + this.correo);
+  }
+
+  Reportar(motivo, descripcion) {
+    const reporte = new Reporte(this.reportes.length + 1, motivo, descripcion);
+    this.reportes.push(reporte);
   }
 }
