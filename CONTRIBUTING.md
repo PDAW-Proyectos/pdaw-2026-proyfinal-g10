@@ -2,9 +2,8 @@
 
 ## Acuerdos del equipo
 
-- **Comunicación:** canal [completar]; respondemos dentro de las [completar] horas en días hábiles.
-- **Disponibilidad:** fuera del horario de clase trabajamos [completar].
-- **Decisiones técnicas:** se toman por consenso; si no hay acuerdo en 10 minutos, decide el
+- **Comunicación:** canal [Whatsapp]; respondemos dentro de las [10am-16pm] horas en días hábiles.
+- **Decisiones técnicas:** se toman por consenso; si no hay acuerdo en 30 minutos, decide el
   referente de producto del sprint y se registra el motivo.
 - **Bloqueos:** quien está bloqueado más de 30 minutos lo informa en el canal del equipo.
 - **Ausencias:** se avisan con anticipación y se reasignan los issues en curso.

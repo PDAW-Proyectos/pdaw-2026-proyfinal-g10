@@ -13,22 +13,21 @@ reportes para promover publicaciones confiables.
 
 ## Ficha del proyecto
 
-| Aspecto                | Descripción                                    |
-| ---------------------- | ---------------------------------------------- |
-| Problema               |                                                |
-| Usuarios               | Personas usuarias principales                  |
-| Funcionalidades núcleo | 1. … 2. … 3. …                                 |
-| Reglas de negocio      | 1. … 2. … 3. …                                 |
-| API externa            | Nombre, URL de la documentación y uso previsto |
+| Aspecto                               | Descripción                                                                       |
+| ----------------------                | ----------------------------------------------                                    |
+| Problema                              | Ofrece alquieres de manera accesible y rapida para personas de bahia blanca       |
+| Usuarios                              | Propietarios de casas y autos y clientes que buscan alquier casas/autos           |
+| Funcionalidades núcleo                |                                                                                   |
+| Reglas de negocio                     | cifrado de datos, creacion de publicaciones usuarios(propietarios y clientes)     |
+| API externa                           | Google maps api, URL de la documentación yuso previsto                            |
 
 ## Equipo y roles del sprint actual
 
 | Integrante | Usuario de GitHub | Rol en el sprint      |
 | ---------- | ----------------- | --------------------- |
-|            |                   | Referente de producto |
-|            |                   | Facilitación          |
-|            |                   | Repositorio           |
-|            |                   | Calidad               |
+|   Gabriel  |  G_comellas       | Referente de producto |
+|  Maxi      |         Maxi-rv   | Repositorio           |
+|   Andres   |      andresressia0| Dev                   |
 
 ## Cómo ejecutar el proyecto
 
@@ -48,12 +47,3 @@ npm test
 
 - Diagramas y wireframes: [`docs/`](docs/)
 - Acuerdos de trabajo y convenciones: [`CONTRIBUTING.md`](CONTRIBUTING.md)
-- Riesgos: [`docs/riesgos.md`](docs/riesgos.md)
-
-## Uso de herramientas de IA
-
-Registrar aquí qué herramientas se usaron, para qué tareas y qué se adoptó de sus propuestas.
-
-| Fecha | Herramienta | Tarea | Qué se adoptó y por qué |
-| ----- | ----------- | ----- | ----------------------- |
-|       |             |       |                         |
