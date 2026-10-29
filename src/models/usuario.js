@@ -1,6 +1,8 @@
 import Validator from "validator";
 import { Reporte } from "./Reporte.js";
+import {hash,compare} from 'bcryptjs'
 export class Usuario {
+
   constructor(nombre, correo, contrasena) {
     if(!nombre) throw new Error("El nombre es obligatorio");
     if(!Validator.isLength(nombre, { min: 3, max: 30 })) throw new Error("El nombre debe tener entre 3 y 30 caracteres");
@@ -10,7 +12,8 @@ export class Usuario {
     this.correo = correo;
     if(!contrasena) throw new Error("La contraseña es obligatoria");
     if(!Validator.isStrongPassword(contrasena)) throw new Error("La contraseña no es segura, debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo");
-    this.contrasena = contrasena;
+      const passwordHash =  hash(contrasena, 10);
+    this.contrasena = passwordHash
     this.reportes = [];
     this.activo = false
   }
@@ -23,4 +26,5 @@ export class Usuario {
     const reporte = new Reporte(this.reportes.length + 1, motivo, descripcion);
     this.reportes.push(reporte);
   }
+ 
 }

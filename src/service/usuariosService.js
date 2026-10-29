@@ -1,11 +1,21 @@
-import {RepositorioUsuarios} from "../models/repositorioUsuarios.js"
-export  function crearUsuario({nombre,correo,contrasena}) {
 
-   const existente =  RepositorioUsuarios.buscarUsuarioPorCorreo(correo)
-   if (existente) throw new Error("El usuario ya existe")   
 
-return  RepositorioUsuarios.agregarUsuario({nombre,correo,contrasena})
+export class UserService {
+    repositorioUsuarios;
+
+    constructor(repositorioUsuarios) {
+        this.repositorioUsuarios = repositorioUsuarios;
+    }
+
+    buscarPorPorCorreo = async (correo) => {
+        return await this.repositorioUsuarios.buscarUsuarioPorCorreo({ correo: correo });
+    };
+
+    agregar = async (datos) => {
+        return await this.repositorioUsuarios.agregarUsuario(datos);
+    }; 
+
+    listarUsuarios = async () => { return this.repositorioUsuarios.listar()}
+
+
 }
-
-
-

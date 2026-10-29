@@ -1,8 +1,16 @@
 import { Cliente } from "./Cliente.js";
 import { Propietario } from "./Propietario.js";
+import { hash, compare } from 'bcryptjs';
+const ROUNDS = 10;
+const password = 'clase08'
+  const passwordHash = await hash(password, ROUNDS);
 export class RepositorioUsuarios {
-    constructor() {
-        this.usuarios = [];
+constructor() {
+        this.usuarios = [
+
+    { id: 'u1', nombre: 'Tomás Herrera', correo: 'tomas@ejemplo.test', role: 'member',contrasena: passwordHash },
+    { id: 'u2', nombre: 'Lucía Fernández', correo: 'lucia@ejemplo.test', role: 'librarian',contrasena: passwordHash },
+  ];
     }
 
     async agregarUsuario(usuario) {
@@ -39,4 +47,21 @@ export class RepositorioUsuarios {
             this.agregarUsuario(elemento);
         }
     }
+    async cargar() {
+    if (!this.ruta) return;
+}
+  listarUsuarios() {
+    return [...this.usuarios];
+  }
+ 
+
+ async verify(correo, plainPassword) {
+      const usuario = this.usuarios.find((u) => u.correo === String(correo).trim().toLowerCase());
+      if (!usuario) return null;
+      return (await compare(String(plainPassword), usuario.contrasena)) ? usuario : null;
+    }
+     findById()
+     {return  (id) => this.usuarios.find((u) => u.id === id) ?? null}
+
+    toPublic = ({ id, nombre, correo, role }) => ({ id, nombre, correo, role });
 }
