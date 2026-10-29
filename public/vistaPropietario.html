@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AlquiYA! | Vista propietario</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="profile-body">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+      <div class="container py-2">
+        <a class="navbar-brand fw-bold brand-text" href="index.html">
+          <span class="brand-mark">A</span>lquiYA!
+        </a>
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <a class="btn btn-outline-primary rounded-pill px-3" href="index.html">Inicio</a>
+          <a class="btn btn-outline-primary rounded-pill px-3" href="perfil.html">Perfil</a>
+          <a class="btn btn-primary rounded-pill px-3" href="login.html">Salir</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-5">
+      <section class="profile-header rounded-4 shadow-sm p-4 mb-4">
+        <div class="row align-items-center g-3">
+          <div class="col-md-8">
+            <span class="badge rounded-pill badge-soft mb-2">Propietario</span>
+            <h1 class="fw-bold mb-2">Publicaciones</h1>
+            <p class="text-secondary mb-0">Administrá tus anuncios y revisá valoraciones y reportes.</p>
+          </div>
+          <div class="col-md-4 text-md-end">
+            <button type="button" class="btn btn-primary rounded-pill px-3">Nueva publicación</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Estado</label>
+            <select class="form-select rounded-3">
+              <option selected>Activas</option>
+              <option>Reservadas</option>
+              <option>Finalizadas</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Tipo</label>
+            <select class="form-select rounded-3">
+              <option selected>Todos</option>
+              <option>Propiedad</option>
+              <option>Habitación</option>
+              <option>Vehículo</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Orden</label>
+            <select class="form-select rounded-3">
+              <option selected>Más recientes</option>
+              <option>Mejor valoradas</option>
+              <option>Con reportes</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section id="publicaciones">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 property-card">
+              <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="card-img-top" alt="Publicación en alquiler" />
+              <button type="button" class="stretched-link border-0 bg-transparent p-0" data-bs-toggle="modal" data-bs-target="#detalleDepartamento" aria-label="Ver detalles del departamento con terraza"></button>
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="badge rounded-pill bg-light text-primary">Departamento</span>
+                  <strong class="text-primary">$ 780</strong>
+                </div>
+                <h4 class="fw-semibold mb-2">Departamento con terraza</h4>
+                <p class="text-secondary mb-3">2 dorm. · 1 baño · Centro</p>
+                <div class="d-flex justify-content-between align-items-center position-relative z-2">
+                  <div class="text-warning">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-half"></i>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill">Ver</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill">Reportes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 property-card">
+              <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" class="card-img-top" alt="Publicación de casa" />
+              <button type="button" class="stretched-link border-0 bg-transparent p-0" data-bs-toggle="modal" data-bs-target="#detalleCasa" aria-label="Ver detalles de la casa familiar"></button>
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="badge rounded-pill bg-light text-primary">Casa</span>
+                  <strong class="text-primary">$ 950</strong>
+                </div>
+                <h4 class="fw-semibold mb-2">Casa familiar</h4>
+                <p class="text-secondary mb-3">3 dorm. · 2 baños · Villa Mitre</p>
+                <div class="d-flex justify-content-between align-items-center position-relative z-2">
+                  <div class="text-warning">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star"></i>
+                    <i class="bi bi-star"></i>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill">Ver</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill">Reportes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal fade" id="detalleDepartamento" tabindex="-1" aria-labelledby="detalleDepartamentoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 overflow-hidden">
+          <div class="modal-header border-0">
+            <h2 class="modal-title fs-5 fw-bold" id="detalleDepartamentoLabel">Departamento con terraza</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body pt-0">
+            <div class="row g-3 align-items-stretch">
+              <div class="col-lg-7">
+                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 w-100 modal-photo" alt="Interior del departamento con terraza" />
+              </div>
+              <div class="col-lg-5">
+                <div class="modal-map-shell">
+                  <iframe
+                    id="mapaUbicacionDepartamento"
+                    title="Mapa de ubicación del departamento"
+                    class="modal-map-frame"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-62.35%2C-38.75%2C-62.20%2C-38.68&layer=mapnik&marker=-38.7196%2C-62.2654"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-3">
+              <span class="badge rounded-pill bg-light text-primary">Departamento · Centro · Activa</span>
+              <strong class="text-primary fs-5">$ 780</strong>
+            </div>
+            <p class="text-secondary">Departamento amplio y luminoso, con terraza y acceso cercano a servicios.</p>
+            <p class="mb-0"><strong>Características:</strong> 2 dormitorios · 1 baño · Terraza</p>
+            <div class="text-warning mt-3" aria-label="Valoración: 4,5 de 5 estrellas">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+              <span class="text-secondary ms-2">4,5 (10 valoraciones)</span>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="detalleCasa" tabindex="-1" aria-labelledby="detalleCasaLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 overflow-hidden">
+          <div class="modal-header border-0">
+            <h2 class="modal-title fs-5 fw-bold" id="detalleCasaLabel">Casa familiar</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body pt-0">
+            <div class="row g-3 align-items-stretch">
+              <div class="col-lg-7">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 w-100 modal-photo" alt="Interior de la casa familiar" />
+              </div>
+              <div class="col-lg-5">
+                <div class="modal-map-shell">
+                  <iframe
+                    id="mapaUbicacionCasa"
+                    title="Mapa de ubicación de la casa"
+                    class="modal-map-frame"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-62.35%2C-38.75%2C-62.20%2C-38.68&layer=mapnik&marker=-38.7196%2C-62.2654"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-3">
+              <span class="badge rounded-pill bg-light text-primary">Casa · Villa Mitre · Activa</span>
+              <strong class="text-primary fs-5">$ 950</strong>
+            </div>
+            <p class="text-secondary">Casa familiar con ambientes amplios y una distribución cómoda.</p>
+            <p class="mb-0"><strong>Características:</strong> 3 dormitorios · 2 baños · Cocina equipada</p>
+            <div class="text-warning mt-3" aria-label="Valoración: 3 de 5 estrellas">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i><i class="bi bi-star"></i>
+              <span class="text-secondary ms-2">3 (5 valoraciones)</span>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
