@@ -143,26 +143,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const modalElement = document.getElementById('registerModal');
-
-        if (!modalElement || typeof bootstrap === 'undefined') {
-          return;
-        }
-
-        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-
-        if (window.location.hash === '#registerModal') {
-          modal.show();
-        }
-
-        document.querySelectorAll('[data-bs-target="#registerModal"]').forEach(function (trigger) {
-          trigger.addEventListener('click', function () {
-            modal.show();
-          });
-        });
-      });
-    </script>
+    <script src="js/common.js"></script>
+    <script src="js/login.js"></script>
   </body>
 </html>

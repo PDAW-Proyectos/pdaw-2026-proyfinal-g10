@@ -17,8 +17,8 @@
       crossorigin="anonymous"
     />
     <link
-      rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
   </head>
@@ -159,14 +159,30 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body pt-0">
-            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 mb-3 w-100" alt="Interior del departamento moderno" />
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="row g-3 align-items-stretch">
+              <div class="col-lg-7">
+                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 w-100 modal-photo" alt="Interior del departamento moderno" />
+              </div>
+              <div class="col-lg-5">
+                <div class="modal-map-shell">
+                  <iframe
+                    id="mapaUbicacionDepartamento"
+                    title="Mapa de ubicación del departamento"
+                    class="modal-map-frame"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-62.35%2C-38.75%2C-62.20%2C-38.68&layer=mapnik&marker=-38.7196%2C-62.2654"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-3">
               <span class="badge rounded-pill bg-light text-primary">Departamento · Centro</span>
               <strong class="text-primary fs-5">$ 560</strong>
             </div>
             <p class="text-secondary">Departamento luminoso, cerca de comercios y transporte.</p>
-            <p class="mb-3"><strong>Características:</strong> 2 dormitorios · 1 baño · Cocina equipada</p>
-            <div class="text-warning" aria-label="Valoración: 4,5 de 5 estrellas">
+            <p class="mb-0"><strong>Características:</strong> 2 dormitorios · 1 baño · Cocina equipada</p>
+            <div class="text-warning mt-3" aria-label="Valoración: 4,5 de 5 estrellas">
               <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
               <span class="text-secondary ms-2">4,5 (12 valoraciones)</span>
             </div>
@@ -186,14 +202,30 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body pt-0">
-            <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 mb-3 w-100" alt="Interior de la casa con patio" />
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="row g-3 align-items-stretch">
+              <div class="col-lg-7">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 w-100 modal-photo" alt="Interior de la casa con patio" />
+              </div>
+              <div class="col-lg-5">
+                <div class="modal-map-shell">
+                  <iframe
+                    id="mapaUbicacionCasa"
+                    title="Mapa de ubicación de la casa"
+                    class="modal-map-frame"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-62.35%2C-38.75%2C-62.20%2C-38.68&layer=mapnik&marker=-38.7196%2C-62.2654"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-3">
               <span class="badge rounded-pill bg-light text-primary">Casa · Barrio Norte</span>
               <strong class="text-primary fs-5">$ 680</strong>
             </div>
             <p class="text-secondary">Casa amplia y luminosa, con espacios para disfrutar en familia.</p>
-            <p class="mb-3"><strong>Características:</strong> 3 dormitorios · 2 baños · Patio</p>
-            <div class="text-warning" aria-label="Valoración: 3,5 de 5 estrellas">
+            <p class="mb-0"><strong>Características:</strong> 3 dormitorios · 2 baños · Patio</p>
+            <div class="text-warning mt-3" aria-label="Valoración: 3,5 de 5 estrellas">
               <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i><i class="bi bi-star"></i>
               <span class="text-secondary ms-2">3,5 (8 valoraciones)</span>
             </div>
@@ -210,5 +242,6 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script src="js/vistaCliente.js"></script>
   </body>
 </html>

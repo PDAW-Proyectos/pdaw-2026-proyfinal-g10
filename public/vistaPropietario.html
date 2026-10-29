@@ -149,14 +149,30 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body pt-0">
-            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 mb-3 w-100" alt="Interior del departamento con terraza" />
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="row g-3 align-items-stretch">
+              <div class="col-lg-7">
+                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 w-100 modal-photo" alt="Interior del departamento con terraza" />
+              </div>
+              <div class="col-lg-5">
+                <div class="modal-map-shell">
+                  <iframe
+                    id="mapaUbicacionDepartamento"
+                    title="Mapa de ubicación del departamento"
+                    class="modal-map-frame"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-62.35%2C-38.75%2C-62.20%2C-38.68&layer=mapnik&marker=-38.7196%2C-62.2654"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-3">
               <span class="badge rounded-pill bg-light text-primary">Departamento · Centro · Activa</span>
               <strong class="text-primary fs-5">$ 780</strong>
             </div>
             <p class="text-secondary">Departamento amplio y luminoso, con terraza y acceso cercano a servicios.</p>
-            <p class="mb-3"><strong>Características:</strong> 2 dormitorios · 1 baño · Terraza</p>
-            <div class="text-warning" aria-label="Valoración: 4,5 de 5 estrellas">
+            <p class="mb-0"><strong>Características:</strong> 2 dormitorios · 1 baño · Terraza</p>
+            <div class="text-warning mt-3" aria-label="Valoración: 4,5 de 5 estrellas">
               <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
               <span class="text-secondary ms-2">4,5 (10 valoraciones)</span>
             </div>
@@ -176,14 +192,30 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body pt-0">
-            <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 mb-3 w-100" alt="Interior de la casa familiar" />
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="row g-3 align-items-stretch">
+              <div class="col-lg-7">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 w-100 modal-photo" alt="Interior de la casa familiar" />
+              </div>
+              <div class="col-lg-5">
+                <div class="modal-map-shell">
+                  <iframe
+                    id="mapaUbicacionCasa"
+                    title="Mapa de ubicación de la casa"
+                    class="modal-map-frame"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-62.35%2C-38.75%2C-62.20%2C-38.68&layer=mapnik&marker=-38.7196%2C-62.2654"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-3">
               <span class="badge rounded-pill bg-light text-primary">Casa · Villa Mitre · Activa</span>
               <strong class="text-primary fs-5">$ 950</strong>
             </div>
             <p class="text-secondary">Casa familiar con ambientes amplios y una distribución cómoda.</p>
-            <p class="mb-3"><strong>Características:</strong> 3 dormitorios · 2 baños · Cocina equipada</p>
-            <div class="text-warning" aria-label="Valoración: 3 de 5 estrellas">
+            <p class="mb-0"><strong>Características:</strong> 3 dormitorios · 2 baños · Cocina equipada</p>
+            <div class="text-warning mt-3" aria-label="Valoración: 3 de 5 estrellas">
               <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i><i class="bi bi-star"></i>
               <span class="text-secondary ms-2">3 (5 valoraciones)</span>
             </div>

@@ -195,9 +195,94 @@ img {
   box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.06) !important;
 }
 
+.modal-photo {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 1rem;
+  display: block;
+}
+
+.modal-map-shell {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #e9edf5;
+}
+
+.modal-map-shell::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+.modal-map-frame {
+  width: 100%;
+  height: 260px;
+  min-height: 260px;
+  border: 0;
+  border-radius: 1rem;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-media-row {
+  margin-top: 0.25rem;
+}
+
+.modal-content {
+  font-size: 1.05rem;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.modal-title {
+  font-size: 1.8rem !important;
+}
+
+.modal-body p,
+.modal-body .text-secondary,
+.modal-body .mb-0,
+.modal-body .badge,
+.modal-body .text-warning {
+  font-size: 1.05rem;
+}
+
+.modal-body .fs-5,
+.modal-body strong {
+  font-size: 1.35rem;
+}
+
+.modal-footer .btn {
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+}
+
 @media (max-width: 767.98px) {
   .hero-image,
   .login-hero-image {
     height: 280px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .modal-photo,
+  .modal-map-shell,
+  .modal-map-frame {
+    height: 220px;
+    min-height: 220px;
   }
 }
