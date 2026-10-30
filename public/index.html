@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sesiones · Clase 08</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; }
+      pre { background: #f1efea; padding: 1rem; overflow-x: auto; }
+      button { margin: 0.25rem 0.25rem 0.25rem 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Sesiones, autenticación y autorización</h1>
+    <form id="login">
+      <p><label>Correo <input name="correo" type="email" value="tomas@ejemplo.test" required /></label></p>
+      <p><label>Contraseña <input name="contrasena" type="password" value="clase08" required /></label></p>
+      <button type="submit">Ingresar</button>
+    </form>
+        <form id="sigIn">
+        <p><label>nombre <input name="nombre" type="text" required /></label></p>
+      <p><label>Correo <input name="correo" type="email"required /></label></p>
+      <p><label>Contraseña <input name="contrasena" type="password" required /></label></p>
+      <select name="tipo" id="tipo">tipo
+        <option value="Cliente">cliente</option>
+        <option value="Propietario">Propietario</option>
+      </select>
+      <button type="submit">Ingresar</button>
+    </form>
+    <p>
+      <button data-url="/api/usuarios/login">GET /api/me</button>
+      <button data-url="/api/prestamos">GET /api/prestamos</button>
+      <button data-url="/api/reportes/vencidos">GET /api/reportes/vencidos</button>
+      <button data-url="/api/usuarios/logout" data-method="POST">POST /api/usuarios/logout</button>
+    </p>
+    <p>Cookie visible desde JavaScript (debería estar vacía por HttpOnly): <code id="cookie"></code></p>
+    <pre id="salida" aria-live="polite"></pre>
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>
