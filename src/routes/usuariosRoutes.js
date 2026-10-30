@@ -1,14 +1,11 @@
 import { Router } from "express";
 import { UserController } from "../controllers/usuariosController.js";
-import { UserService } from "../service/usuariosService.js";
+import { RepositorioUsuarios } from "../models/repositorioUsuarios.js";
 const router = Router();    
-const userService = new UserService();
-const userController = new UserController(userService);
 
+const userController = new UserController(new RepositorioUsuarios ());
 
     router.get("/", userController.listarUsuarios)
     router.post("/", userController.agregar);
     router.get("/:correo", userController.buscarPorCorreo);
-
-
    export default  router;

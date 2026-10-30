@@ -1,6 +1,6 @@
 import Validator from "validator";
 import { Reporte } from "./Reporte.js";
-import {hash,compare} from 'bcryptjs'
+//import {hash,compare} from 'bcryptjs'
 export class Usuario {
 
   constructor(nombre, correo, contrasena) {
@@ -12,8 +12,8 @@ export class Usuario {
     this.correo = correo;
     if(!contrasena) throw new Error("La contraseña es obligatoria");
     if(!Validator.isStrongPassword(contrasena)) throw new Error("La contraseña no es segura, debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo");
-      const passwordHash =  hash(contrasena, 10);
-    this.contrasena = passwordHash
+      //const passwordHash =  hash(contrasena, 10);
+    this.contrasena = contrasena
     this.reportes = [];
     this.activo = false
   }

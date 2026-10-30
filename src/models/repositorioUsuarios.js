@@ -8,29 +8,35 @@ export class RepositorioUsuarios {
 constructor() {
         this.usuarios = [
 
-    { id: 'u1', nombre: 'Tomás Herrera', correo: 'tomas@ejemplo.test', role: 'member',contrasena: passwordHash },
-    { id: 'u2', nombre: 'Lucía Fernández', correo: 'lucia@ejemplo.test', role: 'librarian',contrasena: passwordHash },
+   { id: 'u1', nombre: 'Tomás Herrera', correo: 'tomas@ejemplo.test', role: 'member',contrasena: passwordHash },
+   { id: 'u2', nombre: 'Lucía Fernández', correo: 'lucia@ejemplo.test', role: 'librarian',contrasena: passwordHash },
   ];
     }
 
-    async agregarUsuario(usuario) {
+    async agregarUsuario(usuario) { 
+        const ROUNDS = 10
+        const passwordHash = await hash(password, ROUNDS);
+
         if (this.buscarUsuarioPorCorreo(usuario.correo)) {
             throw new Error(`El correo ${usuario.correo} ya está registrado`);
         }
         if(usuario.tipo === "Cliente") {
             await this.agregarCliente(usuario.nombre, usuario.correo, usuario.contrasena);
+            console.log('agregocliente')
         } else if(usuario.tipo === "Propietario") {
             await this.agregarPropietario(usuario.nombre, usuario.correo, usuario.contrasena);
         }
     }
 
     async agregarCliente(nombre, correo, contrasena) {
-        const cliente = new Cliente(nombre, correo, contrasena);
+        const passwordHash = await hash(contrasena, ROUNDS);
+        const cliente = new Cliente(nombre, correo, passwordHash);
         this.usuarios.push(cliente);
     }
 
     async agregarPropietario(nombre, correo, contrasena) {
-        const propietario = new Propietario(nombre, correo, contrasena);
+        const passwordHash = await hash(contrasena, ROUNDS);
+        const propietario = new Propietario(nombre, correo, passwordHash);
         this.usuarios.push(propietario);
     }
 

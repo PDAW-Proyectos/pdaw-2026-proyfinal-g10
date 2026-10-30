@@ -8,14 +8,18 @@ export class UserController {
 
   agregar = async (req, res) => {
     try {
-      const usuario = await this.userService.agregar({
+  console.log(this.userService)
+
+      console.log(req.body, 'usuario')
+      const usuario = await this.userService.agregarUsuario({
         nombre: req.body.nombre,
         correo: req.body.correo,
         contrasena: req.body.contrasena,
+        tipo: req.body.tipo
       });
       return res.status(200).json(usuario);
     } catch (error) {
-      return res.status(400).json({ error: error.messages });
+      return res.status(420).json({ error: error.messages });
     }
   };
   buscarPorCorreo = async (req, res, next) => {

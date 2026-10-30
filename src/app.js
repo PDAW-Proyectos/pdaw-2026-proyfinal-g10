@@ -2,6 +2,8 @@ import express from 'express';
 import session from 'express-session';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {requireAuth} from './middleware/autentificacion.js'
+import usuariosRoutes from './routes/usuariosRoutes.js'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -23,17 +25,14 @@ export function createApp({ usuarios, secret = 'secreto-solo-para-desarrollo', p
   );
 
   // AUTENTICACIÓN: ¿quién hace la solicitud?
-  app.use((req, res, next) => {
-    req.user = req.session.userId ? usuarios.buscarUsuarioPorCorreo(req.session.userId) : null;
+    app.use((req, res, next) => {
+    req.user = req.session.userId ? usuarios.findById(req.session.userId) : null;
     next();
   });
 
-
-  const requireAuth = (req, res, next) =>
-    req.user ? next() : res.status(401).json({ error: 'Es necesario iniciar sesión' });
-
   app.post('/api/login', async (req, res) => { 
     const usuario = await usuarios.verify(req.body?.correo ?? '', req.body?.contrasena ?? '');
+    console.log(await usuarios.verify(req.body?.correo ?? '', req.body?.contrasena ?? ''))
     console.log(usuario,'login')
     if (!usuario) return res.status(401).json({ error: 'Correo o contraseña incorrectos' });
     await regenerate(req);
@@ -49,11 +48,14 @@ export function createApp({ usuarios, secret = 'secreto-solo-para-desarrollo', p
    app.post('/api/signIn', async (req, res) => {
     const usuario = req.body
     if(usuarios.buscarUsuarioPorCorreo(usuario.correo))return res.status(401).json({ error: 'Correo en uso' });
-  //  usuarios.agregarUsuario(usuario)
-    await regenerate(req); // nuevo id de sesión: previene la fijación de sesión
+    await regenerate(req);
     req.session.userId = usuario.correo;
     res.json(usuario);
   });
+  app
+  app.use('/api/usuarios', usuariosRoutes)
+  //app.use('/api/publicaciones', requireAuth,  publicacionesRoutes),
+
 
   app.get('/api/me', requireAuth, (req, res) => res.json(usuarios.toPublic(req.user)));
   app.use(express.static(path.join(__dirname,"..", 'public')));
