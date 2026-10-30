@@ -1,21 +1,26 @@
 
 
 export class UserService {
-    repositorioUsuarios;
+  constructor(repositorioUsuarios) {
+    this.repositorioUsuarios = repositorioUsuarios;
+  }
 
-    constructor(repositorioUsuarios) {
-        this.repositorioUsuarios = repositorioUsuarios;
-    }
+  iniciarSesion = async (correo, contrasena, req) => {
+    const usuario = this.repositorioUsuarios.buscarUsuarioPorCorreo(
+      String(correo).trim().toLowerCase()
+    );
 
-    buscarPorPorCorreo = async (correo) => {
-        return await this.repositorioUsuarios.buscarUsuarioPorCorreo({ correo: correo });
-    };
+    if (!usuario) throw new Error('Usuario no encontrado');
+    const ok = await this.repositorioUsuarios.verify(correo, contrasena);
 
-    agregar = async (datos) => {
-        return await this.repositorioUsuarios.agregarUsuario(datos);
-    }; 
+    if (!ok) throw new Error('Credenciales inválidas');
 
-    listarUsuarios = async () => { return this.repositorioUsuarios.listar()}
+    req.session.userId = usuario.correo;
+    return usuario;
+  };
 
-
+  cerrarSesion = async (req) => {
+    if (!req.session.userId) throw new Error('No hay sesión iniciada');
+    req.session.destroy();
+  };
 }

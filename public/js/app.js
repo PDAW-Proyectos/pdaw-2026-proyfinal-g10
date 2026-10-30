@@ -8,14 +8,14 @@ const show = async (res) => {
 document.getElementById('login').addEventListener('submit', async (event) => {
   event.preventDefault();
   const body = Object.fromEntries(new FormData(event.target));
-  show(await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }));
+  show(await fetch('/api/usuarios/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }));
 });
 
 
 document.getElementById('sigIn').addEventListener('submit', async (event) => {
   event.preventDefault();
   const body = Object.fromEntries(new FormData(event.target));
-  show(await fetch('/api/signIn', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }));
+  show(await fetch('/api/usuarios', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }));
 });
 
 document.querySelectorAll('button[data-url]').forEach((button) =>

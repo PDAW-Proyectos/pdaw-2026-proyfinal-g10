@@ -1,4 +1,3 @@
-import { UserService } from "../service/usuariosService.js";
 
 
 export class UserController {
@@ -8,9 +7,6 @@ export class UserController {
 
   agregar = async (req, res) => {
     try {
-  console.log(this.userService)
-
-      console.log(req.body, 'usuario')
       const usuario = await this.userService.agregarUsuario({
         nombre: req.body.nombre,
         correo: req.body.correo,
@@ -40,4 +36,25 @@ export class UserController {
       next(error);
     }
   };
+
+  iniciarSesion = async (req, res, next) => {
+    try {
+      const { correo, contrasena } = req.body;
+      const usuario = await this.userService.iniciarSesion(correo, contrasena, req);
+      res.status(200).json(usuario);
+    } catch (error) {
+      next(error);
+    }
+  };
+  cerrarSesion = async (req, res, next) => {
+    try {
+      await this.userService.cerrarSesion(req);
+      res.status(200).json({ message: 'Sesión cerrada correctamente' });
+    } catch (error) {
+      next(error);
+    }
 }
+}
+
+
+

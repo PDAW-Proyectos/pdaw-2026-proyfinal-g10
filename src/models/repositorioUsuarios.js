@@ -1,6 +1,8 @@
 import { Cliente } from "./Cliente.js";
 import { Propietario } from "./Propietario.js";
 import { hash, compare } from 'bcryptjs';
+import { regenerate, destroy } from "../utils/validacion.js";
+
 const ROUNDS = 10;
 const password = 'clase08'
   const passwordHash = await hash(password, ROUNDS);
@@ -8,8 +10,6 @@ export class RepositorioUsuarios {
 constructor() {
         this.usuarios = [
 
-   { id: 'u1', nombre: 'Tomás Herrera', correo: 'tomas@ejemplo.test', role: 'member',contrasena: passwordHash },
-   { id: 'u2', nombre: 'Lucía Fernández', correo: 'lucia@ejemplo.test', role: 'librarian',contrasena: passwordHash },
   ];
     }
 
@@ -22,7 +22,6 @@ constructor() {
         }
         if(usuario.tipo === "Cliente") {
             await this.agregarCliente(usuario.nombre, usuario.correo, usuario.contrasena);
-            console.log('agregocliente')
         } else if(usuario.tipo === "Propietario") {
             await this.agregarPropietario(usuario.nombre, usuario.correo, usuario.contrasena);
         }
@@ -61,13 +60,34 @@ constructor() {
   }
  
 
- async verify(correo, plainPassword) {
+ async verify(correo, contrasena) {
       const usuario = this.usuarios.find((u) => u.correo === String(correo).trim().toLowerCase());
       if (!usuario) return null;
-      return (await compare(String(plainPassword), usuario.contrasena)) ? usuario : null;
+      return (await compare(String(contrasena), usuario.contrasena)) ? usuario : null;
     }
      findById()
      {return  (id) => this.usuarios.find((u) => u.id === id) ?? null}
 
     toPublic = ({ id, nombre, correo, role }) => ({ id, nombre, correo, role });
+
+ iniciarSesion = async (correo, contrasena, req) => {
+    const usuario = this.repositorioUsuarios.buscarUsuarioPorCorreo(
+      String(correo).trim().toLowerCase()
+    );
+
+    if (!usuario) throw new Error('Usuario no encontrado');
+    const ok = await this.repositorioUsuarios.verify(correo, contrasena);
+
+    if (!ok) throw new Error('Credenciales inválidas');
+
+    req.session.userId = usuario.correo;
+    return usuario;
+  };
+
+  cerrarSesion = async (req) => {
+    if (!req.session.userId) throw new Error('No hay sesión iniciada');
+    req.session.destroy();
+  };
+    
+
 }

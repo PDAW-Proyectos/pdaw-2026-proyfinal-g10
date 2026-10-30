@@ -1,0 +1,2 @@
+export const regenerate = (req) => new Promise((ok, fail) => req.session.regenerate((e) => (e ? fail(e) : ok())));
+export const destroy = (req) => new Promise((ok, fail) => req.session.destroy((e) => (e ? fail(e) : ok())));
