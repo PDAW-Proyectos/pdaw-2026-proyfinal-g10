@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {requireAuth} from './middleware/autentificacion.js'
 import {crearUsuariosRoutes} from './routes/usuariosRoutes.js'
-import { RepositorioUsuarios } from '../src/models/repositorioUsuarios.js';
+import { RepositorioUsuarios } from './service/repositorioUsuarios.js';
 
 
 const usuarios = new RepositorioUsuarios();

@@ -1,7 +1,8 @@
-import { Cliente } from "./Cliente.js";
-import { Propietario } from "./Propietario.js";
+import { Cliente } from "../models/Cliente.js";
+import { Propietario } from "../models/Propietario.js";
 import { hash, compare } from 'bcryptjs';
 import { regenerate, destroy } from "../utils/validacion.js";
+import { Usuario } from "../models/Usuario.js";
 
 const ROUNDS = 10;
 const password = 'clase08'
@@ -71,21 +72,22 @@ constructor() {
     toPublic = ({ id, nombre, correo, role }) => ({ id, nombre, correo, role });
 
  iniciarSesion = async (correo, contrasena, req) => {
-    const usuario = this.repositorioUsuarios.buscarUsuarioPorCorreo(
+    const usuario = this.buscarUsuarioPorCorreo(
       String(correo).trim().toLowerCase()
     );
 
     if (!usuario) throw new Error('Usuario no encontrado');
-    const ok = await this.repositorioUsuarios.verify(correo, contrasena);
+    const ok = await this.verify(correo, contrasena);
 
     if (!ok) throw new Error('Credenciales inválidas');
-
+    usuario.activo = true
     req.session.userId = usuario.correo;
     return usuario;
   };
 
   cerrarSesion = async (req) => {
     if (!req.session.userId) throw new Error('No hay sesión iniciada');
+    this.buscarUsuarioPorCorreo(req.session.userId).activo = false
     req.session.destroy();
   };
     

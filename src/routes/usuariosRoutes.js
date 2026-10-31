@@ -3,7 +3,7 @@ import { UserController } from "../controllers/usuariosController.js";
 
 export function crearUsuariosRoutes(usuarios){
 const router = Router();    
-const userController = (usuarios);
+const userController = new UserController(usuarios);
 
 
     router.get("/", userController.listarUsuarios)

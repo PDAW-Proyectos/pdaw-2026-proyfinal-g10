@@ -20,12 +20,12 @@ export class UserController {
   };
   buscarPorCorreo = async (req, res, next) => {
     try {
-      const usuario = await this.userService.buscarUsuarioPorEmail(
+      const usuario = await this.userService.buscarUsuarioPorCorreo(
         req.params.correo,
       );
       res.status(200).json(usuario);
     } catch (error) {
-      next(error);
+    return res.status(400).json({ error: error.messages });
     }
   };
   listarUsuarios = async (req, res, next) => {
@@ -33,7 +33,7 @@ export class UserController {
       const usuarios = await this.userService.listarUsuarios();
       res.status(200).json(usuarios);
     } catch (error) {
-      next(error);
+   return res.status(418).json({ error: error.messages });
     }
   };
 
@@ -43,7 +43,7 @@ export class UserController {
       const usuario = await this.userService.iniciarSesion(correo, contrasena, req);
       res.status(200).json(usuario);
     } catch (error) {
-      next(error);
+    return res.status(403).json({ error: error.messages });
     }
   };
   cerrarSesion = async (req, res, next) => {
@@ -51,7 +51,7 @@ export class UserController {
       await this.userService.cerrarSesion(req);
       res.status(200).json({ message: 'Sesión cerrada correctamente' });
     } catch (error) {
-      next(error);
+    return res.status(403).json({ error: error.messages });
     }
 }
 }

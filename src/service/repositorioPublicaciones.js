@@ -1,4 +1,4 @@
-import { Publicacion } from "./Publicacion.js";
+import { Publicacion } from "../models/Publicacion.js";
 
 export class RepositorioPublicaciones {
 
