@@ -54,6 +54,23 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 | **Middleware**       | Función entre la petición y el controlador. Puede cortar el flujo (`401`) o pasar con `next()`.      |
 | **Pendiente**        | Endpoint o funcionalidad con contrato definido pero sin implementar todavía.                         |
 
+### 1.3 Respuestas HTTP estandarizadas sugeridas
+
+| Estado                      | Uso                                                           |
+| --------------------------- | ------------------------------------------------------------- |
+| `200 OK`                    | Consulta o actualización exitosa con respuesta.               |
+| `201 Created`               | Recurso creado.                                               |
+| `204 No Content`            | Operación exitosa sin cuerpo, por ejemplo cierre de sesión.   |
+| `400 Bad Request`           | JSON mal formado o parámetros inválidos.                      |
+| `401 Unauthorized`          | Falta autenticación o las credenciales no son válidas.        |
+| `403 Forbidden`             | Usuario autenticado sin permisos para la operación.           |
+| `404 Not Found`             | Recurso inexistente o no visible para quien consulta.         |
+| `409 Conflict`              | Conflicto con el estado actual o recurso duplicado.           |
+| `422 Unprocessable Content` | Datos bien formados que incumplen validaciones de negocio.    |
+| `500 Internal Server Error` | Error inesperado del servidor, sin exponer detalles internos. |
+
+---
+
 ---
 
 <br>
@@ -722,25 +739,3 @@ app.get("/api/me", requireAuth, (req, res) => {
 | 10  | **`container.js` es código muerto.** Referencia módulos sin importar, no está conectado a `app.js`.                                                                                                      | Arquitectura  | `src/container.js`                                    |
 | 11  | **`publicacionesService.js`, `historialService.js`, `historial.js`, `config.js` vacíos.**                                                                                                                | Pendiente     | `src/service/`, `src/repositories/`, `src/config.js`  |
 | 12  | **Modelos desalineados con el diagrama.** `Usuario` sin `idUsuario`, `telefono`, `fechaRegistro`; `Valoracion` sin `fecha`; `Alquiler` sin `precioTotal`; `Direccion` sin `export`.                      | Modelos       | `src/models/`                                         |
-
-## Respuestas HTTP sugeridas
-
-| Estado                      | Uso                                                           |
-| --------------------------- | ------------------------------------------------------------- |
-| `200 OK`                    | Consulta o actualización exitosa con respuesta.               |
-| `201 Created`               | Recurso creado.                                               |
-| `204 No Content`            | Operación exitosa sin cuerpo, por ejemplo cierre de sesión.   |
-| `400 Bad Request`           | JSON mal formado o parámetros inválidos.                      |
-| `401 Unauthorized`          | Falta autenticación o las credenciales no son válidas.        |
-| `403 Forbidden`             | Usuario autenticado sin permisos para la operación.           |
-| `404 Not Found`             | Recurso inexistente o no visible para quien consulta.         |
-| `409 Conflict`              | Conflicto con el estado actual o recurso duplicado.           |
-| `422 Unprocessable Content` | Datos bien formados que incumplen validaciones de negocio.    |
-| `500 Internal Server Error` | Error inesperado del servidor, sin exponer detalles internos. |
-
----
-
-<br>
-<br>
-
-> **Estado del documento.** Refleja el código de la rama `dev/sprint02` (noviembre 2026). Los issues 1–3 deben resolverse antes de cualquier prueba en CI. Las secciones Publicaciones, Alquileres y Reportes están **completamente pendientes**: sus endpoints no están implementados y sus tablas resumen son una guía para sprints futuros, no forman parte del contrato operativo actual.
