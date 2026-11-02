@@ -31,7 +31,9 @@ app.use(express.urlencoded({ extended: true }));
   });
 
   app.use('/usuarios', crearUsuariosRoutes(usuarios));
-
+app.use('/me', requireAuth, (req, res) => {
+    res.json(usuarios.toPublic(req.user));
+  })
 
   app.use(express.static(path.join(__dirname,"..", 'public')));
   export default app;
