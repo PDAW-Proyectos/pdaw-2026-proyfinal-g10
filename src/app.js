@@ -12,8 +12,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
   const app = express();
-  app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+  app.use(express.json());
   app.use(
     session({
       name: 'clase08.sid',
@@ -29,10 +30,9 @@ const __dirname = path.dirname(__filename);
     next();
   });
 
-  app.use('/api/usuarios', crearUsuariosRoutes(usuarios));
+  app.use('/usuarios', crearUsuariosRoutes(usuarios));
 
 
-  app.get('/api/me', requireAuth, (req, res) => res.json(usuarios.toPublic(req.user)));
   app.use(express.static(path.join(__dirname,"..", 'public')));
   export default app;
 

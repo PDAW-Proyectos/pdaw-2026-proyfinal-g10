@@ -13,9 +13,9 @@ export class UserController {
         contrasena: req.body.contrasena,
         tipo: req.body.tipo
       });
-      return res.status(200).json(usuario);
+      return res.status(201).json(usuario);
     } catch (error) {
-      return res.status(420).json({ error: error.messages });
+      return res.status(420).json({ error: error.message });
     }
   };
   buscarPorCorreo = async (req, res, next) => {
@@ -25,7 +25,7 @@ export class UserController {
       );
       res.status(200).json(usuario);
     } catch (error) {
-    return res.status(400).json({ error: error.messages });
+    return res.status(400).json({ error: error.message });
     }
   };
   listarUsuarios = async (req, res, next) => {
@@ -33,7 +33,7 @@ export class UserController {
       const usuarios = await this.userService.listarUsuarios();
       res.status(200).json(usuarios);
     } catch (error) {
-   return res.status(418).json({ error: error.messages });
+   return res.status(418).json({ error: error.message });
     }
   };
 
@@ -43,7 +43,7 @@ export class UserController {
       const usuario = await this.userService.iniciarSesion(correo, contrasena, req);
       res.status(200).json(usuario);
     } catch (error) {
-    return res.status(403).json({ error: error.messages });
+    return res.status(403).json({ error: error.message });
     }
   };
   cerrarSesion = async (req, res, next) => {
@@ -51,7 +51,7 @@ export class UserController {
       await this.userService.cerrarSesion(req);
       res.status(200).json({ message: 'Sesión cerrada correctamente' });
     } catch (error) {
-    return res.status(403).json({ error: error.messages });
+    return res.status(404).json({ error: error.message });
     }
 }
 }
