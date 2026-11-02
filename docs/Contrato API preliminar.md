@@ -14,18 +14,18 @@
 
 # 1. Información general
 
-| Campo                                         | Definición                                                                                                           |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Nombre de la API                              | API de AlquiYA!                                                                                                      |
-| URL base actual                               | `http://localhost:3000` (rutas de usuarios montadas en `/usuarios`, sin `/api` ni versión)                           |
-| URL base propuesta                            | `http://localhost:3000/api/v1`                                                                                       |
-| Formato principal                             | `application/json`                                                                                                   |
-| Recursos                                      | `usuarios`, `publicaciones`, `alquileres`, `reportes`                                                                |
-| Autenticación                                 | Sesión con cookie `clase08.sid` gestionada por `express-session`. Actualmente **ninguna ruta aplica `requireAuth`**. |
-| Identificador de usuario                      | El **correo electrónico** es el identificador de negocio (no hay `idUsuario` en el modelo).                          |
-| Identificador de publicación/alquiler/reporte | Entero autoincremental en memoria (propuesto).                                                                       |
-| Roles                                         | `Cliente` y `Propietario` (campo `tipo` del modelo). Sin rol de moderación definido.                                 |
-| Persistencia                                  | En memoria (`this.usuarios = []`). Se pierde al reiniciar el servidor.                                               |
+| Campo                                         | Definición                                                                                                                                                   |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Nombre de la API                              | API de AlquiYA!                                                                                                                                              |
+| URL base actual                               | `http://localhost:3000` (rutas de usuarios montadas en `/usuarios`, sin `/api` ni versión)                                                                   |
+| URL base propuesta                            | `http://localhost:3000/api/v1`                                                                                                                               |
+| Formato principal                             | `application/json`                                                                                                                                           |
+| Recursos                                      | `usuarios`, `publicaciones`, `alquileres`, `reportes`                                                                                                        |
+| Autenticación                                 | Sesión con cookie `clase08.sid` gestionada por `express-session`. `requireAuth` **solo se aplica en `GET /me`**; el resto de rutas de usuarios son públicas. |
+| Identificador de usuario                      | El **correo electrónico** es el identificador de negocio (no hay `idUsuario` en el modelo).                                                                  |
+| Identificador de publicación/alquiler/reporte | Entero autoincremental en memoria (propuesto).                                                                                                               |
+| Roles                                         | `Cliente` y `Propietario` (campo `tipo` del modelo). Sin rol de moderación definido.                                                                         |
+| Persistencia                                  | En memoria (`this.usuarios = []`). Se pierde al reiniciar el servidor.                                                                                       |
 
 <br>
 
@@ -78,13 +78,13 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 
 # 2. Resumen general
 
-| Sección           | Estado             | Autenticación actual | Endpoints implementados | Endpoints pendientes |
-| ----------------- | ------------------ | -------------------- | ----------------------- | -------------------- |
-| **Usuarios**      | Parcial (con bugs) | —                    | 6                       | 0                    |
-| **Productos**     | No Definido        | —                    | 0                       | 0                    |
-| **Publicaciones** | No implementado    | —                    | 0                       | 5                    |
-| **Alquileres**    | No implementado    | —                    | 0                       | 5                    |
-| **Reportes**      | No implementado    | —                    | 0                       | 3                    |
+| Sección           | Estado             | Autenticación actual        | Endpoints implementados | Endpoints pendientes |
+| ----------------- | ------------------ | --------------------------- | ----------------------- | -------------------- |
+| **Usuarios**      | Parcial (con bugs) | `requireAuth` solo en `/me` | 6                       | 0                    |
+| **Productos**     | No Definido        | —                           | 0                       | 0                    |
+| **Publicaciones** | No implementado    | —                           | 0                       | 5                    |
+| **Alquileres**    | No implementado    | —                           | 0                       | 5                    |
+| **Reportes**      | No implementado    | —                           | 0                       | 3                    |
 
 <br>
 
@@ -110,20 +110,20 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 
 <br>
 
-**Descripción.** Este módulo gestiona el alta, la autenticación y la consulta de usuarios (`Cliente` o `Propietario`). Es el único módulo con endpoints implementados hoy. Todos los endpoints funcionan, pero tienen problemas de seguridad (hash expuesto, sin `requireAuth`) y de contrato (códigos HTTP no estándar, respuesta de alta vacía).
+**Descripción.** Este módulo gestiona el alta, la autenticación y la consulta de usuarios (`Cliente` o `Propietario`). Es el único módulo con endpoints implementados hoy. Todos los endpoints funcionan, pero tienen problemas de seguridad (hash expuesto, rutas de usuarios sin `requireAuth`) y de contrato (códigos HTTP no estándar, respuesta de alta vacía, proyección pública defectuosa).
 
 <br>
 
 ## 3.1 Resumen de endpoints
 
-| Operación         | Método y ruta                  | Autenticación actual | Estado       | Cuerpo de entrada                        | Cuerpo de respuesta actual                       |
-| ----------------- | ------------------------------ | -------------------- | ------------ | ---------------------------------------- | ------------------------------------------------ |
-| Listar usuarios   | `GET /usuarios`                | Ninguna              | Implementado | —                                        | Arreglo de modelos crudos (incluye `contrasena`) |
-| Crear usuario     | `POST /usuarios`               | Pública              | Implementado | `nombre`, `correo`, `contrasena`, `tipo` | `undefined` (body vacío)                         |
-| Buscar por correo | `GET /usuarios/correo/:correo` | Ninguna              | Implementado | Path: `correo`                           | Modelo crudo (incluye `contrasena`)              |
-| Iniciar sesión    | `POST /usuarios/login`         | Pública              | Implementado | `correo`, `contrasena`                   | Modelo crudo + cookie `clase08.sid`              |
-| Cerrar sesión     | `POST /usuarios/logout`        | Sesión activa        | Implementado | Cookie `clase08.sid`                     | `{ "message": "..." }`                           |
-| Perfil propio     | `GET /api/me`                  | —                    | Pendiente    | —                                        | —                                                |
+| Operación         | Método y ruta                  | Autenticación actual | Estado       | Cuerpo de entrada                        | Cuerpo de respuesta actual                                                 |
+| ----------------- | ------------------------------ | -------------------- | ------------ | ---------------------------------------- | -------------------------------------------------------------------------- |
+| Listar usuarios   | `GET /usuarios`                | Ninguna              | Implementado | —                                        | Arreglo de modelos crudos (incluye `contrasena`)                           |
+| Crear usuario     | `POST /usuarios`               | Pública              | Implementado | `nombre`, `correo`, `contrasena`, `tipo` | `undefined` (body vacío)                                                   |
+| Buscar por correo | `GET /usuarios/correo/:correo` | Ninguna              | Implementado | Path: `correo`                           | Modelo crudo (incluye `contrasena`)                                        |
+| Iniciar sesión    | `POST /usuarios/login`         | Pública              | Implementado | `correo`, `contrasena`                   | Modelo crudo + cookie `clase08.sid`                                        |
+| Cerrar sesión     | `POST /usuarios/logout`        | Sesión activa        | Implementado | Cookie `clase08.sid`                     | `{ "message": "..." }`                                                     |
+| Perfil propio     | `GET /me`                      | `requireAuth`        | Implementado | Cookie `clase08.sid`                     | Proyección `toPublic` (ver 3.7: devuelve `{ nombre, correo }`, sin `tipo`) |
 
 ---
 
@@ -543,21 +543,32 @@ Cookie: clase08.sid=s%3A...
 
 ### Tabla de estado actual
 
-| Campo                    | Valor                                                  |
-| ------------------------ | ------------------------------------------------------ |
-| Recurso                  | Perfil del usuario autenticado                         |
-| Propósito                | Devolver los datos del usuario en sesión               |
-| Método HTTP              | GET                                                    |
-| Endpoint                 | `/me`                                                  |
-| Parámetros de ruta       | No utiliza                                             |
-| Query string             | No utiliza                                             |
-| Encabezados de solicitud | Cookie `clase08.sid`                                   |
-| Cuerpo JSON              | No utiliza                                             |
-| Reglas de validación     | Requiere sesión válida (middleware `requireAuth`)      |
-| Autenticación            | `requireAuth`                                          |
-| Respuesta exitosa        | `200 OK` con perfil público `{ nombre, correo, tipo }` |
-| Encabezados de respuesta | `Content-Type: application/json`                       |
-| Respuestas de error      | `401 Unauthorized` si no hay sesión                    |
+| Campo                    | Valor actual                                                                                 |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| Recurso                  | Perfil del usuario autenticado                                                               |
+| Propósito                | Devolver los datos del usuario en sesión                                                     |
+| Método HTTP              | GET                                                                                          |
+| Endpoint                 | `/me` (montado directamente en `app.js`, sin prefijo `/api`)                                 |
+| Parámetros de ruta       | No utiliza                                                                                   |
+| Query string             | No utiliza                                                                                   |
+| Encabezados de solicitud | Cookie `clase08.sid`                                                                         |
+| Cuerpo JSON              | No utiliza                                                                                   |
+| Reglas de validación     | Requiere sesión válida (middleware `requireAuth`)                                            |
+| Autenticación            | `requireAuth`                                                                                |
+| Respuesta exitosa        | `200 OK` con proyección `toPublic` → en la práctica `{ nombre, correo }` (ver observaciones) |
+| Encabezados de respuesta | `Content-Type: application/json`                                                             |
+| Respuestas de error      | `401 Unauthorized` si no hay sesión                                                          |
+
+<br>
+
+### Estructura del cuerpo de respuesta actual
+
+| Campo    | Tipo   | Descripción        |
+| -------- | ------ | ------------------ |
+| `nombre` | string | Nombre del usuario |
+| `correo` | string | Correo del usuario |
+
+> `toPublic` intenta proyectar `{ id, nombre, correo, role }`, pero `id` y `role` no existen en el modelo `Usuario` y se serializan como `undefined` (descartados por `JSON.stringify`). `tipo` **no se incluye**.
 
 <br>
 
@@ -570,7 +581,18 @@ Cookie: clase08.sid=s%3A...
 
 <br>
 
-### Ejemplo de respuesta exitosa
+### Ejemplo de respuesta exitosa (real)
+
+```json
+{
+  "nombre": "Ana",
+  "correo": "ana@example.com"
+}
+```
+
+<br>
+
+### Ejemplo de respuesta esperada (propuesta)
 
 ```json
 {
@@ -589,6 +611,12 @@ Cookie: clase08.sid=s%3A...
 ```
 
 <br>
+
+### Observaciones y propuestas
+
+- **Bug (contrato):** `toPublic` está definido como `({ id, nombre, correo, role }) => ({ id, nombre, correo, role })`, pero el modelo `Usuario` **no tiene** `id` ni `role`, y sí tiene `tipo`. El resultado real omite `tipo` y descarta `id`/`role` al serializar. Debería ser `({ nombre, correo, tipo }) => ({ nombre, correo, tipo })`.
+- **Contrato:** la ruta es `/me`, no `/api/me` (el contrato anterior listaba `/api/me` como pendiente; eso era incorrecto: `/me` está implementado y activo).
+- **Propuesta:** cuando se introduzca el prefijo `/api/v1`, mover a `GET /api/v1/me`.
 
 ---
 
@@ -675,21 +703,21 @@ Cookie: clase08.sid=s%3A...
 
 <br>
 
-| Campo                               | Definición                                                                                                                                                                                                                         |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Exposición de usuarios              | Se deben exponer exclusivamente mediante una función de proyección (`toPublic()` o similar) que excluya `contrasena`. Hoy **no se aplica** en ningún endpoint: login, alta, listado y búsqueda devuelven el modelo crudo con hash. |
-| Exposición de publicaciones         | Se deben exponer mediante una función de proyección que excluya la lista de reportes. Los reportes se consultarán por endpoint aparte (Pendiente).                                                                                 |
-| Formato de error                    | Todo error responde en JSON con `{ "error": "mensaje legible" }`. El formato se mantiene; lo que cambia es el **código HTTP**.                                                                                                     |
-| Códigos HTTP actuales (no estándar) | `200` en alta, `420` en errores de alta/listado, `418` en listado, `403` en login, `404` en logout.                                                                                                                                |
-| Códigos HTTP propuestos             | `201` en alta, `204` en logout, `401` sin sesión, `403` sin permiso, `404` recurso inexistente, `409` conflicto, `422` regla de negocio, `500` falla interna.                                                                      |
-| Identidad pública                   | El correo es el identificador de usuario. El modelo no tiene `idUsuario`. Pendiente de decidir si se agrega.                                                                                                                       |
-| Normalización de correo             | La búsqueda y el login normalizan con `trim().toLowerCase()`. El **almacenamiento** no normaliza (el constructor de `usuario.js` guarda el correo tal cual). Pendiente: normalizar en el constructor.                              |
-| Autenticación                       | El middleware `requireAuth` existe pero **no se aplica en ninguna ruta**. Pendiente: aplicarlo en `GET /usuarios`, `POST /usuarios`, `GET /usuarios/correo/:correo` y en todos los endpoints futuros.                              |
-| Autorización por rol                | No existe hoy. Pendiente: crear un middleware `requireRole('Propietario')` para la creación de publicaciones.                                                                                                                      |
-| Sesión                              | Cookie `clase08.sid`, secret hardcodeado `'secret'` (inseguro), TTL 1 hora, `httpOnly`, `sameSite=lax`. Pendiente: mover secret a variable de entorno.                                                                             |
-| Persistencia                        | En memoria (`this.usuarios = []`). Se pierde al reiniciar. Pendiente: base de datos real.                                                                                                                                          |
-| Base URL                            | Actual: `/usuarios`. Propuesto: `/api/usuarios` con versión `/api/v1`.                                                                                                                                                             |
-| Proveedor externo                   | Sin integración. Google Maps mencionado en requisitos pero no implementado.                                                                                                                                                        |
+| Campo                               | Definición                                                                                                                                                                                                                                                                                                        |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Exposición de usuarios              | Se deben exponer exclusivamente mediante una función de proyección (`toPublic()` o similar) que excluya `contrasena`. Hoy **solo se aplica en `GET /me`**, y con un mapeo de campos incorrecto (`id`/`role` en lugar de `tipo`). Las rutas de listado, alta, búsqueda y login siguen devolviendo el modelo crudo. |
+| Exposición de publicaciones         | Se deben exponer mediante una función de proyección que excluya la lista de reportes. Los reportes se consultarán por endpoint aparte (Pendiente).                                                                                                                                                                |
+| Formato de error                    | Todo error responde en JSON con `{ "error": "mensaje legible" }`. El formato se mantiene; lo que cambia es el **código HTTP**.                                                                                                                                                                                    |
+| Códigos HTTP actuales (no estándar) | `201` en alta, `420` en errores de alta/listado, `418` en listado, `403` en login, `404` en logout.                                                                                                                                                                                                               |
+| Códigos HTTP propuestos             | `201` en alta, `204` en logout, `401` sin sesión, `403` sin permiso, `404` recurso inexistente, `409` conflicto, `422` regla de negocio, `500` falla interna.                                                                                                                                                     |
+| Identidad pública                   | El correo es el identificador de usuario. El modelo no tiene `idUsuario`. Pendiente de decidir si se agrega.                                                                                                                                                                                                      |
+| Normalización de correo             | La búsqueda y el login normalizan con `trim().toLowerCase()`. El **almacenamiento** no normaliza (el constructor de `usuario.js` guarda el correo tal cual). Pendiente: normalizar en el constructor.                                                                                                             |
+| Autenticación                       | El middleware `requireAuth` existe y **se aplica únicamente en `GET /me`**. No se aplica en `GET /usuarios`, `POST /usuarios`, `GET /usuarios/correo/:correo` ni `POST /usuarios/login` (pública por diseño). Pendiente: aplicarlo en las rutas de usuarios que correspondan.                                     |
+| Autorización por rol                | No existe hoy. Pendiente: crear un middleware `requireRole('Propietario')` para la creación de publicaciones.                                                                                                                                                                                                     |
+| Sesión                              | Cookie `clase08.sid`, secret hardcodeado `'secret'` (inseguro), TTL 1 hora, `httpOnly`, `sameSite=lax`. Pendiente: mover secret a variable de entorno.                                                                                                                                                            |
+| Persistencia                        | En memoria (`this.usuarios = []`). Se pierde al reiniciar. Pendiente: base de datos real.                                                                                                                                                                                                                         |
+| Base URL                            | Actual: `/usuarios` y `/me`. Propuesto: `/api/v1/usuarios` y `/api/v1/me`.                                                                                                                                                                                                                                        |
+| Proveedor externo                   | Sin integración. Google Maps mencionado en requisitos pero no implementado.                                                                                                                                                                                                                                       |
 
 ---
 
@@ -704,13 +732,28 @@ Cookie: clase08.sid=s%3A...
 | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----------------------------------------------------- |
 | 1   | **Casing inconsistente de archivos de modelos.** En disco: `usuario.js` / `propietario.js` (minúscula). En imports: `Usuario.js` / `Propietario.js` (mayúscula). En Linux/CI el servidor **no arranca**. | Bloqueante    | `src/models/` vs `src/service/repositorioUsuarios.js` |
 | 2   | **Hash de contraseña expuesto.** `GET /usuarios`, `POST /usuarios`, `GET /usuarios/correo/:correo` y `POST /usuarios/login` devuelven el modelo crudo con `contrasena`.                                  | Seguridad     | `src/controllers/usuariosController.js`               |
-| 3   | **Sin `requireAuth` en ninguna ruta.** El middleware existe pero no se aplica. Todos los endpoints son públicos.                                                                                         | Seguridad     | `src/routes/usuariosRoutes.js` y `src/app.js`         |
+| 3   | **`requireAuth` solo aplicado en `/me`.** Las rutas de usuarios (`GET /usuarios`, `POST /usuarios`, `GET /usuarios/correo/:correo`) son públicas.                                                        | Seguridad     | `src/routes/usuariosRoutes.js` y `src/app.js`         |
 | 4   | **Alta devuelve `201` con cuerpo vacío.** `agregarUsuario` no retorna el usuario creado.                                                                                                                 | Contrato      | `src/service/repositorioUsuarios.js`                  |
 | 5   | **Códigos HTTP no estándar.** `420`, `418`, `403` (debería `401`), `404` (debería `204`).                                                                                                                | Contrato      | `src/controllers/usuariosController.js`               |
 | 6   | **`agregarUsuario` silencioso.** Si `tipo` no es `"Cliente"` ni `"Propietario"`, no crea nada ni lanza error.                                                                                            | Contrato      | `src/service/repositorioUsuarios.js`                  |
 | 7   | **`cerrarSesion` puede crashear.** Si el usuario no existe en memoria, `.activo = false` lanza `TypeError`.                                                                                              | Runtime       | `src/service/repositorioUsuarios.js`                  |
 | 8   | **`await` de nivel superior** con `password` no usado en `repositorioUsuarios.js`.                                                                                                                       | Código suelto | `src/service/repositorioUsuarios.js`                  |
 | 9   | **Secret de sesión hardcodeado** (`'secret'`) y credenciales demo impresas por consola.                                                                                                                  | Seguridad     | `src/app.js`, `server.js`                             |
-| 10  | **`container.js` es código muerto.** Referencia módulos sin importar, no está conectado a `app.js`.                                                                                                      | Arquitectura  | `src/container.js`                                    |
+| 10  | **`toPublic` mapea campos inexistentes.** `toPublic` devuelve `{ id, nombre, correo, role }`; el modelo no tiene `id` ni `role`, y `tipo` se pierde. `GET /me` responde sin `tipo`.                      | Contrato      | `src/service/repositorioUsuarios.js`                  |
 | 11  | **`publicacionesService.js`, `historialService.js`, `historial.js`, `config.js` vacíos.**                                                                                                                | Pendiente     | `src/service/`, `src/repositories/`, `src/config.js`  |
 | 12  | **Modelos desalineados con el diagrama.** `Usuario` sin `idUsuario`, `telefono`, `fechaRegistro`; `Valoracion` sin `fecha`; `Alquiler` sin `precioTotal`; `Direccion` sin `export`.                      | Modelos       | `src/models/`                                         |
+
+---
+
+### Cambios aplicados respecto de la versión preliminar
+
+| #   | Corrección                                                                                                                   |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Se actualizó la sección 1: `requireAuth` **sí** se aplica en `GET /me`.                                                      |
+| 2   | Se reemplazó la fila “Perfil propio → `GET /api/me` → Pendiente” por “`GET /me` → `requireAuth` → Implementado”.             |
+| 3   | Se agregó `GET /me` al listado de endpoints implementados en la sección 2.                                                   |
+| 4   | Se corrigió en la sección 8 “`200` en alta” → “`201` en alta”.                                                               |
+| 5   | Se actualizó la sección 3.7 para reflejar el comportamiento real de `toPublic` (`{ id, nombre, correo, role }`, sin `tipo`). |
+| 6   | Se corrigió en la sección 8 “`toPublic` no se aplica en ningún endpoint” → “solo se aplica en `GET /me`”.                    |
+| 7   | Se eliminó el issue #10 original (`container.js` inexistente en `sprint02`) y se reemplazó por el bug real de `toPublic`.    |
+| 8   | Se ajustaron las referencias a `/api/me` y a la URL base para reflejar que hoy la ruta es `/me` sin prefijo.                 |
