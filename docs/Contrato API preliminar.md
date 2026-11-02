@@ -723,6 +723,21 @@ app.get("/api/me", requireAuth, (req, res) => {
 | 11  | **`publicacionesService.js`, `historialService.js`, `historial.js`, `config.js` vacíos.**                                                                                                                | Pendiente     | `src/service/`, `src/repositories/`, `src/config.js`  |
 | 12  | **Modelos desalineados con el diagrama.** `Usuario` sin `idUsuario`, `telefono`, `fechaRegistro`; `Valoracion` sin `fecha`; `Alquiler` sin `precioTotal`; `Direccion` sin `export`.                      | Modelos       | `src/models/`                                         |
 
+## Respuestas HTTP sugeridas
+
+| Estado                      | Uso                                                           |
+| --------------------------- | ------------------------------------------------------------- |
+| `200 OK`                    | Consulta o actualización exitosa con respuesta.               |
+| `201 Created`               | Recurso creado.                                               |
+| `204 No Content`            | Operación exitosa sin cuerpo, por ejemplo cierre de sesión.   |
+| `400 Bad Request`           | JSON mal formado o parámetros inválidos.                      |
+| `401 Unauthorized`          | Falta autenticación o las credenciales no son válidas.        |
+| `403 Forbidden`             | Usuario autenticado sin permisos para la operación.           |
+| `404 Not Found`             | Recurso inexistente o no visible para quien consulta.         |
+| `409 Conflict`              | Conflicto con el estado actual o recurso duplicado.           |
+| `422 Unprocessable Content` | Datos bien formados que incumplen validaciones de negocio.    |
+| `500 Internal Server Error` | Error inesperado del servidor, sin exponer detalles internos. |
+
 ---
 
 <br>
