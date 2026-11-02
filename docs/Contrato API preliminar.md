@@ -78,13 +78,13 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 
 # 2. Resumen general
 
-| Sección           | Estado             | Autenticación actual              | Endpoints implementados | Endpoints pendientes |
-| ----------------- | ------------------ | --------------------------------- | ----------------------- | -------------------- |
-| **Usuarios**      | Parcial (con bugs) | Ninguna ruta aplica `requireAuth` | 6                       | 0                    |
-| **Productos**     | No Definido        | —                                 | 0                       | 0                    |
-| **Publicaciones** | No implementado    | —                                 | 0                       | 5                    |
-| **Alquileres**    | No implementado    | —                                 | 0                       | 5                    |
-| **Reportes**      | No implementado    | —                                 | 0                       | 3                    |
+| Sección           | Estado             | Autenticación actual | Endpoints implementados | Endpoints pendientes |
+| ----------------- | ------------------ | -------------------- | ----------------------- | -------------------- |
+| **Usuarios**      | Parcial (con bugs) | —                    | 6                       | 0                    |
+| **Productos**     | No Definido        | —                    | 0                       | 0                    |
+| **Publicaciones** | No implementado    | —                    | 0                       | 5                    |
+| **Alquileres**    | No implementado    | —                    | 0                       | 5                    |
+| **Reportes**      | No implementado    | —                    | 0                       | 3                    |
 
 <br>
 
@@ -95,11 +95,11 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 - `GET /usuarios/correo/:correo`
 - `POST /usuarios/login`
 - `POST /usuarios/logout`
+- `GET /me`
 
 **Endpoints pendientes:**
 
-- `GET /api/me` (documentado abajo como pendiente con el contrato que debería cumplir).
-- Todos los endpoints de publicaciones, alquileres y reportes.
+- Todos los endpoints de productos, publicaciones, alquileres y reportes.
 
 ---
 
