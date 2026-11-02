@@ -38,7 +38,6 @@ constructor() {
     }
 
     buscarUsuarioPorCorreo(correo) {
-        
         return this.usuarios.find(usuario => usuario.correo.trim().toLowerCase() === correo.trim().toLowerCase());
     }
 
