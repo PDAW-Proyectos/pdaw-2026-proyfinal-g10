@@ -1,4 +1,4 @@
-import { RepositorioUsuarios } from "../src/models/repositorioUsuarios.js";
+import { RepositorioUsuarios } from "../src/service/repositorioUsuarios.js";
 import { Cliente } from "../src/models/Cliente.js";
 import { Propietario } from "../src/models/Propietario.js";
 
@@ -9,11 +9,14 @@ describe("RepositorioUsuarios", () => {
     repositorio = new RepositorioUsuarios();
   });
 
-  test("Añadir distintos tipos de usuarios", () => {
+  test("Añadir distintos tipos de usuarios", async () => {
     const user1 = { nombre: "Juan", correo: "juan@gmail.com", contrasena: "1234/aAa", tipo: "Cliente" };
     const user2 = { nombre: "Maria", correo: "maria@gmail.com", contrasena: "5678/BbB", tipo: "Propietario" };
-    const usuarios = [user1, user2];
-    repositorio.cargarDesde(usuarios);
+
+    await repositorio.agregarUsuario(user1);
+    await repositorio.agregarUsuario(user2);
+
+    expect(repositorio.usuarios.length).toBe(2);
     expect(repositorio.usuarios[0]).toBeInstanceOf(Cliente);
     expect(repositorio.usuarios[1]).toBeInstanceOf(Propietario);
   });
@@ -35,7 +38,7 @@ describe("RepositorioUsuarios", () => {
   });
 
     test("probar error al cargar usuarios con correos duplicados", async () => {
-        repositorio.agregarUsuario({"nombre": "Juan", "correo": "juan@gmail.com", "contrasena": "1234/aAa", "tipo": "Cliente"});
+        await repositorio.agregarUsuario({"nombre": "Juan", "correo": "juan@gmail.com", "contrasena": "1234/aAa", "tipo": "Cliente"});
         await expect(repositorio.agregarUsuario({"nombre": "Maria", "correo": "juan@gmail.com", "contrasena": "5678/BbB", "tipo": "Propietario"})).rejects.toThrow("El correo juan@gmail.com ya está registrado");
     });
 });
