@@ -1,6 +1,6 @@
 import { RepositorioUsuarios } from "../src/service/repositorioUsuarios.js";
 import { Cliente } from "../src/models/Cliente.js";
-import { Propietario } from "../src/models/Propietario.js";
+import { Propietario } from "../src/models/propietario.js";
 
 describe("RepositorioUsuarios", () => {
   let repositorio;

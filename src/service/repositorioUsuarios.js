@@ -1,8 +1,8 @@
 import { Cliente } from "../models/Cliente.js";
-import { Propietario } from "../models/Propietario.js";
+import { Propietario } from "../models/propietario.js";
 import { hash, compare } from 'bcryptjs';
 import { regenerate, destroy } from "../utils/validacion.js";
-import { Usuario } from "../models/Usuario.js";
+import { Usuario } from "../models/usuario.js";
 
 const ROUNDS = 10;
 const password = 'clase08'
