@@ -15,9 +15,6 @@ constructor() {
     }
 
     async agregarUsuario(usuario) { 
-        const ROUNDS = 10
-        const passwordHash = await hash(password, ROUNDS);
-
         if (this.buscarUsuarioPorCorreo(usuario.correo)) {
             throw new Error(`El correo ${usuario.correo} ya está registrado`);
         }
@@ -29,19 +26,20 @@ constructor() {
     }
 
     async agregarCliente(nombre, correo, contrasena) {
-        const passwordHash = await hash(contrasena, ROUNDS);
-        const cliente = new Cliente(nombre, correo, passwordHash);
-        this.usuarios.push(cliente);
+   const cliente = new Cliente(nombre, correo, contrasena);
+  cliente.contrasena = await hash(contrasena, ROUNDS);
+  this.usuarios.push(cliente);
     }
 
     async agregarPropietario(nombre, correo, contrasena) {
-        const passwordHash = await hash(contrasena, ROUNDS);
-        const propietario = new Propietario(nombre, correo, passwordHash);
-        this.usuarios.push(propietario);
+   const propietario = new Propietario(nombre, correo, contrasena);
+  propietario.contrasena = await hash(contrasena, ROUNDS);
+  this.usuarios.push(propietario);
     }
 
     buscarUsuarioPorCorreo(correo) {
-        return this.usuarios.find(usuario => usuario.correo === correo);
+        
+        return this.usuarios.find(usuario => usuario.correo.trim().toLowerCase() === correo.trim().toLowerCase());
     }
 
     buscarUsuarioActivo() {
@@ -62,7 +60,8 @@ constructor() {
  
 
  async verify(correo, contrasena) {
-      const usuario = this.usuarios.find((u) => u.correo === String(correo).trim().toLowerCase());
+    const correoComparable = String(correo).trim().toLowerCase();
+      const usuario = this.usuarios.find((u) => u.correo.trim().toLowerCase() === correoComparable);
       if (!usuario) return null;
       return (await compare(String(contrasena), usuario.contrasena)) ? usuario : null;
     }

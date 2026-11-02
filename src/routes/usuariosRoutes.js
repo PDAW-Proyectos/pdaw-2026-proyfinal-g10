@@ -8,7 +8,7 @@ const userController = new UserController(usuarios);
 
     router.get("/", userController.listarUsuarios)
     router.post("/", userController.agregar);
-    router.get("/correo", userController.buscarPorCorreo);
+    router.get("/correo/:correo", userController.buscarPorCorreo);
    router.post("/login", userController.iniciarSesion);
    router.post("/logout", userController.cerrarSesion);
 return router
