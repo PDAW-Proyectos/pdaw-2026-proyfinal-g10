@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { validarDireccionPublicacion } from '../src/service/publicacionService.js';
+import { validarDireccionPublicacion } from '../src/service/publicacionesService.js';
 import { validarDireccion } from '../src/controllers/publicacionController.js';
 
 describe('Validación de dirección para publicación', () => {
