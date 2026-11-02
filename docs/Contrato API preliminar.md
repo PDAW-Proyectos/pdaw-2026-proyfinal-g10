@@ -12,7 +12,7 @@
 
 <br>
 
-## 1. Información general
+# 1. Información general
 
 | Campo                                         | Definición                                                                                                           |
 | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -41,7 +41,7 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 
 <br>
 
-### 1.2 Glosario rápido
+## 1.2 Glosario rápido
 
 | Término              | Qué significa                                                                                        |
 | -------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -54,7 +54,7 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 | **Middleware**       | Función entre la petición y el controlador. Puede cortar el flujo (`401`) o pasar con `next()`.      |
 | **Pendiente**        | Endpoint o funcionalidad con contrato definido pero sin implementar todavía.                         |
 
-### 1.3 Respuestas HTTP estandarizadas sugeridas
+## 1.3 Respuestas HTTP estandarizadas sugeridas
 
 | Estado                      | Uso                                                           |
 | --------------------------- | ------------------------------------------------------------- |
@@ -76,11 +76,12 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 <br>
 <br>
 
-## 2. Resumen general
+# 2. Resumen general
 
 | Sección           | Estado             | Autenticación actual              | Endpoints implementados | Endpoints pendientes |
 | ----------------- | ------------------ | --------------------------------- | ----------------------- | -------------------- |
-| **Usuarios**      | Parcial (con bugs) | Ninguna ruta aplica `requireAuth` | 5                       | 1                    |
+| **Usuarios**      | Parcial (con bugs) | Ninguna ruta aplica `requireAuth` | 6                       | 0                    |
+| **Productos**     | No Definido        | —                                 | 0                       | 0                    |
 | **Publicaciones** | No implementado    | —                                 | 0                       | 5                    |
 | **Alquileres**    | No implementado    | —                                 | 0                       | 5                    |
 | **Reportes**      | No implementado    | —                                 | 0                       | 3                    |
@@ -536,38 +537,18 @@ Cookie: clase08.sid=s%3A...
 
 <br>
 
-## 3.7 Obtener perfil propio — GET /api/me (Pendiente)
+## 3.7 Obtener perfil propio — GET /me
 
 <br>
 
 ### Tabla de estado actual
 
-| Campo                    | Valor actual                                                                                                                        |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Recurso                  | Perfil del usuario autenticado                                                                                                      |
-| Propósito                | Devolver los datos del usuario en sesión                                                                                            |
-| Método HTTP              | GET                                                                                                                                 |
-| Endpoint                 | `/api/me`                                                                                                                           |
-| Parámetros de ruta       | No utiliza                                                                                                                          |
-| Query string             | No utiliza                                                                                                                          |
-| Encabezados de solicitud | Cookie `clase08.sid`                                                                                                                |
-| Cuerpo JSON              | No utiliza                                                                                                                          |
-| Reglas de validación     | —                                                                                                                                   |
-| Autenticación            | —                                                                                                                                   |
-| Respuesta exitosa        | —                                                                                                                                   |
-| Respuestas de error      | —                                                                                                                                   |
-| Estado                   | **Pendiente.** El endpoint **no existe** en el código actual. `app.js` importa `requireAuth` pero nunca define una ruta que lo use. |
-
-<br>
-
-### Contrato que debería cumplir
-
-| Campo                    | Valor propuesto                                        |
+| Campo                    | Valor                                                  |
 | ------------------------ | ------------------------------------------------------ |
 | Recurso                  | Perfil del usuario autenticado                         |
 | Propósito                | Devolver los datos del usuario en sesión               |
 | Método HTTP              | GET                                                    |
-| Endpoint                 | `/api/me`                                              |
+| Endpoint                 | `/me`                                                  |
 | Parámetros de ruta       | No utiliza                                             |
 | Query string             | No utiliza                                             |
 | Encabezados de solicitud | Cookie `clase08.sid`                                   |
@@ -580,16 +561,16 @@ Cookie: clase08.sid=s%3A...
 
 <br>
 
-### Ejemplo de solicitud (propuesto)
+### Ejemplo de solicitud
 
 ```http
-GET /api/me
+GET /me
 Cookie: clase08.sid=s%3A...
 ```
 
 <br>
 
-### Ejemplo de respuesta exitosa (propuesto)
+### Ejemplo de respuesta exitosa
 
 ```json
 {
@@ -601,7 +582,7 @@ Cookie: clase08.sid=s%3A...
 
 <br>
 
-### Ejemplo de error (propuesto)
+### Ejemplo de error
 
 ```json
 { "error": "Es necesario iniciar sesión" }
@@ -609,27 +590,21 @@ Cookie: clase08.sid=s%3A...
 
 <br>
 
-### Observaciones y propuestas
+---
 
-- **Estado:** pendiente de implementación. El middleware `requireAuth` ya existe en `src/middleware/autentificacion.js`, solo falta montar la ruta en `app.js`.
-- **Bug relacionado:** existe un método `toPublic()` en el repositorio que proyecta `{ id, nombre, correo, role }`, pero `id` y `role` no existen en el modelo (salen `undefined`). Antes de usar `toPublic()` en `/api/me`, corregir la proyección a `{ nombre, correo, tipo }`.
-- **Propuesta de implementación:**
+<br>
+<br>
 
-```javascript
-import { requireAuth } from "./middleware/autentificacion.js";
+# 4. Sección Productos
 
-app.get("/api/me", requireAuth, (req, res) => {
-  const { nombre, correo, tipo } = req.user;
-  res.json({ nombre, correo, tipo });
-});
-```
+## 4.1 Resumen de endpoints
 
 ---
 
 <br>
 <br>
 
-# 4. Sección Publicaciones
+# 5. Sección Publicaciones
 
 <br>
 
@@ -637,7 +612,7 @@ app.get("/api/me", requireAuth, (req, res) => {
 
 <br>
 
-## 4.1 Resumen de endpoints
+## 5.1 Resumen de endpoints
 
 | Operación             | Método y ruta               | Autenticación propuesta              | Estado    | Entrada                                                                                        | Cuerpo de respuesta propuesto                         | Códigos propuestos                |
 | --------------------- | --------------------------- | ------------------------------------ | --------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------- |
@@ -652,7 +627,7 @@ app.get("/api/me", requireAuth, (req, res) => {
 <br>
 <br>
 
-# 5. Sección Alquileres
+# 6. Sección Alquileres
 
 <br>
 
@@ -660,7 +635,7 @@ app.get("/api/me", requireAuth, (req, res) => {
 
 <br>
 
-## 5.1 Resumen de endpoints
+## 6.1 Resumen de endpoints
 
 | Operación          | Método y ruta                                   | Autenticación propuesta                 | Estado    | Entrada                                                | Cuerpo de respuesta propuesto                      | Códigos propuestos                              |
 | ------------------ | ----------------------------------------------- | --------------------------------------- | --------- | ------------------------------------------------------ | -------------------------------------------------- | ----------------------------------------------- |
@@ -675,7 +650,7 @@ app.get("/api/me", requireAuth, (req, res) => {
 <br>
 <br>
 
-# 6. Sección Reportes
+# 7. Sección Reportes
 
 <br>
 
@@ -683,7 +658,7 @@ app.get("/api/me", requireAuth, (req, res) => {
 
 <br>
 
-## 6.1 Resumen de endpoints
+## 7.1 Resumen de endpoints
 
 | Operación                 | Método y ruta                                 | Autenticación propuesta | Estado    | Entrada                                              | Cuerpo de respuesta propuesto                    | Códigos propuestos                       |
 | ------------------------- | --------------------------------------------- | ----------------------- | --------- | ---------------------------------------------------- | ------------------------------------------------ | ---------------------------------------- |
@@ -696,7 +671,7 @@ app.get("/api/me", requireAuth, (req, res) => {
 <br>
 <br>
 
-# 7. Convenciones generales
+# 8. Convenciones generales
 
 <br>
 
@@ -721,7 +696,7 @@ app.get("/api/me", requireAuth, (req, res) => {
 <br>
 <br>
 
-# 8. Issues priorizados
+# 9. Issues priorizados
 
 <br>
 
