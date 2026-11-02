@@ -1,4 +1,5 @@
 window.AlquiYA = window.AlquiYA || {};
+const botonSesion = document.getElementById('cerrarSesion')
 
 window.AlquiYA.initModalFromHash = function (modalId, hash = '#registerModal') {
   const modalElement = document.getElementById(modalId);
@@ -40,3 +41,22 @@ window.AlquiYA.initLoginPage = function () {
   window.AlquiYA.initModalFromHash('registerModal', '#registerModal');
   window.AlquiYA.bindModalTriggers('[data-bs-target="#registerModal"]', 'registerModal');
 };
+
+
+botonSesion.addEventListener('click', async ()=>{
+try {
+        const respuesta = await fetch("/usuarios/logout", {
+            method: "POST",
+            credentials: "include"
+        });
+
+        if (respuesta.ok) {
+            window.location.href = '../index.html';
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+} )
+
+
