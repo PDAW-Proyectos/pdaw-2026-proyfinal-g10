@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'dev/**'
+  pull_request:
+    branches:
+      - main
+      - 'dev/**'
+
+jobs:
+  verificar:
+    name: Lint y Pruebas
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obtener código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Utilizar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias (npm ci)
+        run: npm ci
+
+      - name: Build si existe
+        run: npm run build --if-present
+
+      - name: Lint si existe
+        run: npm run lint --if-present
+
+      - name: Correr tests
+        run: npm test
