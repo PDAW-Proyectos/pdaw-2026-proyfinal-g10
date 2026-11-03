@@ -104,10 +104,7 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 | Sección           | Estado             | Endpoints implementados | Endpoints pendientes |
 | ----------------- | ------------------ | ----------------------- | -------------------- |
 | **Usuarios**      | Parcial (con bugs) | 6                       | 0                    |
-| **Productos**     | No Definido        | 0                       | 0                    |
 | **Publicaciones** | No implementado    | 0                       | 5                    |
-| **Alquileres**    | No implementado    | 0                       | 5                    |
-| **Reportes**      | No implementado    | 0                       | 3                    |
 
 <br>
 
@@ -657,15 +654,15 @@ Cookie: clase08.sid=s%3A...
 
 <br>
 
-## 4.1 Resumen de endpoints
+## 4.1 Resumen de endpoints (Tentativo)
 
-| Operación             | Método y ruta               | Autenticación propuesta              | Estado    | Entrada                                                                                        | Cuerpo de respuesta propuesto                         | Códigos propuestos                |
-| --------------------- | --------------------------- | ------------------------------------ | --------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------- |
-| Listar publicaciones  | `GET /publicaciones`        | Público                              | Pendiente | Query: `disponibilidad`, `propietarioId`, `tipo`, `precioMin`, `precioMax`, `pagina`, `limite` | `total`, `pagina`, `limite`, arreglo de publicaciones | `200`, `400`                      |
-| Consultar publicación | `GET /publicaciones/:id`    | Público                              | Pendiente | Path: `id`                                                                                     | Publicación                                           | `200`, `404`                      |
-| Crear publicación     | `POST /publicaciones`       | `requireRole('Propietario')`         | Pendiente | `titulo`, `descripcion`, `direccion`, `precio`, `tipo`                                         | Publicación creada                                    | `201`, `400`, `401`, `403`, `422` |
-| Editar publicación    | `PATCH /publicaciones/:id`  | `requireRole('Propietario')` + autor | Pendiente | Path: `id`; JSON parcial                                                                       | Publicación actualizada                               | `200`, `400`, `401`, `403`, `404` |
-| Eliminar publicación  | `DELETE /publicaciones/:id` | `requireRole('Propietario')` + autor | Pendiente | Path: `id`                                                                                     | Sin cuerpo (soft delete)                              | `204`, `401`, `403`, `404`        |
+| Operación             | Método y ruta               | Autenticación propuesta              | Entrada                                                                                        | Cuerpo de respuesta propuesto                         | Códigos propuestos                |
+| --------------------- | --------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------- |
+| Listar publicaciones  | `GET /publicaciones`        | Público                              | Query: `disponibilidad`, `propietarioId`, `tipo`, `precioMin`, `precioMax`, `pagina`, `limite` | `total`, `pagina`, `limite`, arreglo de publicaciones | `200`, `400`                      |
+| Consultar publicación | `GET /publicaciones/:id`    | Público                              | Path: `id`                                                                                     | Publicación                                           | `200`, `404`                      |
+| Crear publicación     | `POST /publicaciones`       | `requireRole('Propietario')`         | `titulo`, `descripcion`, `direccion`, `precio`, `tipo`                                         | Publicación creada                                    | `201`, `400`, `401`, `403`, `422` |
+| Editar publicación    | `PATCH /publicaciones/:id`  | `requireRole('Propietario')` + autor | Path: `id`; JSON parcial                                                                       | Publicación actualizada                               | `200`, `400`, `401`, `403`, `404` |
+| Eliminar publicación  | `DELETE /publicaciones/:id` | `requireRole('Propietario')` + autor | Path: `id`                                                                                     | Sin cuerpo (soft delete)                              | `204`, `401`, `403`, `404`        |
 
 ---
 
