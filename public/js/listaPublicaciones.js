@@ -84,7 +84,7 @@ export function crearPublicaciones(publicaciones, acciones = null) {
         detailsButton.type = "button";
         detailsButton.classList.add("stretched-link", "border-0", "bg-transparent", "p-0");
         detailsButton.dataset.bsToggle = "modal";
-        detailsButton.dataset.bsTarget = `#${publicacion.modal || "detalleDepartamento"}`;
+        detailsButton.dataset.bsTarget = "#detallePublicacion";
         detailsButton.setAttribute(
             "aria-label",
             `Ver detalles de ${publicacion.detalle || publicacion.titulo}`
@@ -129,10 +129,14 @@ export function crearPublicaciones(publicaciones, acciones = null) {
 
             const actionButtons = document.createElement("div");
             actionButtons.classList.add("d-flex", "gap-2");
-            actionButtons.append(
-                crearBoton(acciones[0], "btn-outline-primary"),
-                crearBoton(acciones[1], "btn-outline-secondary")
-            );
+            const botonPrincipal = crearBoton(acciones[0], "btn-outline-primary");
+            if (acciones[0] === "Ver") {
+                botonPrincipal.dataset.bsToggle = "modal";
+                botonPrincipal.dataset.bsTarget = "#detallePublicacion";
+                botonPrincipal.dataset.publicacion = JSON.stringify(publicacion);
+                botonPrincipal.setAttribute("aria-label", `Ver detalles de ${publicacion.titulo}`);
+            }
+            actionButtons.append(botonPrincipal, crearBoton(acciones[1], "btn-outline-secondary"));
             footer.appendChild(actionButtons);
             cardBody.appendChild(footer);
         } else {
