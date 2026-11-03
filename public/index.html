@@ -106,17 +106,18 @@
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 rounded-4 overflow-hidden">
           <div class="modal-header border-0">
-            <h2 class="modal-title fs-5 fw-bold" id="detalleDepartamentoLabel">Departamento moderno</h2>
+            <h2 class="modal-title fs-5 fw-bold" id="detalleDepartamentoLabel" data-publicacion-titulo>Departamento moderno</h2>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body pt-0">
-            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 mb-3 w-100" alt="Interior del departamento moderno" />
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 mb-3 w-100" alt="Interior del departamento moderno" data-publicacion-imagen />
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <span class="badge rounded-pill bg-light text-primary">Departamento · Centro</span>
-              <strong class="text-primary fs-5">$ 560</strong>
+              <span class="badge rounded-pill bg-light text-primary" data-publicacion-ubicacion>Departamento · Centro</span>
+              <strong class="text-primary fs-5" data-publicacion-precio>$ 560</strong>
             </div>
-            <p class="text-secondary">Departamento luminoso en una ubicación céntrica, cerca de comercios y transporte.</p>
-            <p class="mb-0"><strong>Características:</strong> 2 dormitorios · 1 baño · Cocina equipada</p>
+            <p class="text-secondary" data-publicacion-descripcion>Departamento luminoso en una ubicación céntrica, cerca de comercios y transporte.</p>
+            <p class="mb-0" data-publicacion-caracteristicas><strong>Características:</strong> 2 dormitorios · 1 baño · Cocina equipada</p>
+            <div class="text-warning mt-3" data-publicacion-calificacion aria-label="Valoración: 4,5 de 5 estrellas"></div>
           </div>
           <div class="modal-footer border-0">
             <a href="login.html" class="btn btn-primary rounded-pill px-4">Iniciá sesión para consultar</a>

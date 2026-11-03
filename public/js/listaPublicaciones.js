@@ -4,11 +4,23 @@ window.addEventListener("load", async () => {
     await cargarPublicaciones();
 });
 
+document.addEventListener("show.bs.modal", (event) => {
+    const publicacion = event.relatedTarget?.dataset.publicacion;
+    if (!publicacion) return;
+
+    actualizarModal(event.target, JSON.parse(publicacion));
+});
+
 export async function cargarPublicaciones() {
     if (!listaPublicaciones || listaPublicaciones.dataset.vista) return;
 
     listaPublicaciones.textContent = "";
     try {
+        //const response = await fetch("/api/publicaciones");
+        /*if (!response.ok) {
+            throw new Error("");
+        }*/
+       // const publicaciones = await response.json();
         const publicaciones = [
             {
                 id: 1,
@@ -16,7 +28,12 @@ export async function cargarPublicaciones() {
                 tipo: "Departamento",
                 precio: 560,
                 titulo: "Departamento moderno",
-                descripcion: "2 dorm. · 1 baño · Centro"
+                descripcion: "2 dorm. · 1 baño · Centro",
+                ubicacion: "Centro, Bahía Blanca",
+                detalleDescripcion: "Departamento luminoso en una ubicación céntrica, cerca de comercios y transporte.",
+                caracteristicas: "2 dormitorios · 1 baño · Cocina equipada",
+                calificacion: 4.5,
+                cantidadValoraciones: 12
             },
             {
                 id: 2,
@@ -24,7 +41,12 @@ export async function cargarPublicaciones() {
                 tipo: "Departamento",
                 precio: 450,
                 titulo: "Departamento acogedor",
-                descripcion: "1 dorm. · 1 baño · Barrio Norte"
+                descripcion: "1 dorm. · 1 baño · Barrio Norte",
+                ubicacion: "Barrio Norte, Bahía Blanca",
+                detalleDescripcion: "Departamento acogedor, ideal para una persona o una pareja.",
+                caracteristicas: "1 dormitorio · 1 baño · Cocina equipada",
+                calificacion: 0,
+                cantidadValoraciones: 0
             }
         ];
         const publicacionesEnLista = crearPublicaciones(publicaciones);
@@ -67,6 +89,7 @@ export function crearPublicaciones(publicaciones, acciones = null) {
             "aria-label",
             `Ver detalles de ${publicacion.detalle || publicacion.titulo}`
         );
+        detailsButton.dataset.publicacion = JSON.stringify(publicacion);
 
         const cardBody = document.createElement("div");
         cardBody.classList.add("card-body", "p-4");
@@ -133,6 +156,30 @@ export function crearPublicaciones(publicaciones, acciones = null) {
     });
 
     return listado;
+}
+
+function actualizarModal(modal, publicacion) {
+    modal.querySelector("[data-publicacion-titulo]").textContent = publicacion.titulo;
+    modal.querySelector("[data-publicacion-imagen]").src = publicacion.imagen;
+    modal.querySelector("[data-publicacion-imagen]").alt = publicacion.alt || publicacion.titulo;
+    modal.querySelector("[data-publicacion-ubicacion]").textContent =
+        `${publicacion.tipo} · ${publicacion.ubicacion || publicacion.descripcion}`;
+    modal.querySelector("[data-publicacion-precio]").textContent = `$ ${publicacion.precio}`;
+    modal.querySelector("[data-publicacion-descripcion]").textContent =
+        publicacion.detalleDescripcion || publicacion.descripcion;
+    modal.querySelector("[data-publicacion-caracteristicas]").textContent =
+        `Características: ${publicacion.caracteristicas || publicacion.descripcion}`;
+    modal.dataset.ubicacion = publicacion.ubicacion || "";
+
+    const calificacion = Number(publicacion.calificacion) || 0;
+    const rating = modal.querySelector("[data-publicacion-calificacion]");
+    const estrellas = crearEstrellas(calificacion);
+    const textoValoracion = document.createElement("span");
+    textoValoracion.classList.add("text-secondary", "ms-2");
+    textoValoracion.textContent =
+        `${calificacion.toLocaleString("es-AR")} (${publicacion.cantidadValoraciones || 0} valoraciones)`;
+    rating.setAttribute("aria-label", `Valoración: ${calificacion.toLocaleString("es-AR")} de 5 estrellas`);
+    rating.replaceChildren(...estrellas.childNodes, textoValoracion);
 }
 
 function crearEstrellas(calificacion = 0) {

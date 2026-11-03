@@ -8,7 +8,11 @@ const publicaciones = [
         precio: 560,
         titulo: "Departamento moderno",
         descripcion: "2 dorm. · 1 baño · Centro",
+        ubicacion: "Centro, Bahía Blanca",
+        detalleDescripcion: "Departamento luminoso, cerca de comercios y transporte.",
+        caracteristicas: "2 dormitorios · 1 baño · Cocina equipada",
         calificacion: 4.5,
+        cantidadValoraciones: 12,
         modal: "detalleDepartamento",
         detalle: "el departamento moderno"
     },
@@ -19,7 +23,11 @@ const publicaciones = [
         precio: 680,
         titulo: "Casa con patio",
         descripcion: "3 dorm. · 2 baños · Barrio Norte",
+        ubicacion: "Barrio Norte, Bahía Blanca",
+        detalleDescripcion: "Casa amplia y luminosa, con espacios para disfrutar en familia.",
+        caracteristicas: "3 dormitorios · 2 baños · Patio",
         calificacion: 3.5,
+        cantidadValoraciones: 8,
         modal: "detalleCasa",
         detalle: "la casa con patio"
     }
