@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {requireAuth} from './middleware/autentificacion.js'
 import {crearUsuariosRoutes} from './routes/usuariosRoutes.js'
+import publicacionRoutes from './routes/publicacionRoutes.js';
 import { RepositorioUsuarios } from './service/repositorioUsuarios.js';
 
 
@@ -31,10 +32,10 @@ app.use(express.urlencoded({ extended: true }));
   });
 
   app.use('/usuarios', crearUsuariosRoutes(usuarios));
+  app.use('/api/publicaciones', publicacionRoutes);
 app.use('/me', requireAuth, (req, res) => {
     res.json(usuarios.toPublic(req.user));
   })
 
   app.use(express.static(path.join(__dirname,"..", 'public')));
   export default app;
-
