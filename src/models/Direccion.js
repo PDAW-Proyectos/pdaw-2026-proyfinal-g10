@@ -1,8 +1,14 @@
-class Direccion {
-    constructor(calle, altura, piso, departamento) {
-        this.calle = calle;
-        this.altura = altura;
-        this.piso = piso;
-        this.departamento = departamento;
-    }
+export class Direccion {
+  constructor(calle, altura, localidad = "Bahía Blanca, Buenos Aires, Argentina") {
+    this.calle = calle;
+    this.altura = altura;
+    this.localidad = localidad;
+    this.direccionCompleta = this.comoTextoBusqueda();
+  }
+
+  comoTextoBusqueda() {
+    return [[this.calle, this.altura].filter(Boolean).join(" "), this.localidad]
+      .filter(Boolean)
+      .join(", ");
+  }
 }

@@ -90,145 +90,42 @@
         </div>
       </section>
 
-      <section id="publicaciones">
-        <div class="row g-4">
-          <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 property-card">
-              <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="card-img-top" alt="Publicación de alquiler" />
-              <button type="button" class="stretched-link border-0 bg-transparent p-0" data-bs-toggle="modal" data-bs-target="#detalleDepartamento" aria-label="Ver detalles del departamento moderno"></button>
-              <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="badge rounded-pill bg-light text-primary">Departamento</span>
-                  <strong class="text-primary">$ 560</strong>
-                </div>
-                <h4 class="fw-semibold mb-2">Departamento moderno</h4>
-                <p class="text-secondary mb-3">2 dorm. · 1 baño · Centro</p>
-                <div class="d-flex justify-content-between align-items-center position-relative z-2">
-                  <div class="text-warning">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-half"></i>
-                  </div>
-                  <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill">Valorar</button>
-                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill">Reportar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 property-card">
-              <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" class="card-img-top" alt="Publicación de casa" />
-              <button type="button" class="stretched-link border-0 bg-transparent p-0" data-bs-toggle="modal" data-bs-target="#detalleCasa" aria-label="Ver detalles de la casa con patio"></button>
-              <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="badge rounded-pill bg-light text-primary">Casa</span>
-                  <strong class="text-primary">$ 680</strong>
-                </div>
-                <h4 class="fw-semibold mb-2">Casa con patio</h4>
-                <p class="text-secondary mb-3">3 dorm. · 2 baños · Barrio Norte</p>
-                <div class="d-flex justify-content-between align-items-center position-relative z-2">
-                  <div class="text-warning">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-half"></i>
-                    <i class="bi bi-star"></i>
-                  </div>
-                  <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill">Valorar</button>
-                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill">Reportar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <section id="publicaciones" data-vista="cliente">
       </section>
     </main>
 
-    <div class="modal fade" id="detalleDepartamento" tabindex="-1" aria-labelledby="detalleDepartamentoLabel" aria-hidden="true">
+    <div class="modal fade" id="detallePublicacion" tabindex="-1" aria-labelledby="detallePublicacionLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 rounded-4 overflow-hidden">
           <div class="modal-header border-0">
-            <h2 class="modal-title fs-5 fw-bold" id="detalleDepartamentoLabel">Departamento moderno</h2>
+            <h2 class="modal-title fs-5 fw-bold" id="detallePublicacionLabel" data-publicacion-titulo></h2>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body pt-0">
             <div class="row g-3 align-items-stretch">
               <div class="col-lg-7">
-                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 w-100 modal-photo" alt="Interior del departamento moderno" />
+                <img src="" class="img-fluid rounded-3 w-100 modal-photo" alt="" data-publicacion-imagen />
               </div>
               <div class="col-lg-5">
                 <div class="modal-map-shell">
                   <iframe
-                    id="mapaUbicacionDepartamento"
-                    title="Mapa de ubicación del departamento"
+                    id="mapaUbicacion"
+                    title="Mapa de ubicación de la publicación"
                     class="modal-map-frame"
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
-                    src="https://www.openstreetmap.org/export/embed.html?bbox=-62.35%2C-38.75%2C-62.20%2C-38.68&layer=mapnik&marker=-38.7196%2C-62.2654"
+                    src="about:blank"
                   ></iframe>
                 </div>
               </div>
             </div>
             <div class="d-flex justify-content-between align-items-center my-3">
-              <span class="badge rounded-pill bg-light text-primary">Departamento · Centro</span>
-              <strong class="text-primary fs-5">$ 560</strong>
+              <span class="badge rounded-pill bg-light text-primary" data-publicacion-ubicacion></span>
+              <strong class="text-primary fs-5" data-publicacion-precio></strong>
             </div>
-            <p class="text-secondary">Departamento luminoso, cerca de comercios y transporte.</p>
-            <p class="mb-0"><strong>Características:</strong> 2 dormitorios · 1 baño · Cocina equipada</p>
-            <div class="text-warning mt-3" aria-label="Valoración: 4,5 de 5 estrellas">
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
-              <span class="text-secondary ms-2">4,5 (12 valoraciones)</span>
-            </div>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="detalleCasa" tabindex="-1" aria-labelledby="detalleCasaLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 rounded-4 overflow-hidden">
-          <div class="modal-header border-0">
-            <h2 class="modal-title fs-5 fw-bold" id="detalleCasaLabel">Casa con patio</h2>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-          </div>
-          <div class="modal-body pt-0">
-            <div class="row g-3 align-items-stretch">
-              <div class="col-lg-7">
-                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded-3 w-100 modal-photo" alt="Interior de la casa con patio" />
-              </div>
-              <div class="col-lg-5">
-                <div class="modal-map-shell">
-                  <iframe
-                    id="mapaUbicacionCasa"
-                    title="Mapa de ubicación de la casa"
-                    class="modal-map-frame"
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"
-                    src="https://www.openstreetmap.org/export/embed.html?bbox=-62.35%2C-38.75%2C-62.20%2C-38.68&layer=mapnik&marker=-38.7196%2C-62.2654"
-                  ></iframe>
-                </div>
-              </div>
-            </div>
-            <div class="d-flex justify-content-between align-items-center my-3">
-              <span class="badge rounded-pill bg-light text-primary">Casa · Barrio Norte</span>
-              <strong class="text-primary fs-5">$ 680</strong>
-            </div>
-            <p class="text-secondary">Casa amplia y luminosa, con espacios para disfrutar en familia.</p>
-            <p class="mb-0"><strong>Características:</strong> 3 dormitorios · 2 baños · Patio</p>
-            <div class="text-warning mt-3" aria-label="Valoración: 3,5 de 5 estrellas">
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i><i class="bi bi-star"></i>
-              <span class="text-secondary ms-2">3,5 (8 valoraciones)</span>
-            </div>
+            <p class="text-secondary" data-publicacion-descripcion></p>
+            <p class="mb-0" data-publicacion-caracteristicas></p>
+            <div class="text-warning mt-3" data-publicacion-calificacion></div>
           </div>
           <div class="modal-footer border-0">
             <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
@@ -242,6 +139,7 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script type="module" src="js/vistasPublicaciones.js"></script>
     <script src="js/vistaCliente.js"></script>
   </body>
 </html>
