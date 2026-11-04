@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { buscarUbicacionPorTexto } from '../src/service/ubicacionService.js';
 import { obtenerUbicacion } from '../src/controllers/ubicacionController.js';
+import { Direccion } from '../src/models/Direccion.js';
 
 describe('API externa de ubicación', () => {
   beforeEach(() => {
@@ -24,7 +25,8 @@ describe('API externa de ubicación', () => {
       ]
     });
 
-    const resultado = await buscarUbicacionPorTexto('Calle 123, Bahia Blanca');
+    const direccion = new Direccion('Calle', 123, 'Bahía Blanca, Argentina');
+    const resultado = await buscarUbicacionPorTexto(direccion.comoTextoBusqueda());
 
     expect(resultado).toEqual({
       display_name: 'Calle 123, Bahía Blanca, Argentina',
@@ -36,7 +38,7 @@ describe('API externa de ubicación', () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);
     const [url] = global.fetch.mock.calls[0];
     expect(String(url)).toContain('format=jsonv2');
-    expect(String(url)).toContain('q=Calle+123%2C+Bahia+Blanca');
+    expect(url.searchParams.get('q')).toBe('Calle 123, Bahía Blanca, Argentina');
   });
 
   test('lanza error cuando Nominatim no encuentra resultados para una dirección inventada', async () => {
@@ -45,7 +47,9 @@ describe('API externa de ubicación', () => {
       json: async () => []
     });
 
-    await expect(buscarUbicacionPorTexto('Dirección inexistente 99999')).rejects.toThrow('No se encontró la ubicación solicitada.');
+    const direccion = new Direccion('Dirección inexistente', 99999, 'Bahía Blanca, Argentina');
+
+    await expect(buscarUbicacionPorTexto(direccion.comoTextoBusqueda())).rejects.toThrow('No se encontró la ubicación solicitada.');
   });
 
   test('acepta una dirección real válida de Bahía Blanca', async () => {
@@ -61,7 +65,8 @@ describe('API externa de ubicación', () => {
       ]
     });
 
-    const resultado = await buscarUbicacionPorTexto('Avenida Colon 123, Bahía Blanca');
+    const direccion = new Direccion('Avenida Colón', 123);
+    const resultado = await buscarUbicacionPorTexto(direccion.comoTextoBusqueda());
 
     expect(resultado.lat).toBe(-38.7177);
     expect(resultado.lon).toBe(-62.2681);
@@ -74,11 +79,14 @@ describe('API externa de ubicación', () => {
       json: async () => []
     });
 
-    await expect(buscarUbicacionPorTexto('Calle sin nombre')).rejects.toThrow('No se encontró la ubicación solicitada.');
+    const direccion = new Direccion('Calle sin nombre', '', '');
+
+    await expect(buscarUbicacionPorTexto(direccion.comoTextoBusqueda())).rejects.toThrow('No se encontró la ubicación solicitada.');
   });
 
   test('el controlador devuelve 400 cuando la busqueda llega vacía', async () => {
-    const req = { query: { q: '' } };
+    const direccion = new Direccion('', '', '');
+    const req = { query: { q: direccion.comoTextoBusqueda() } };
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn()
