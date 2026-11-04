@@ -6,6 +6,7 @@ import {requireAuth} from './middleware/autentificacion.js'
 import {crearUsuariosRoutes} from './routes/usuariosRoutes.js'
 import { RepositorioUsuarios } from './service/repositorioUsuarios.js';
 import ubicacionRoutes from './routes/ubicacionRoutes.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 
 const usuarios = new RepositorioUsuarios();
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
     }),
   );
 
+
     app.use((req, res, next) => {
     req.user = req.session.userId ? usuarios.buscarUsuarioPorCorreo(req.session.userId) : null;
     next();
@@ -38,5 +40,7 @@ app.use('/me', requireAuth, (req, res) => {
   })
 
   app.use(express.static(path.join(__dirname,"..", 'public')));
+  app.use(errorHandler)
+
   export default app;
 
