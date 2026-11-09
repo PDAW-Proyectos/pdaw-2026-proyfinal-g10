@@ -26,3 +26,8 @@ constructor(message = '	Conflicto con el estado actual o recurso duplicado') { s
             super(message, 401);
         }
 }
+export class ForbiddenError extends AppError{
+    constructor(message = 'Usuario autenticado sin permisos para la operacion'){
+        super(message,403)
+    }
+}

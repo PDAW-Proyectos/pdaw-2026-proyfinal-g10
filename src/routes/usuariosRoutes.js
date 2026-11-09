@@ -1,16 +1,17 @@
 import { Router } from "express";
 import { UserController } from "../controllers/usuariosController.js";
+import { requireAuth, rol } from "../middleware/autentificacion.js";
 
 export function crearUsuariosRoutes(usuarios){
 const router = Router();    
 const userController = new UserController(usuarios);
 
 
-    router.get("/", userController.listarUsuarios)
+    router.get("/",requireAuth, userController.listarUsuarios)
     router.post("/", userController.agregar);
-    router.get("/correo/:correo", userController.buscarPorCorreo);
+    router.get("/correo/:correo",requireAuth, userController.buscarPorCorreo);
    router.post("/login", userController.iniciarSesion);
-   router.post("/logout", userController.cerrarSesion);
+   router.post("/logout",requireAuth, userController.cerrarSesion);
 return router
 
 
