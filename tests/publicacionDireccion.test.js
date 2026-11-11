@@ -24,18 +24,40 @@ describe('Validación de dirección para publicación', () => {
       ]
     });
 
-    const direccion = new Direccion('Avenida Colón', 123, 'Bahía Blanca, Argentina');
-    const resultado = await validarDireccionPublicacion(direccion.comoTextoBusqueda());
+    const textoDireccion = 'Avenida Colón 123, Bahía Blanca, Argentina';
+    const resultado = await validarDireccionPublicacion(textoDireccion);
 
     expect(resultado.valido).toBe(true);
-    expect(resultado.direccion).toBe('Avenida Colón 123, Bahía Blanca, Argentina');
-    expect(resultado.ubicacion.lat).toBe(-38.7177);
+    expect(resultado.direccion).toBe(textoDireccion);
+    expect(resultado.ubicacion).toBeInstanceOf(Direccion);
+    expect(resultado.ubicacion).toEqual(new Direccion(
+      'Avenida Colón 123, Bahía Blanca, Argentina',
+      -38.7177,
+      -62.2681,
+      {}
+    ));
+  });
+
+  test('busca en Bahía Blanca cuando se ingresa solo la dirección', async () => {
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => [
+        {
+          display_name: 'Avenida Colón 123, Bahía Blanca, Buenos Aires, Argentina',
+          lat: '-38.7177',
+          lon: '-62.2681'
+        }
+      ]
+    });
+
+    await validarDireccionPublicacion('Avenida Colón 123');
+
+    const [url] = global.fetch.mock.calls[0];
+    expect(url.searchParams.get('q')).toBe('Avenida Colón 123, Bahía Blanca, Buenos Aires, Argentina');
   });
 
   test('rechaza una dirección vacía', async () => {
-    const direccion = new Direccion('', '', '');
-
-    await expect(validarDireccionPublicacion(direccion.comoTextoBusqueda())).rejects.toThrow('La dirección es obligatoria.');
+    await expect(validarDireccionPublicacion('')).rejects.toThrow('La dirección es obligatoria.');
   });
 
   test('el controlador devuelve 400 si la dirección no existe o está vacía', async () => {
@@ -44,8 +66,7 @@ describe('Validación de dirección para publicación', () => {
       json: async () => []
     });
 
-    const direccion = new Direccion('Calle inexistente', 999, 'Bahía Blanca, Argentina');
-    const req = { body: { direccion: direccion.comoTextoBusqueda() } };
+    const req = { body: { direccion: 'Calle inexistente 999, Bahía Blanca, Argentina' } };
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn()

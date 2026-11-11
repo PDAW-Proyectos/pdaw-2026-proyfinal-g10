@@ -16,43 +16,21 @@ export async function cargarPublicaciones() {
 
     listaPublicaciones.textContent = "";
     try {
-        //const response = await fetch("/api/publicaciones");
-        /*if (!response.ok) {
-            throw new Error("");
-        }*/
-       // const publicaciones = await response.json();
-        const publicaciones = [
-            {
-                id: 1,
-                imagen: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80",
-                tipo: "Departamento",
-                precio: 560,
-                titulo: "Departamento moderno",
-                descripcion: "2 dorm. · 1 baño · Centro",
-                ubicacion: "Centro, Bahía Blanca",
-                detalleDescripcion: "Departamento luminoso en una ubicación céntrica, cerca de comercios y transporte.",
-                caracteristicas: "2 dormitorios · 1 baño · Cocina equipada",
-                calificacion: 4.5,
-                cantidadValoraciones: 12
-            },
-            {
-                id: 2,
-                imagen: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=900&q=80",
-                tipo: "Departamento",
-                precio: 450,
-                titulo: "Departamento acogedor",
-                descripcion: "1 dorm. · 1 baño · Barrio Norte",
-                ubicacion: "Barrio Norte, Bahía Blanca",
-                detalleDescripcion: "Departamento acogedor, ideal para una persona o una pareja.",
-                caracteristicas: "1 dormitorio · 1 baño · Cocina equipada",
-                calificacion: 0,
-                cantidadValoraciones: 0
-            }
-        ];
+        const response = await fetch("/api/publicaciones");
+        if (!response.ok) {
+            throw new Error(`Error al obtener publicaciones: ${response.status}`);
+        }
+
+        const publicaciones = await response.json();
+        if (!Array.isArray(publicaciones)) {
+            throw new Error("La respuesta de publicaciones no tiene un formato válido.");
+        }
+
         const publicacionesEnLista = crearPublicaciones(publicaciones);
         listaPublicaciones.appendChild(publicacionesEnLista);
     } catch (error) {
         console.error("Error al cargar las publicaciones:", error);
+        listaPublicaciones.textContent = "No se pudieron cargar las publicaciones.";
     }
 }
 

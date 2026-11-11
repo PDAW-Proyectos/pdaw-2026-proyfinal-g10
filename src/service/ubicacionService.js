@@ -1,5 +1,5 @@
 import { config } from '../config.js';
-
+import { Direccion } from '../models/Direccion.js';
 export async function buscarUbicacionPorTexto(query) {
   const texto = (query || '').toString().trim();
 
@@ -32,10 +32,10 @@ export async function buscarUbicacionPorTexto(query) {
 
   const ubicacion = data[0];
 
-  return {
-    display_name: ubicacion.display_name,
-    lat: Number(ubicacion.lat),
-    lon: Number(ubicacion.lon),
-    address: ubicacion.address || {}
-  };
+  return new Direccion(
+    ubicacion.display_name,
+    Number(ubicacion.lat),
+    Number(ubicacion.lon),
+    ubicacion.address || {}
+  );
 }
