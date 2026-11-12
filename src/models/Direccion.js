@@ -1,8 +1,8 @@
-class Direccion {
-    constructor(calle, altura, piso, departamento) {
-        this.calle = calle;
-        this.altura = altura;
-        this.piso = piso;
-        this.departamento = departamento;
-    }
+export class Direccion {
+  constructor(direccionCompleta, latitud, longitud, direccion) {
+    this.direccionCompleta = direccionCompleta;
+    this.lat = latitud;
+    this.lon = longitud;
+    this.direccion = direccion;
+  }
 }

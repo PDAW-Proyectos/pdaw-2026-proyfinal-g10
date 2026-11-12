@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { buscarUbicacionPorTexto } from '../src/service/ubicacionService.js';
 import { obtenerUbicacion } from '../src/controllers/ubicacionController.js';
+import { Direccion } from '../src/models/Direccion.js';
 
 describe('API externa de ubicación', () => {
   beforeEach(() => {
@@ -24,19 +25,21 @@ describe('API externa de ubicación', () => {
       ]
     });
 
-    const resultado = await buscarUbicacionPorTexto('Calle 123, Bahia Blanca');
+    const textoDireccion = 'Calle 123, Bahía Blanca, Argentina';
+    const resultado = await buscarUbicacionPorTexto(textoDireccion);
 
-    expect(resultado).toEqual({
-      display_name: 'Calle 123, Bahía Blanca, Argentina',
-      lat: -38.7196,
-      lon: -62.2654,
-      address: { city: 'Bahía Blanca', country: 'Argentina' }
-    });
+    expect(resultado).toBeInstanceOf(Direccion);
+    expect(resultado).toEqual(new Direccion(
+      'Calle 123, Bahía Blanca, Argentina',
+      -38.7196,
+      -62.2654,
+      { city: 'Bahía Blanca', country: 'Argentina' }
+    ));
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
     const [url] = global.fetch.mock.calls[0];
     expect(String(url)).toContain('format=jsonv2');
-    expect(String(url)).toContain('q=Calle+123%2C+Bahia+Blanca');
+    expect(url.searchParams.get('q')).toBe(textoDireccion);
   });
 
   test('lanza error cuando Nominatim no encuentra resultados para una dirección inventada', async () => {
@@ -45,7 +48,9 @@ describe('API externa de ubicación', () => {
       json: async () => []
     });
 
-    await expect(buscarUbicacionPorTexto('Dirección inexistente 99999')).rejects.toThrow('No se encontró la ubicación solicitada.');
+    await expect(buscarUbicacionPorTexto('Dirección inexistente 99999, Bahía Blanca, Argentina')).rejects.toThrow(
+      'No encontramos esa dirección. Verificá que esté escrita correctamente y que pertenezca a Bahía Blanca.'
+    );
   });
 
   test('acepta una dirección real válida de Bahía Blanca', async () => {
@@ -61,11 +66,11 @@ describe('API externa de ubicación', () => {
       ]
     });
 
-    const resultado = await buscarUbicacionPorTexto('Avenida Colon 123, Bahía Blanca');
+    const resultado = await buscarUbicacionPorTexto('Avenida Colón 123, Bahía Blanca');
 
     expect(resultado.lat).toBe(-38.7177);
     expect(resultado.lon).toBe(-62.2681);
-    expect(resultado.display_name).toContain('Bahía Blanca');
+    expect(resultado.direccionCompleta).toContain('Bahía Blanca');
   });
 
   test('rechaza una dirección ambigua o incompleta', async () => {
@@ -74,7 +79,9 @@ describe('API externa de ubicación', () => {
       json: async () => []
     });
 
-    await expect(buscarUbicacionPorTexto('Calle sin nombre')).rejects.toThrow('No se encontró la ubicación solicitada.');
+    await expect(buscarUbicacionPorTexto('Calle sin nombre')).rejects.toThrow(
+      'No encontramos esa dirección. Verificá que esté escrita correctamente y que pertenezca a Bahía Blanca.'
+    );
   });
 
   test('el controlador devuelve 400 cuando la busqueda llega vacía', async () => {

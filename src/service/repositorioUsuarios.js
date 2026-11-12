@@ -2,21 +2,16 @@ import { Cliente } from "../models/Cliente.js";
 import { Propietario } from "../models/propietario.js";
 import { hash, compare } from 'bcryptjs';
 import { regenerate, destroy } from "../utils/validacion.js";
-import { Usuario } from "../models/usuario.js";
+import { NotFoundError, UnauthorizedError, ValidationError } from "../models/errores.js";
 
 const ROUNDS = 10;
-const password = 'clase08'
-  const passwordHash = await hash(password, ROUNDS);
 export class RepositorioUsuarios {
 constructor() {
-        this.usuarios = [
-
-  ];
+        this.usuarios = [];
     }
-
     async agregarUsuario(usuario) { 
         if (this.buscarUsuarioPorCorreo(usuario.correo)) {
-            throw new Error(`El correo ${usuario.correo} ya está registrado`);
+            throw new ValidationError(`El correo ${usuario.correo} ya está registrado`);
         }
         if(usuario.tipo === "Cliente") {
             await this.agregarCliente(usuario.nombre, usuario.correo, usuario.contrasena);
@@ -64,30 +59,28 @@ constructor() {
       if (!usuario) return null;
       return (await compare(String(contrasena), usuario.contrasena)) ? usuario : null;
     }
-     findById()
-     {return  (id) => this.usuarios.find((u) => u.id === id) ?? null}
 
-    toPublic = ({ id, nombre, correo, role }) => ({ id, nombre, correo, role });
+    toPublic = ({ nombre, correo, tipo }) => ({ nombre, correo, tipo });
 
  iniciarSesion = async (correo, contrasena, req) => {
     const usuario = this.buscarUsuarioPorCorreo(
       String(correo).trim().toLowerCase()
     );
 
-    if (!usuario) throw new Error('Usuario no encontrado');
+    if (!usuario) throw new NotFoundError('Usuario no encontrado');
     const ok = await this.verify(correo, contrasena);
 
-    if (!ok) throw new Error('Credenciales inválidas');
+    if (!ok) throw new ValidationError('Credenciales inválidas');
     usuario.activo = true
+    await regenerate(req); 
     req.session.userId = usuario.correo;
     return usuario;
   };
 
   cerrarSesion = async (req) => {
-    if (!req.session.userId) throw new Error('No hay sesión iniciada');
+    if (!req.session.userId) throw new UnauthorizedError('No hay sesión iniciada');
     this.buscarUsuarioPorCorreo(req.session.userId).activo = false
-    req.session.destroy();
+    await destroy(req);
   };
-    
 
 }
