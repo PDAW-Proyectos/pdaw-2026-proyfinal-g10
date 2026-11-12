@@ -8,10 +8,17 @@ describe('API de publicaciones', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers['content-type']).toMatch(/application\/json/);
-    expect(response.body).toEqual(expect.arrayContaining([
-      expect.objectContaining({ titulo: 'Departamento moderno' }),
-      expect.objectContaining({ titulo: 'Casa con patio' })
-    ]));
+    expect(Array.isArray(response.body)).toBe(true);
+    response.body.forEach((publicacion) => {
+      expect(publicacion).toEqual(expect.objectContaining({
+        titulo: expect.any(String),
+        descripcion: expect.any(String),
+        imagen: expect.any(String),
+        precio: expect.any(Number)
+      }));
+      expect(publicacion).not.toHaveProperty('detalleDescripcion');
+      expect(publicacion).not.toHaveProperty('caracteristicas');
+    });
   });
 
   test('rechaza la creación si faltan campos requeridos', async () => {
