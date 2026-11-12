@@ -4,9 +4,8 @@
 >
 > **Estructura del documento.** Para cada endpoint implementado se presentan tres bloques:
 >
-> 1. **Tabla de estado actual:** describe lo que el código hace **hoy** (sin opiniones ni propuestas).
+> 1. **Tabla de estado actual:** describe lo que el código hace
 > 2. **Ejemplos:** solicitud y respuesta tal cual las devuelve el servidor actual.
-> 3. **Observaciones y propuestas:** los bugs, inconsistencias y mejoras sugeridas, **separados de la tabla** para que la descripción del estado actual quede limpia.
 
 ---
 
@@ -105,10 +104,7 @@ El código actual usa `{ "error": "mensaje legible" }` en todos los controladore
 | Sección           | Estado             | Endpoints implementados | Endpoints pendientes |
 | ----------------- | ------------------ | ----------------------- | -------------------- |
 | **Usuarios**      | Parcial (con bugs) | 6                       | 0                    |
-| **Productos**     | No Definido        | 0                       | 0                    |
 | **Publicaciones** | No implementado    | 0                       | 5                    |
-| **Alquileres**    | No implementado    | 0                       | 5                    |
-| **Reportes**      | No implementado    | 0                       | 3                    |
 
 <br>
 
@@ -647,18 +643,10 @@ Cookie: clase08.sid=s%3A...
 <br>
 <br>
 
-# 4. Sección Productos
-
-<br>
-
-**Descripción.** Módulo base de productos alquilables. Existe el modelo `Producto` (con sus especializaciones `Publicacion`, `Propiedad` y `Vehiculo` en `src/models/`) y el modelo `Alquiler` referencia `producto` como recurso. Sin embargo, **no hay ruta, controlador ni servicio implementado** para `Producto` como recurso autónomo, y **no se propone un contrato propio** para este módulo en el sprint actual: los productos se exponen al cliente exclusivamente a través del módulo de Publicaciones (sección 5). Por eso, en el resumen general (sección 2) esta sección figura como **No Definido**, con 0 endpoints implementados y 0 pendientes.
-
----
-
 <br>
 <br>
 
-# 5. Sección Publicaciones
+# 4. Sección Publicaciones
 
 <br>
 
@@ -666,38 +654,15 @@ Cookie: clase08.sid=s%3A...
 
 <br>
 
-## 5.1 Resumen de endpoints
+## 4.1 Resumen de endpoints (Tentativo)
 
-| Operación             | Método y ruta               | Autenticación propuesta              | Estado    | Entrada                                                                                        | Cuerpo de respuesta propuesto                         | Códigos propuestos                |
-| --------------------- | --------------------------- | ------------------------------------ | --------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------- |
-| Listar publicaciones  | `GET /publicaciones`        | Público                              | Pendiente | Query: `disponibilidad`, `propietarioId`, `tipo`, `precioMin`, `precioMax`, `pagina`, `limite` | `total`, `pagina`, `limite`, arreglo de publicaciones | `200`, `400`                      |
-| Consultar publicación | `GET /publicaciones/:id`    | Público                              | Pendiente | Path: `id`                                                                                     | Publicación                                           | `200`, `404`                      |
-| Crear publicación     | `POST /publicaciones`       | `requireRole('Propietario')`         | Pendiente | `titulo`, `descripcion`, `direccion`, `precio`, `tipo`                                         | Publicación creada                                    | `201`, `400`, `401`, `403`, `422` |
-| Editar publicación    | `PATCH /publicaciones/:id`  | `requireRole('Propietario')` + autor | Pendiente | Path: `id`; JSON parcial                                                                       | Publicación actualizada                               | `200`, `400`, `401`, `403`, `404` |
-| Eliminar publicación  | `DELETE /publicaciones/:id` | `requireRole('Propietario')` + autor | Pendiente | Path: `id`                                                                                     | Sin cuerpo (soft delete)                              | `204`, `401`, `403`, `404`        |
-
----
-
-<br>
-<br>
-
-# 6. Sección Alquileres
-
-<br>
-
-**Descripción.** Módulo de alquileres de publicaciones. Solo existe el modelo `Alquiler` (que referencia `producto`, no `publicacion`, y no tiene `precioTotal`). Ningún endpoint está implementado todavía.
-
-<br>
-
-## 6.1 Resumen de endpoints
-
-| Operación          | Método y ruta                                   | Autenticación propuesta                 | Estado    | Entrada                                                | Cuerpo de respuesta propuesto                      | Códigos propuestos                              |
-| ------------------ | ----------------------------------------------- | --------------------------------------- | --------- | ------------------------------------------------------ | -------------------------------------------------- | ----------------------------------------------- |
-| Solicitar alquiler | `POST /publicaciones/:publicacionId/alquileres` | `requireRole('Cliente')`                | Pendiente | Path: `publicacionId`; JSON: `fechaInicio`, `fechaFin` | Alquiler en estado `pendiente`                     | `201`, `400`, `401`, `403`, `404`, `409`, `422` |
-| Listar historial   | `GET /alquileres`                               | `requireAuth`                           | Pendiente | Query: `estado`, `pagina`, `limite`                    | `total`, `pagina`, `limite`, arreglo de alquileres | `200`, `401`                                    |
-| Consultar alquiler | `GET /alquileres/:alquilerId`                   | `requireAuth` + participante            | Pendiente | Path: `alquilerId`                                     | Alquiler                                           | `200`, `401`, `403`, `404`                      |
-| Decidir            | `POST /alquileres/:alquilerId/decision`         | `requireRole('Propietario')` + autor    | Pendiente | Path: `alquilerId`; JSON: `decision`                   | Alquiler actualizado                               | `200`, `401`, `403`, `404`, `409`, `422`        |
-| Cancelar           | `POST /alquileres/:alquilerId/cancelacion`      | `requireAuth` + participante autorizado | Pendiente | Path: `alquilerId`                                     | Alquiler actualizado                               | `200`, `401`, `403`, `404`, `409`, `422`        |
+| Operación             | Método y ruta               | Autenticación propuesta              | Entrada                                                                                        | Cuerpo de respuesta propuesto                         | Códigos propuestos                |
+| --------------------- | --------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------- |
+| Listar publicaciones  | `GET /publicaciones`        | Público                              | Query: `disponibilidad`, `propietarioId`, `tipo`, `precioMin`, `precioMax`, `pagina`, `limite` | `total`, `pagina`, `limite`, arreglo de publicaciones | `200`, `400`                      |
+| Consultar publicación | `GET /publicaciones/:id`    | Público                              | Path: `id`                                                                                     | Publicación                                           | `200`, `404`                      |
+| Crear publicación     | `POST /publicaciones`       | `requireRole('Propietario')`         | `titulo`, `descripcion`, `direccion`, `precio`, `tipo`                                         | Publicación creada                                    | `201`, `400`, `401`, `403`, `422` |
+| Editar publicación    | `PATCH /publicaciones/:id`  | `requireRole('Propietario')` + autor | Path: `id`; JSON parcial                                                                       | Publicación actualizada                               | `200`, `400`, `401`, `403`, `404` |
+| Eliminar publicación  | `DELETE /publicaciones/:id` | `requireRole('Propietario')` + autor | Path: `id`                                                                                     | Sin cuerpo (soft delete)                              | `204`, `401`, `403`, `404`        |
 
 ---
 
