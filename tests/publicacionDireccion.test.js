@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { validarDireccionPublicacion } from '../src/service/publicacionesService.js';
-import { validarDireccion } from '../src/controllers/publicacionController.js';
+import { crearPublicacion, validarDireccion } from '../src/controllers/publicacionController.js';
 import { Direccion } from '../src/models/Direccion.js';
 
 describe('Validación de dirección para publicación', () => {
@@ -76,7 +76,37 @@ describe('Validación de dirección para publicación', () => {
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      error: 'No se encontró la ubicación solicitada.'
+      error: 'No encontramos esa dirección. Verificá que esté escrita correctamente y que pertenezca a Bahía Blanca.'
     });
+  });
+
+  test('crear publicación devuelve un mensaje específico si la dirección no existe', async () => {
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => []
+    });
+
+    const req = {
+      body: {
+        titulo: 'Publicación de prueba',
+        imagen: 'https://example.test/imagen.jpg',
+        precio: 100,
+        direccion: 'Calle inexistente 999',
+        descripcion: 'Descripción de prueba'
+      }
+    };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
+    const next = jest.fn();
+
+    await crearPublicacion(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      error: 'No encontramos esa dirección. Verificá que esté escrita correctamente y que pertenezca a Bahía Blanca.'
+    });
+    expect(next).not.toHaveBeenCalled();
   });
 });

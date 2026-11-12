@@ -13,21 +13,41 @@ export async function buscarUbicacionPorTexto(query) {
   url.searchParams.set('q', texto);
   url.searchParams.set('addressdetails', '1');
 
-  const response = await fetch(url, {
-    headers: {
-      'Accept-Language': 'es',
-      'User-Agent': 'AlquiYA-Universidad/1.0'
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`Nominatim respondió con estado ${response.status}`);
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        'Accept-Language': 'es',
+        'User-Agent': 'AlquiYA-Universidad/1.0'
+      }
+    });
+  } catch (cause) {
+    const error = new Error('No se pudo verificar la dirección en este momento. Intentá nuevamente.');
+    error.code = 'ADDRESS_LOOKUP_FAILED';
+    error.cause = cause;
+    throw error;
   }
 
-  const data = await response.json();
+  if (!response.ok) {
+    const error = new Error('No se pudo verificar la dirección en este momento. Intentá nuevamente.');
+    error.code = 'ADDRESS_LOOKUP_FAILED';
+    throw error;
+  }
+
+  let data;
+  try {
+    data = await response.json();
+  } catch (cause) {
+    const error = new Error('No se pudo verificar la dirección en este momento. Intentá nuevamente.');
+    error.code = 'ADDRESS_LOOKUP_FAILED';
+    error.cause = cause;
+    throw error;
+  }
 
   if (!Array.isArray(data) || data.length === 0) {
-    throw new Error('No se encontró la ubicación solicitada.');
+    const error = new Error('No encontramos esa dirección. Verificá que esté escrita correctamente y que pertenezca a Bahía Blanca.');
+    error.code = 'ADDRESS_NOT_FOUND';
+    throw error;
   }
 
   const ubicacion = data[0];

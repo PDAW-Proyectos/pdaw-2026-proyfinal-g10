@@ -77,7 +77,7 @@ export function crearPublicaciones(publicaciones, acciones = null) {
 
         const type = document.createElement("span");
         type.classList.add("badge", "rounded-pill", "bg-light", "text-primary");
-        type.textContent = publicacion.tipo;
+        type.textContent = publicacion.tipo || "Alquiler";
 
         const price = document.createElement("strong");
         price.classList.add("text-primary");
@@ -145,12 +145,9 @@ function actualizarModal(modal, publicacion) {
     modal.querySelector("[data-publicacion-imagen]").src = publicacion.imagen;
     modal.querySelector("[data-publicacion-imagen]").alt = publicacion.alt || publicacion.titulo;
     modal.querySelector("[data-publicacion-ubicacion]").textContent =
-        `${publicacion.tipo} · ${publicacion.ubicacion || publicacion.descripcion}`;
+        publicacion.direccion || publicacion.ubicacion || "";
     modal.querySelector("[data-publicacion-precio]").textContent = `$ ${publicacion.precio}`;
-    modal.querySelector("[data-publicacion-descripcion]").textContent =
-        publicacion.detalleDescripcion || publicacion.descripcion;
-    modal.querySelector("[data-publicacion-caracteristicas]").textContent =
-        `Características: ${publicacion.caracteristicas || publicacion.descripcion}`;
+    modal.querySelector("[data-publicacion-descripcion]").textContent = publicacion.descripcion;
     modal.dataset.ubicacion = publicacion.ubicacion || "";
 
     const calificacion = Number(publicacion.calificacion) || 0;

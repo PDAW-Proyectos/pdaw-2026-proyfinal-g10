@@ -20,6 +20,35 @@ describe('API de publicaciones', () => {
       .send({ titulo: 'Publicación incompleta' });
 
     expect(response.status).toBe(400);
-    expect(response.body).toEqual({ error: 'Completá todos los campos de la publicación.' });
+    expect(response.body).toEqual({ error: 'La imagen es obligatoria.' });
+  });
+
+  test('valida una publicación usando solo los cinco campos del formulario', async () => {
+    const response = await request(app)
+      .post('/api/publicaciones')
+      .send({
+        titulo: 'Publicación de prueba',
+        imagen: 'https://example.test/imagen.jpg',
+        precio: 0,
+        direccion: 'Avenida Colón 123',
+        descripcion: 'Descripción de prueba'
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({ error: 'El precio debe ser un número mayor que cero.' });
+  });
+
+  test('indica específicamente cuando falta la dirección', async () => {
+    const response = await request(app)
+      .post('/api/publicaciones')
+      .send({
+        titulo: 'Publicación de prueba',
+        imagen: 'https://example.test/imagen.jpg',
+        precio: 100,
+        descripcion: 'Descripción de prueba'
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({ error: 'La dirección es obligatoria.' });
   });
 });

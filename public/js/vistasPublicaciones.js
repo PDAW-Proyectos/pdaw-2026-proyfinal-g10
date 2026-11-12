@@ -36,17 +36,10 @@ formularioPublicacion?.addEventListener("submit", async (event) => {
     const titulo = datos.get("titulo").trim();
     const publicacion = {
         imagen: datos.get("imagen").trim(),
-        alt: `Publicación de ${datos.get("tipo").toLowerCase()}`,
-        tipo: datos.get("tipo"),
         precio: Number(datos.get("precio")),
         titulo,
         descripcion: datos.get("descripcion").trim(),
-        ubicacion: datos.get("ubicacion").trim(),
-        detalleDescripcion: datos.get("detalleDescripcion").trim(),
-        caracteristicas: datos.get("caracteristicas").trim(),
-        calificacion: 0,
-        cantidadValoraciones: 0,
-        detalle: titulo
+        direccion: datos.get("direccion").trim()
     };
 
     mensajeError.hidden = true;
