@@ -48,7 +48,9 @@ describe('API externa de ubicación', () => {
       json: async () => []
     });
 
-    await expect(buscarUbicacionPorTexto('Dirección inexistente 99999, Bahía Blanca, Argentina')).rejects.toThrow('No se encontró la ubicación solicitada.');
+    await expect(buscarUbicacionPorTexto('Dirección inexistente 99999, Bahía Blanca, Argentina')).rejects.toThrow(
+      'No encontramos esa dirección. Verificá que esté escrita correctamente y que pertenezca a Bahía Blanca.'
+    );
   });
 
   test('acepta una dirección real válida de Bahía Blanca', async () => {
@@ -77,7 +79,9 @@ describe('API externa de ubicación', () => {
       json: async () => []
     });
 
-    await expect(buscarUbicacionPorTexto('Calle sin nombre')).rejects.toThrow('No se encontró la ubicación solicitada.');
+    await expect(buscarUbicacionPorTexto('Calle sin nombre')).rejects.toThrow(
+      'No encontramos esa dirección. Verificá que esté escrita correctamente y que pertenezca a Bahía Blanca.'
+    );
   });
 
   test('el controlador devuelve 400 cuando la busqueda llega vacía', async () => {

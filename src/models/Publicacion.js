@@ -10,8 +10,6 @@ export class Publicacion {
         this.imagen = detalles.imagen ?? "";
         this.alt = detalles.alt ?? "";
         this.tipo = detalles.tipo ?? "";
-        this.detalleDescripcion = detalles.detalleDescripcion ?? descripcion;
-        this.caracteristicas = detalles.caracteristicas ?? "";
         this.calificacion = detalles.calificacion ?? 0;
         this.cantidadValoraciones = detalles.cantidadValoraciones ?? 0;
         this.detalle = detalles.detalle ?? titulo;

@@ -14,11 +14,19 @@ export async function listarPublicaciones(req, res, next) {
 }
 
 export async function crearPublicacion(req, res, next) {
-  const { imagen, tipo, precio, titulo, descripcion, ubicacion, detalleDescripcion, caracteristicas } = req.body || {};
-  const camposTexto = { imagen, tipo, titulo, descripcion, ubicacion, detalleDescripcion, caracteristicas };
+  const { imagen, precio, titulo, descripcion, direccion } = req.body || {};
+  const camposTexto = [
+    [titulo, 'El título es obligatorio.'],
+    [imagen, 'La imagen es obligatoria.'],
+    [descripcion, 'La descripción es obligatoria.'],
+    [direccion, 'La dirección es obligatoria.']
+  ];
 
-  if (Object.values(camposTexto).some((valor) => typeof valor !== 'string' || !valor.trim())) {
-    return res.status(400).json({ error: 'Completá todos los campos de la publicación.' });
+  const campoIncompleto = camposTexto.find(
+    ([valor]) => typeof valor !== 'string' || !valor.trim()
+  );
+  if (campoIncompleto) {
+    return res.status(400).json({ error: campoIncompleto[1] });
   }
 
   const precioNumerico = Number(precio);
@@ -32,23 +40,20 @@ export async function crearPublicacion(req, res, next) {
       throw new Error('El archivo de publicaciones no contiene una lista válida.');
     }
 
-    const resultadoDireccion = await validarDireccionPublicacion(ubicacion);
+    const resultadoDireccion = await validarDireccionPublicacion(direccion);
     const direccionCompleta = resultadoDireccion.ubicacion.direccionCompleta;
     const id = Math.max(0, ...publicaciones.map((publicacion) => Number(publicacion.id) || 0)) + 1;
     const nuevaPublicacion = new Publicacion(
       id,
       titulo.trim(),
       descripcion.trim(),
-      direccionCompleta,
+      direccion.trim(),
       precioNumerico,
       req.user?.correo ?? null,
       {
         imagen: imagen.trim(),
-        alt: `Publicación de ${tipo.trim().toLowerCase()}`,
-        tipo: tipo.trim(),
+        alt: 'Publicación de alquiler',
         ubicacion: direccionCompleta,
-        detalleDescripcion: detalleDescripcion.trim(),
-        caracteristicas: caracteristicas.trim(),
         calificacion: 0,
         cantidadValoraciones: 0,
         detalle: titulo.trim()
@@ -59,24 +64,28 @@ export async function crearPublicacion(req, res, next) {
     await writeFile(archivoPublicaciones, `${JSON.stringify(publicaciones, null, 2)}\n`, 'utf8');
     return res.status(201).json(nuevaPublicacion);
   } catch (error) {
-    if (error.message?.includes('No se encontró')) {
-      return res.status(400).json({ error: error.message });
-    }
-    return next(error);
+    return responderErrorDireccion(error, res, next);
   }
 }
 
-export async function validarDireccion(req, res) {
+export async function validarDireccion(req, res, next) {
   try {
     const resultado = await validarDireccionPublicacion(req.body?.direccion || req.query?.direccion);
     return res.status(200).json(resultado);
   } catch (error) {
-    const mensaje = error.message || 'La dirección no es válida.';
-
-    if (mensaje.includes('obligatoria') || mensaje.includes('No se encontró')) {
-      return res.status(400).json({ error: mensaje });
+    if (error.message === 'La dirección es obligatoria.') {
+      return res.status(400).json({ error: error.message });
     }
-
-    return res.status(500).json({ error: mensaje });
+    return responderErrorDireccion(error, res, next);
   }
+}
+
+function responderErrorDireccion(error, res, next) {
+  if (error.code === 'ADDRESS_NOT_FOUND') {
+    return res.status(400).json({ error: error.message });
+  }
+  if (error.code === 'ADDRESS_LOOKUP_FAILED') {
+    return res.status(503).json({ error: error.message });
+  }
+  return next(error);
 }
