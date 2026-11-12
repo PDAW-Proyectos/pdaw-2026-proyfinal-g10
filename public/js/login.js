@@ -1,8 +1,8 @@
 
 const formLogin = document.getElementById('loginForm')
 const Registro = document.getElementById('formRegistro')
-
-
+//import { botonSesion } from "./common.js";
+//botonSesion
 window.addEventListener('DOMContentLoaded', () => {
   if (window.AlquiYA && typeof window.AlquiYA.initLoginPage === 'function') {
     window.AlquiYA.initLoginPage();

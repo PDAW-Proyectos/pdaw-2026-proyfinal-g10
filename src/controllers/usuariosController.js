@@ -1,5 +1,5 @@
 
-
+import { exponerUsuario } from "../middleware/transformador.js";
 export class UserController {
   constructor(userService) {
     this.userService =  userService
@@ -53,6 +53,15 @@ export class UserController {
     } catch (error) {
     return next(error);
     }
+}
+
+buscarLogueado =  (req,res,next) => {
+    try {
+      res.status(200).json(exponerUsuario(this.userService.toPublic(req.user)));
+    } catch (error) {
+    return next(error);
+    }
+
 }
 }
 
