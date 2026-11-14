@@ -1,5 +1,4 @@
 
-import { exponerUsuario } from "../middleware/transformador.js";
 export class UserController {
   constructor(userService) {
     this.userService =  userService
@@ -9,9 +8,11 @@ export class UserController {
     try {
       const usuario = await this.userService.agregarUsuario({
         nombre: req.body.nombre,
+        apellido: req.body.apellido,
         correo: req.body.correo,
+        telefono: req.body.telefono,
         contrasena: req.body.contrasena,
-        tipo: req.body.tipo
+        tipo: req.body.tipo,
       });
       return res.status(201).json(usuario);
     } catch (error) {
@@ -57,7 +58,7 @@ export class UserController {
 
 buscarLogueado =  (req,res,next) => {
     try {
-      res.status(200).json(exponerUsuario(this.userService.toPublic(req.user)));
+      res.status(200).json((this.userService.toPublic(req.user)));
     } catch (error) {
     return next(error);
     }

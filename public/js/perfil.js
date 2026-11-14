@@ -2,11 +2,10 @@
 const datosPersonales = document.getElementById('datos')
 const encabezado = document.getElementById('perfil')
 import { api } from "./api.js";
-
  async function obtenerUsuario(){
     try{
     const usuario = await api.buscarUsuario()
-    encabezado.appendChild(crearEncabezado(usuario.nombre))
+    encabezado.appendChild(crearEncabezado(usuario.nombre,usuario.apellido))
     datosPersonales.appendChild(crearPerfil(usuario))
 }catch{
     location.href = '../index.html';
@@ -54,7 +53,7 @@ const columna = document.createElement("div");
     return columna;
  }
 
- function crearEncabezado(nombre){
+ function crearEncabezado(nombre,apellido){
     const columna = document.createElement('div')
     columna.className ='row align-items-center g-4'
 
@@ -62,9 +61,9 @@ const div = document.createElement('div')
 div.className = 'col-auto'
 const logo = document.createElement('div')   
 logo.className = 'avatar-circle'
-logo.textContent = (nombre.slice(0,1)) 
+logo.textContent = `${nombre.slice(0,1)}${apellido.slice(0,1)}`
 const usuario = document.createElement('h1')    
-usuario.textContent = nombre
+usuario.textContent = nombre + ' ' + apellido
 const div2 = document.createElement('div')
 div2.className = 'col-md text-center'
 
