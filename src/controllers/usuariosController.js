@@ -8,7 +8,11 @@ export class UserController {
   agregar = async (req, res,next) => {
     try {
       const usuario = await this.userService.agregarUsuario({
-        nombre: req.body.nombre,
+        nombre: [req.body.nombre, req.body.apellido]
+          .filter((parte) => typeof parte === 'string')
+          .map((parte) => parte.trim())
+          .filter(Boolean)
+          .join(' '),
         correo: req.body.correo,
         contrasena: req.body.contrasena,
         tipo: req.body.tipo

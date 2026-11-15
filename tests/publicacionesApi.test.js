@@ -21,6 +21,23 @@ describe('API de publicaciones', () => {
     });
   });
 
+  test('resuelve el nombre del autor por el correo guardado en la publicación', async () => {
+    const correo = 'andresnressia@gmail.com';
+    const nombre = 'Andrés Ressia';
+    await request(app).post('/usuarios').send({
+      nombre: 'Andrés',
+      apellido: 'Ressia',
+      correo,
+      contrasena: 'ClaveSegura123!',
+      tipo: 'Propietario'
+    }).expect(201);
+
+    const response = await request(app).get('/api/publicaciones').expect(200);
+    const publicacion = response.body.find((item) => item.autor === correo);
+
+    expect(publicacion.nombreAutor).toBe(nombre);
+  });
+
   test('rechaza la creación si faltan campos requeridos', async () => {
     const response = await request(app)
       .post('/api/publicaciones')

@@ -1,10 +1,25 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/autentificacion.js';
-import { crearAlquiler, listarAlquileres } from '../controllers/alquilerController.js';
+import {
+  actualizarEstadoAlquiler,
+  cancelarAlquiler,
+  crearAlquiler,
+  listarAlquileres,
+  listarAlquileresPropietario
+} from '../controllers/alquilerController.js';
 
-const router = Router();
+export function crearAlquilerRoutes(usuarios) {
+  const router = Router();
 
-router.get('/', requireAuth, listarAlquileres);
-router.post('/', requireAuth, crearAlquiler);
+  router.get('/', requireAuth, listarAlquileres);
+  router.post('/', requireAuth, crearAlquiler);
+  router.patch('/:id/cancelar', requireAuth, cancelarAlquiler);
+  router.get('/propietario', requireAuth, (req, res) =>
+    listarAlquileresPropietario(req, res, usuarios)
+  );
+  router.patch('/:id/estado', requireAuth, (req, res) =>
+    actualizarEstadoAlquiler(req, res, usuarios)
+  );
 
-export default router;
+  return router;
+}

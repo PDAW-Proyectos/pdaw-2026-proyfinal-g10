@@ -4,16 +4,17 @@ import { validarDireccionPublicacion } from '../service/publicacionesService.js'
 
 const archivoPublicaciones = new URL('../repositories/Publicaciones.json', import.meta.url);
 
-export async function listarPublicaciones(req, res, next) {
+export async function listarPublicaciones(req, res, next, usuarios) {
   try {
     const archivo = await readFile(archivoPublicaciones, 'utf8');
-    return res.status(200).json(JSON.parse(archivo));
+    const publicaciones = JSON.parse(archivo);
+    return res.status(200).json(publicaciones.map((publicacion) => agregarNombreAutor(publicacion, usuarios)));
   } catch (error) {
     return next(error);
   }
 }
 
-export async function crearPublicacion(req, res, next) {
+export async function crearPublicacion(req, res, next, usuarios) {
   const { imagen, precio, titulo, descripcion, direccion } = req.body || {};
   const camposTexto = [
     [titulo, 'El título es obligatorio.'],
@@ -62,7 +63,7 @@ export async function crearPublicacion(req, res, next) {
 
     publicaciones.push(nuevaPublicacion);
     await writeFile(archivoPublicaciones, `${JSON.stringify(publicaciones, null, 2)}\n`, 'utf8');
-    return res.status(201).json(nuevaPublicacion);
+    return res.status(201).json(agregarNombreAutor(nuevaPublicacion, usuarios));
   } catch (error) {
     return responderErrorDireccion(error, res, next);
   }
@@ -78,6 +79,13 @@ export async function validarDireccion(req, res, next) {
     }
     return responderErrorDireccion(error, res, next);
   }
+}
+
+function agregarNombreAutor(publicacion, usuarios) {
+  const autor = publicacion.autor
+    ? usuarios?.buscarUsuarioPorCorreo(publicacion.autor)
+    : null;
+  return { ...publicacion, nombreAutor: autor?.nombre ?? null };
 }
 
 function responderErrorDireccion(error, res, next) {

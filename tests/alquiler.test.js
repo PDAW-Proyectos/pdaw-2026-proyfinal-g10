@@ -1,7 +1,10 @@
 import { describe, expect, test } from '@jest/globals';
+import express from 'express';
 import request from 'supertest';
 import app from '../src/app.js';
 import { crearAlquiler, listarAlquileres } from '../src/controllers/alquilerController.js';
+import { Alquiler } from '../src/models/Alquiler.js';
+import { crearAlquilerRoutes } from '../src/routes/alquilerRoutes.js';
 
 describe('API de alquileres', () => {
   test('requiere sesión para consultar o crear alquileres', async () => {
@@ -44,6 +47,14 @@ describe('API de alquileres', () => {
 
     const repetido = await cliente.post('/api/alquileres').send(solicitud).expect(409);
     expect(repetido.body.error).toBe('Ya tienes un alquiler activo o pendiente.');
+
+    const cancelado = await cliente
+      .patch(`/api/alquileres/${creado.body.id}/cancelar`)
+      .expect(200);
+    expect(cancelado.body.estado).toBe('cancelado');
+
+    const historialCancelado = await cliente.get('/api/alquileres').expect(200);
+    expect(historialCancelado.body).toEqual([cancelado.body]);
   });
 
   test('trata el historial ausente de un cliente API como vacío', async () => {
@@ -68,7 +79,100 @@ describe('API de alquileres', () => {
     expect(respuestaCreacion.codigo).toBe(201);
     expect(cliente.historial).toEqual([respuestaCreacion.cuerpo]);
   });
+
+  test('permite al propietario listar sus solicitudes y aceptar o rechazar las pendientes', async () => {
+    const propietario = { tipo: 'Propietario', correo: 'propietario@example.com' };
+    const solicitudes = [
+      { id: 'aceptar-1', estado: 'pendiente', producto: { autor: propietario.correo, titulo: 'Casa' } },
+      { id: 'rechazar-1', estado: 'pendiente', producto: { autor: propietario.correo, titulo: 'Habitación' } },
+      { id: 'otro-1', estado: 'pendiente', producto: { autor: 'otro@example.com', titulo: 'Otro' } }
+    ];
+    const usuarios = {
+      listarUsuarios: () => [
+        { tipo: 'Cliente', nombre: 'Inquilino', historial: solicitudes }
+      ]
+    };
+    const api = express();
+    api.use(express.json());
+    api.use((req, res, next) => {
+      req.user = propietario;
+      next();
+    });
+    api.use('/api/alquileres', crearAlquilerRoutes(usuarios));
+
+    const alquileres = await request(api).get('/api/alquileres/propietario').expect(200);
+    expect(alquileres.body).toEqual([
+      expect.objectContaining({ id: 'aceptar-1', solicitante: 'Inquilino' }),
+      expect.objectContaining({ id: 'rechazar-1', solicitante: 'Inquilino' })
+    ]);
+
+    const aceptado = await request(api)
+      .patch('/api/alquileres/aceptar-1/estado')
+      .send({ estado: 'activo' })
+      .expect(200);
+    expect(aceptado.body.estado).toBe('activo');
+
+    const rechazado = await request(api)
+      .patch('/api/alquileres/rechazar-1/estado')
+      .send({ estado: 'rechazado' })
+      .expect(200);
+    expect(rechazado.body.estado).toBe('rechazado');
+
+    await request(api)
+      .patch('/api/alquileres/aceptar-1/estado')
+      .send({ estado: 'rechazado' })
+      .expect(409);
+    await request(api)
+      .patch('/api/alquileres/otro-1/estado')
+      .send({ estado: 'activo' })
+      .expect(404);
+  });
+
+  test('el cliente puede cancelar alquileres activos o pendientes y los activos vencidos finalizan', async () => {
+    const cliente = {
+      tipo: 'Cliente',
+      historial: [
+        alquilerDePrueba('activo', 'activo', fechaRelativa(2)),
+        alquilerDePrueba('pendiente', 'pendiente', fechaRelativa(2)),
+        alquilerDePrueba('vencido', 'activo', fechaRelativa(0))
+      ]
+    };
+    const api = express();
+    api.use(express.json());
+    api.use((req, res, next) => {
+      req.user = cliente;
+      next();
+    });
+    api.use('/api/alquileres', crearAlquilerRoutes({ listarUsuarios: () => [cliente] }));
+
+    const historial = await request(api).get('/api/alquileres').expect(200);
+    expect(historial.body.map(({ estado }) => estado)).toEqual([
+      'activo',
+      'pendiente',
+      'finalizado'
+    ]);
+
+    const canceladoActivo = await request(api)
+      .patch('/api/alquileres/activo/cancelar')
+      .expect(200);
+    expect(canceladoActivo.body.estado).toBe('cancelado');
+
+    const canceladoPendiente = await request(api)
+      .patch('/api/alquileres/pendiente/cancelar')
+      .expect(200);
+    expect(canceladoPendiente.body.estado).toBe('cancelado');
+
+    await request(api)
+      .patch('/api/alquileres/vencido/cancelar')
+      .expect(409);
+  });
 });
+
+function alquilerDePrueba(id, estado, fechaFin) {
+  const alquiler = new Alquiler(id, {}, fechaRelativa(0), fechaFin);
+  alquiler.estado = estado;
+  return alquiler;
+}
 
 function respuestaMock() {
   return {

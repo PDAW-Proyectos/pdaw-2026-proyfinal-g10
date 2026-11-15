@@ -10,7 +10,9 @@ export async function listarAlquileres(req, res) {
     return res.status(403).json({ error: 'Solo los clientes pueden consultar alquileres.' });
   }
 
-  return res.status(200).json(obtenerHistorial(req.user));
+  const historial = obtenerHistorial(req.user);
+  finalizarAlquileresVencidos(historial);
+  return res.status(200).json(historial);
 }
 
 export async function crearAlquiler(req, res, next) {
@@ -19,6 +21,7 @@ export async function crearAlquiler(req, res, next) {
     return res.status(403).json({ error: 'Solo los clientes pueden realizar alquileres.' });
   }
   const historial = obtenerHistorial(cliente);
+  finalizarAlquileresVencidos(historial);
 
   if (historial.some((alquiler) => estadosQueBloquean.has(alquiler.estado))) {
     return res.status(409).json({ error: 'Ya tienes un alquiler activo o pendiente.' });
@@ -73,11 +76,97 @@ export async function crearAlquiler(req, res, next) {
   }
 }
 
+export function listarAlquileresPropietario(req, res, usuarios) {
+  if (req.user.tipo !== 'Propietario') {
+    return res.status(403).json({ error: 'Solo los propietarios pueden consultar solicitudes de alquiler.' });
+  }
+
+  const correoPropietario = normalizarCorreo(req.user.correo);
+  const alquileres = usuarios.listarUsuarios()
+    .filter((usuario) => usuario.tipo === 'Cliente')
+    .flatMap((cliente) => {
+      const historial = obtenerHistorial(cliente);
+      finalizarAlquileresVencidos(historial);
+      return historial
+        .filter((alquiler) => normalizarCorreo(alquiler.producto?.autor) === correoPropietario)
+        .map((alquiler) => ({ ...alquiler, solicitante: cliente.nombre }));
+    });
+
+  return res.status(200).json(alquileres);
+}
+
+export function actualizarEstadoAlquiler(req, res, usuarios) {
+  if (req.user.tipo !== 'Propietario') {
+    return res.status(403).json({ error: 'Solo los propietarios pueden responder solicitudes de alquiler.' });
+  }
+
+  const estadosPermitidos = new Set(['activo', 'rechazado']);
+  const nuevoEstado = req.body?.estado;
+  if (!estadosPermitidos.has(nuevoEstado)) {
+    return res.status(400).json({ error: 'El estado debe ser activo o rechazado.' });
+  }
+
+  const correoPropietario = normalizarCorreo(req.user.correo);
+  const solicitud = usuarios.listarUsuarios()
+    .filter((usuario) => usuario.tipo === 'Cliente')
+    .flatMap((cliente) => obtenerHistorial(cliente)
+      .filter((alquiler) => String(alquiler.id) === String(req.params.id)
+        && normalizarCorreo(alquiler.producto?.autor) === correoPropietario)
+      .map((alquiler) => ({ cliente, alquiler })))
+    .find(() => true);
+
+  if (!solicitud) {
+    return res.status(404).json({ error: 'No se encontró la solicitud de alquiler.' });
+  }
+  finalizarAlquileresVencidos([solicitud.alquiler]);
+  if (solicitud.alquiler.estado !== 'pendiente') {
+    return res.status(409).json({ error: 'La solicitud ya fue respondida.' });
+  }
+  if (nuevoEstado === 'activo' && solicitud.alquiler.fechaFin <= fechaLocal(new Date())) {
+    return res.status(409).json({ error: 'El período solicitado ya terminó.' });
+  }
+
+  solicitud.alquiler.estado = nuevoEstado;
+  return res.status(200).json(solicitud.alquiler);
+}
+
+export function cancelarAlquiler(req, res) {
+  if (req.user.tipo !== 'Cliente') {
+    return res.status(403).json({ error: 'Solo los clientes pueden cancelar alquileres.' });
+  }
+
+  const historial = obtenerHistorial(req.user);
+  finalizarAlquileresVencidos(historial);
+  const alquiler = historial.find((elemento) => String(elemento.id) === String(req.params.id));
+  if (!alquiler) {
+    return res.status(404).json({ error: 'No se encontró el alquiler solicitado.' });
+  }
+  if (!['pendiente', 'activo'].includes(alquiler.estado)) {
+    return res.status(409).json({ error: 'Solo puedes cancelar alquileres activos o pendientes.' });
+  }
+
+  alquiler.cancelar();
+  return res.status(200).json(alquiler);
+}
+
 function obtenerHistorial(cliente) {
   if (!Array.isArray(cliente.historial)) {
     cliente.historial = [];
   }
   return cliente.historial;
+}
+
+function finalizarAlquileresVencidos(historial) {
+  const hoy = fechaLocal(new Date());
+  for (const alquiler of historial) {
+    if (alquiler.estado === 'activo' && esFechaValida(alquiler.fechaFin) && alquiler.fechaFin <= hoy) {
+      alquiler.finalizar();
+    }
+  }
+}
+
+function normalizarCorreo(correo) {
+  return typeof correo === 'string' ? correo.trim().toLowerCase() : '';
 }
 
 function esFechaValida(fecha) {

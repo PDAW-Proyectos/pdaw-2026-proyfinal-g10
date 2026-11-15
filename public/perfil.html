@@ -52,6 +52,32 @@
         </div>
       </section>
 
+      <section
+        id="solicitudesAlquilerPropietario"
+        class="card border-0 shadow-sm rounded-4 p-4 mb-4"
+        aria-labelledby="solicitudesAlquilerTitulo"
+        hidden
+      >
+        <h2 id="solicitudesAlquilerTitulo" class="h4 fw-bold mb-3">Solicitudes de alquiler</h2>
+        <p id="mensajeSolicitudesAlquiler" class="text-secondary mb-3" role="status" aria-live="polite">
+          Cargando solicitudes...
+        </p>
+        <div id="alquileresPropietario" class="row g-3"></div>
+      </section>
+
+      <section
+        id="misAlquileresCliente"
+        class="card border-0 shadow-sm rounded-4 p-4 mb-4"
+        aria-labelledby="misAlquileresTitulo"
+        hidden
+      >
+        <h2 id="misAlquileresTitulo" class="h4 fw-bold mb-3">Mis alquileres</h2>
+        <p id="mensajeMisAlquileres" class="text-secondary mb-3" role="status" aria-live="polite">
+          Cargando alquileres...
+        </p>
+        <div id="listaMisAlquileres" class="row g-3"></div>
+      </section>
+
       <section class="row g-4 mb-4">
         <div class="col-lg-5">
           <div class="card border-0 shadow-sm rounded-4 h-100">
@@ -139,5 +165,7 @@
         </div>
       </section>
     </main>
+    <script src="js/perfilPropietario.js"></script>
+    <script src="js/perfilCliente.js"></script>
   </body>
 </html>
