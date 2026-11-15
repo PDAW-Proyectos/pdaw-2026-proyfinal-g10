@@ -124,9 +124,23 @@
               <strong class="text-primary fs-5" data-publicacion-precio></strong>
             </div>
             <p class="text-secondary" data-publicacion-descripcion></p>
+            <form id="formAlquiler" class="row g-3">
+              <div class="col-md-6">
+                <label for="fechaInicioAlquiler" class="form-label fw-semibold">Fecha de inicio</label>
+                <input type="date" class="form-control" id="fechaInicioAlquiler" name="fechaInicio" required />
+              </div>
+              <div class="col-md-6">
+                <label for="fechaFinAlquiler" class="form-label fw-semibold">Fecha de fin</label>
+                <input type="date" class="form-control" id="fechaFinAlquiler" name="fechaFin" required />
+              </div>
+              <div class="col-12">
+                <div id="mensajeAlquiler" class="alert mb-0" role="status" aria-live="polite" hidden></div>
+              </div>
+            </form>
             <div class="text-warning mt-3" data-publicacion-calificacion></div>
           </div>
           <div class="modal-footer border-0">
+            <button type="submit" form="formAlquiler" id="botonAlquilar" class="btn btn-primary rounded-pill">Alquilar</button>
             <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
           </div>
         </div>
@@ -140,5 +154,6 @@
     ></script>
     <script type="module" src="js/vistasPublicaciones.js"></script>
     <script src="js/vistaCliente.js"></script>
+    <script src="js/alquilar.js"></script>
   </body>
 </html>
