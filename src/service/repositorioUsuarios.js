@@ -78,7 +78,6 @@ constructor() {
   };
 
   cerrarSesion = async (req) => {
-    if (!req.session.userId) throw new UnauthorizedError('No hay sesión iniciada');
     this.buscarUsuarioPorCorreo(req.session.userId).activo = false
     await destroy(req);
   };
