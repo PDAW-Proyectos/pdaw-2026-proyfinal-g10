@@ -7,8 +7,8 @@ export class Usuario {
     if(!nombre) throw new ValidationError("El nombre es obligatorio");
     if(!Validator.isLength(nombre, { min: 3, max: 30 })) throw new ValidationError("El nombre debe tener entre 3 y 30 caracteres");
     this.nombre = nombre;
-      if(!nombre) throw new ValidationError("El nombre es obligatorio");
-    if(!Validator.isLength(apellido, { min: 3, max: 15 })) throw new ValidationError("El nombre debe tener entre 3 y 15 caracteres");
+      if(!apellido) throw new ValidationError("El apellido es obligatorio");
+    if(!Validator.isLength(apellido, { min: 3, max: 15 })) throw new ValidationError("El apellido debe tener entre 3 y 15 caracteres");
       this.apellido = apellido
     if(!correo) throw new ValidationError("El correo es obligatorio");
     if(!Validator.isEmail(correo)) throw new ValidationError("El correo no es válido");

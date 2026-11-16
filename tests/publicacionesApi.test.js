@@ -23,12 +23,13 @@ describe('API de publicaciones', () => {
 
   test('resuelve el nombre del autor por el correo guardado en la publicación', async () => {
     const correo = 'andresnressia@gmail.com';
-    const nombre = 'Andrés Ressia';
+    const nombre = 'Andrés';
     await request(app).post('/usuarios').send({
       nombre: 'Andrés',
       apellido: 'Ressia',
       correo,
       contrasena: 'ClaveSegura123!',
+      telefono: '5491123456789',
       tipo: 'Propietario'
     }).expect(201);
 

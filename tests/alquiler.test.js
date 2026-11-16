@@ -22,8 +22,10 @@ describe('API de alquileres', () => {
 
     await cliente.post('/usuarios').send({
       nombre: 'Cliente de prueba',
+      apellido: 'Prueba',
       correo,
       contrasena,
+      telefono: '5491123456789',
       tipo: 'Cliente'
     }).expect(201);
     await cliente.post('/usuarios/login').send({ correo, contrasena }).expect(201);
