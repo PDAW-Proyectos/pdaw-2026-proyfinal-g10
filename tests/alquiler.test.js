@@ -25,7 +25,7 @@ describe('API de alquileres', () => {
       apellido: 'Prueba',
       correo,
       contrasena,
-      telefono: '5491123456789',
+      telefono: '1123456789',
       tipo: 'Cliente'
     }).expect(201);
     await cliente.post('/usuarios/login').send({ correo, contrasena }).expect(201);
