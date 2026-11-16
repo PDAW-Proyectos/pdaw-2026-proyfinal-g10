@@ -2,16 +2,10 @@
 const formLogin = document.getElementById('loginForm')
 const Registro = document.getElementById('formRegistro')
 
-window.addEventListener('DOMContentLoaded', () => {
-  if (window.AlquiYA && typeof window.AlquiYA.initLoginPage === 'function') {
-    window.AlquiYA.initLoginPage();
-  }
-});
-
-
 formLogin.addEventListener('submit', async (event) => {
   event.preventDefault();
-
+  errorSesion.hidden = true;
+  errorSesion.textContent = '';
   try {
       const datos = new FormData(formLogin);
      const usuario = await fetch('/usuarios/login', {
@@ -19,35 +13,52 @@ formLogin.addEventListener('submit', async (event) => {
         body: new URLSearchParams(datos),
         
     });
-       if (usuario.ok) {
-            window.location.href = '../index.html';
-        }
+      if (!usuario.ok) {
+    const res = await usuario.json(); 
+      handlerSesion(res.message);
+      return;
+    }
+          window.location.href = '../vistaCliente.html';
     
   }  catch (error) {
-        console.error("Error:", error);
+    handlerSesion(error.message);
     }
  })
-
-
-
-
+ 
 Registro.addEventListener('submit', async (event) => {
     event.preventDefault();
+    errorRegistro.hidden = true;
+    errorRegistro.textContent = '';
     try{
     const datos = new FormData(Registro);
     const respuesta = await fetch('/usuarios', {
         method: 'POST',
         body: new URLSearchParams(datos)
     });
+ if (!respuesta.ok) {
+    const res = await respuesta.json();
+      handlerRegistro(res.message);
+      return;
+    }
 
-     if (respuesta.ok) {
       await fetch('/usuarios/login', {
         method: 'POST',
         body: new URLSearchParams(datos),       
     });
-            window.location.href = '../index.html';
-        }
+       window.location.href = '../vistaCliente.html';
+        
 }
   catch (error) {
-        console.error("Error:", error);}
+        handlerRegistro(error.message);}
 });
+
+
+
+function handlerRegistro(mensaje) {
+  errorRegistro.textContent = mensaje || 'No se pudo completar el registro.';
+  errorRegistro.hidden = false;
+}
+function handlerSesion(mensaje) {
+  errorSesion.textContent = mensaje || 'No se pudo iniciar sesión.';
+  errorSesion.hidden = false;
+}

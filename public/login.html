@@ -69,6 +69,14 @@
                   Registrate
                 </button>
               </p>
+            <div class="error-div">
+                  <div
+                    id="errorSesion"
+                    class="alert alert-danger mb-0 text-center"
+                    role="alert"
+                    hidden
+                  ></div>
+                </div>
             </div>
           </div>
         </div>
@@ -76,7 +84,7 @@
     </main>
 
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-dialog  modal-lg">
         <div class="modal-content border-0 rounded-4 shadow-lg">
           <div class="modal-header border-0 pb-0">
             <div>
@@ -114,14 +122,23 @@
                     <select class="form-select form-select-lg mb-3" name="tipo" id="tipo">Rol de la cuenta
                       <option value="Cliente">Cliente</option>
                       <option value="Propietario">Propietario</option>
-                    </select>
+                    </select>        
               </div>
+
 
               <div class="d-grid gap-2 mt-4">
                 <button type="submit" class="btn btn-primary btn-lg rounded-3">Crear cuenta</button>
                 <button type="button" class="btn btn-outline-primary btn-lg rounded-3" data-bs-dismiss="modal">
                   Cancelar
                 </button>
+                  <div class="col-12 error-div">
+                    <div
+                      id="errorRegistro"
+                      class="alert alert-danger mb-0 text-center"
+                      role="alert"
+                      hidden
+                    ></div>
+                  </div>
               </div>
             </form>
           </div>
