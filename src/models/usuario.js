@@ -14,8 +14,8 @@ export class Usuario {
     if(!Validator.isEmail(correo)) throw new ValidationError("El correo no es válido");
     this.correo = correo;
     if(!telefono)throw new ValidationError("El telefono es obligatorio");
-    if(!Validator.isMobilePhone(telefono,'es-AR'))throw new ValidationError("ingrese un numero de argentina");
-    this.telefono = telefono;
+    if(!Validator.isMobilePhone("549" + telefono,'es-AR'))throw new ValidationError("ingrese un numero de argentina");
+    this.telefono = "549" + telefono;
     if(!contrasena) throw new ValidationError("La contraseña es obligatoria");
     if(!Validator.isStrongPassword(contrasena)) throw new ValidationError("La contraseña no es segura, debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo");
     this.contrasena = contrasena

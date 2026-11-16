@@ -29,7 +29,7 @@ describe('API de publicaciones', () => {
       apellido: 'Ressia',
       correo,
       contrasena: 'ClaveSegura123!',
-      telefono: '5491123456789',
+      telefono: '1123456789',
       tipo: 'Propietario'
     }).expect(201);
 

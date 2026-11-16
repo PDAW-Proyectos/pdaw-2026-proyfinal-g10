@@ -10,8 +10,8 @@ describe("RepositorioUsuarios", () => {
   });
   
   test("Añadir distintos tipos de usuarios", async () => {
-    const user1 = { nombre: "Juan", apellido: "test", telefono: "5491123456789", correo: "juan@gmail.com", contrasena: "1234/aAa", tipo: "Cliente" };
-    const user2 = { nombre: "Maria",apellido: "test", telefono: "5491123456789", correo: "maria@gmail.com", contrasena: "5678/BbB", tipo: "Propietario" };
+    const user1 = { nombre: "Juan", apellido: "test", telefono: "1123456789", correo: "juan@gmail.com", contrasena: "1234/aAa", tipo: "Cliente" };
+    const user2 = { nombre: "Maria",apellido: "test", telefono: "1123456789", correo: "maria@gmail.com", contrasena: "5678/BbB", tipo: "Propietario" };
 
     await repositorio.agregarUsuario(user1);
     await repositorio.agregarUsuario(user2);
@@ -23,22 +23,22 @@ describe("RepositorioUsuarios", () => {
 
 //"apellido": "test", "telefono": "549291123456",
   test("probar error al agregar usuario con correo inválido", async () => {
-    await expect(repositorio.agregarUsuario({"nombre": "Juan","apellido": "test", "correo": "", "contrasena": "1234/aAa", "telefono" : "5491123456789", "tipo": "Cliente"})).rejects.toThrow("El correo es obligatorio");
-    await expect(repositorio.agregarUsuario({"nombre": "Maria","apellido": "test", "correo": "mariagmail", "contrasena": "1234/aAa","telefono": "5491123456789", "tipo": "Propietario"})).rejects.toThrow("El correo no es válido");
+    await expect(repositorio.agregarUsuario({"nombre": "Juan","apellido": "test", "correo": "", "contrasena": "1234/aAa", "telefono" : "1123456789", "tipo": "Cliente"})).rejects.toThrow("El correo es obligatorio");
+    await expect(repositorio.agregarUsuario({"nombre": "Maria","apellido": "test", "correo": "mariagmail", "contrasena": "1234/aAa","telefono": "1123456789", "tipo": "Propietario"})).rejects.toThrow("El correo no es válido");
   });
 
   test("probar error al agregar usuario con contraseña débil o invalida", async () => {
-    await expect(repositorio.agregarUsuario({"nombre": "Juan","apellido": "test", "correo": "juan@gmail.com", "contrasena": "", "telefono": "5491123456789", "tipo": "Cliente"})).rejects.toThrow("La contraseña es obligatoria");
-    await expect(repositorio.agregarUsuario({"nombre": "Maria","apellido": "test", "correo": "maria@gmail.com", "contrasena": "1234", "telefono": "5491123456789", "tipo": "Propietario"})).rejects.toThrow("La contraseña no es segura, debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo");
+    await expect(repositorio.agregarUsuario({"nombre": "Juan","apellido": "test", "correo": "juan@gmail.com", "contrasena": "", "telefono": "1123456789", "tipo": "Cliente"})).rejects.toThrow("La contraseña es obligatoria");
+    await expect(repositorio.agregarUsuario({"nombre": "Maria","apellido": "test", "correo": "maria@gmail.com", "contrasena": "1234", "telefono": "1123456789", "tipo": "Propietario"})).rejects.toThrow("La contraseña no es segura, debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo");
   })
 
   test("probar error al agregar usuario con nombre invalido", async () => {
-    await expect(repositorio.agregarUsuario({"nombre": "","apellido": "test", "correo": "juan@gmail.com", "contrasena": "1234/aAa","telefono": "5491123456789", "tipo": "Cliente"})).rejects.toThrow("El nombre es obligatorio");
-    await expect(repositorio.agregarUsuario({"nombre": "Ma","apellido": "test","correo": "maria@gmail.com", "contrasena": "1234/aAa","telefono": "5491123456789", "tipo": "Propietario"})).rejects.toThrow("El nombre debe tener entre 3 y 30 caracteres");
+    await expect(repositorio.agregarUsuario({"nombre": "","apellido": "test", "correo": "juan@gmail.com", "contrasena": "1234/aAa","telefono": "1123456789", "tipo": "Cliente"})).rejects.toThrow("El nombre es obligatorio");
+    await expect(repositorio.agregarUsuario({"nombre": "Ma","apellido": "test","correo": "maria@gmail.com", "contrasena": "1234/aAa","telefono": "1123456789", "tipo": "Propietario"})).rejects.toThrow("El nombre debe tener entre 3 y 30 caracteres");
   });
 
     test("probar error al cargar usuarios con correos duplicados", async () => {
-        await repositorio.agregarUsuario({"nombre": "Juan","apellido": "test", "correo": "juan@gmail.com", "contrasena": "1234/aAa","telefono": "5491123456789", "tipo": "Cliente"});
-        await expect(repositorio.agregarUsuario({"nombre": "Maria","apellido": "test", "correo": "juan@gmail.com", "contrasena": "5678/BbB","telefono": "5491123456789", "tipo": "Propietario"})).rejects.toThrow("El correo juan@gmail.com ya está registrado");
+        await repositorio.agregarUsuario({"nombre": "Juan","apellido": "test", "correo": "juan@gmail.com", "contrasena": "1234/aAa","telefono": "1123456789", "tipo": "Cliente"});
+        await expect(repositorio.agregarUsuario({"nombre": "Maria","apellido": "test", "correo": "juan@gmail.com", "contrasena": "5678/BbB","telefono": "1123456789", "tipo": "Propietario"})).rejects.toThrow("El correo juan@gmail.com ya está registrado");
     });
 });
