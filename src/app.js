@@ -5,6 +5,10 @@ import { fileURLToPath } from 'node:url';
 import {requireAuth} from './middleware/autentificacion.js'
 import {crearUsuariosRoutes} from './routes/usuariosRoutes.js'
 import { RepositorioUsuarios } from './service/repositorioUsuarios.js';
+import ubicacionRoutes from './routes/ubicacionRoutes.js';
+import { crearPublicacionRoutes } from './routes/publicacionRoutes.js';
+import { crearAlquilerRoutes } from './routes/alquilerRoutes.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 
 const usuarios = new RepositorioUsuarios();
@@ -25,16 +29,21 @@ app.use(express.urlencoded({ extended: true }));
     }),
   );
 
+
     app.use((req, res, next) => {
     req.user = req.session.userId ? usuarios.buscarUsuarioPorCorreo(req.session.userId) : null;
     next();
   });
 
   app.use('/usuarios', crearUsuariosRoutes(usuarios));
+  app.use('/api/ubicacion', ubicacionRoutes);
+  app.use('/api/publicaciones', crearPublicacionRoutes(usuarios));
+  app.use('/api/alquileres', crearAlquilerRoutes(usuarios));
 app.use('/me', requireAuth, (req, res) => {
     res.json(usuarios.toPublic(req.user));
   })
 
   app.use(express.static(path.join(__dirname,"..", 'public')));
-  export default app;
+  app.use(errorHandler)
 
+  export default app;

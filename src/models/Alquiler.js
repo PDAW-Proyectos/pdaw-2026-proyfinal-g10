@@ -9,13 +9,13 @@ export class Alquiler {
     }
 
     cancelar() {
-        if (this.estado === "pendiente") {
+        if (this.estado === "pendiente" || this.estado === "activo") {
             this.estado = "cancelado";
         } 
     }
 
     finalizar() {
-        if (this.estado === "pendiente") {
+        if (this.estado === "activo") {
             this.estado = "finalizado";
         }
     }

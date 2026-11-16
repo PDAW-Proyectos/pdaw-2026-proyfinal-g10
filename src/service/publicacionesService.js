@@ -7,7 +7,10 @@ export async function validarDireccionPublicacion(direccion) {
     throw new Error('La dirección es obligatoria.');
   }
 
-  const ubicacion = await buscarUbicacionPorTexto(texto);
+  const consulta = /bah[ií]a blanca/i.test(texto)
+    ? texto
+    : `${texto}, Bahía Blanca, Buenos Aires, Argentina`;
+  const ubicacion = await buscarUbicacionPorTexto(consulta);
 
   return {
     valido: true,
