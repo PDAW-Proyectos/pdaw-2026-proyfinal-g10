@@ -14,20 +14,20 @@ constructor() {
             throw new ValidationError(`El correo ${usuario.correo} ya está registrado`);
         }
         if(usuario.tipo === "Cliente") {
-            await this.agregarCliente(usuario.nombre, usuario.correo, usuario.contrasena);
+            await this.agregarCliente(usuario.nombre,usuario.apellido, usuario.correo, usuario.contrasena,usuario.telefono);
         } else if(usuario.tipo === "Propietario") {
-            await this.agregarPropietario(usuario.nombre, usuario.correo, usuario.contrasena);
+            await this.agregarPropietario(usuario.nombre,usuario.apellido, usuario.correo, usuario.contrasena,usuario.telefono);
         }
     }
 
-    async agregarCliente(nombre, correo, contrasena) {
-   const cliente = new Cliente(nombre, correo, contrasena);
+    async agregarCliente(nombre,apellido, correo, contrasena,telefono) {
+   const cliente = new Cliente(nombre,apellido, correo, contrasena,telefono);
   cliente.contrasena = await hash(contrasena, ROUNDS);
   this.usuarios.push(cliente);
     }
 
-    async agregarPropietario(nombre, correo, contrasena) {
-   const propietario = new Propietario(nombre, correo, contrasena);
+    async agregarPropietario(nombre,apellido, correo, contrasena,telefono)  {
+   const propietario = new Propietario(nombre,apellido, correo, contrasena,telefono);
   propietario.contrasena = await hash(contrasena, ROUNDS);
   this.usuarios.push(propietario);
     }
@@ -60,7 +60,7 @@ constructor() {
       return (await compare(String(contrasena), usuario.contrasena)) ? usuario : null;
     }
 
-    toPublic = ({ nombre, correo, tipo }) => ({ nombre, correo, tipo });
+    toPublic = ({ nombre,apellido, correo, tipo,telefono }) => ({ nombre,apellido, correo, tipo,telefono });
 
  iniciarSesion = async (correo, contrasena, req) => {
     const usuario = this.buscarUsuarioPorCorreo(
@@ -78,7 +78,6 @@ constructor() {
   };
 
   cerrarSesion = async (req) => {
-    if (!req.session.userId) throw new UnauthorizedError('No hay sesión iniciada');
     this.buscarUsuarioPorCorreo(req.session.userId).activo = false
     await destroy(req);
   };

@@ -1,8 +1,8 @@
 import { Usuario } from "./usuario.js";
 
 export class Cliente extends Usuario {
-  constructor(nombre, correo, contrasena) {
-    super(nombre, correo, contrasena);
+  constructor(nombre,apellido, correo, contrasena,telefono) {
+    super(nombre,apellido, correo, contrasena,telefono);
     this.tipo = "Cliente";
     this.historial = [];
   }

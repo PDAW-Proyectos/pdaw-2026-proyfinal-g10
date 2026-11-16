@@ -3,7 +3,7 @@ if (modalRegistro && location.hash === '#registerModal' && typeof bootstrap !== 
   bootstrap.Modal.getOrCreateInstance(modalRegistro).show();
 }
 
-const botonSesion = document.getElementById('cerrarSesion');
+ const botonSesion = document.getElementById('cerrarSesion');
 
 botonSesion?.addEventListener('click', async () => {
   try {
@@ -17,3 +17,5 @@ botonSesion?.addEventListener('click', async () => {
     console.error("Error:", error);
   }
 });
+
+

@@ -54,16 +54,8 @@
                   <input type="password" name="contrasena" class="form-control form-control-lg rounded-3" id="password" placeholder="••••••••" />
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="recordarme" />
-                    <label class="form-check-label text-secondary" for="recordarme">Recordarme</label>
-                  </div>
-                  <a href="#" class="small text-primary text-decoration-none">Olvidé mi contraseña</a>
-                </div>
 
                 <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 mb-3">Ingresar</button>
-                <a href="perfil.html" class="btn btn-outline-primary btn-lg w-100 rounded-3">Ver perfil</a>
               </form>
 
               <p class="text-center text-secondary mt-4 mb-0">
@@ -77,6 +69,14 @@
                   Registrate
                 </button>
               </p>
+            <div class="error-div">
+                  <div
+                    id="errorSesion"
+                    class="alert alert-danger mb-0 text-center"
+                    role="alert"
+                    hidden
+                  ></div>
+                </div>
             </div>
           </div>
         </div>
@@ -84,7 +84,7 @@
     </main>
 
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-dialog  modal-lg">
         <div class="modal-content border-0 rounded-4 shadow-lg">
           <div class="modal-header border-0 pb-0">
             <div>
@@ -110,28 +110,35 @@
                 </div>
                 <div class="col-md-6">
                   <label for="telefono" class="form-label fw-semibold">Número de teléfono</label>
-                  <input type="tel" class="form-control form-control-lg rounded-3" id="telefono" placeholder="291 123 4567" />
+                  <input type="tel" class="form-control form-control-lg rounded-3" id="telefono" name="telefono" placeholder="54 9 291 1234567" />
                 </div>
                 <div class="col-md-6">
                   <label for="registro-password" class="form-label fw-semibold">Contraseña</label>
                   <input type="password" class="form-control form-control-lg rounded-3" name="contrasena" id="registro-password" placeholder="••••••••" />
                 </div>
-                <div class="col-md-6">
-                  <label for="confirm-password" class="form-label fw-semibold">Repetir contraseña</label>
-                  <input type="password" class="form-control form-control-lg rounded-3" id="confirm-password" placeholder="••••••••" />
-              </div>
+
                  <div class="col-md-6">
-                    <select name="tipo" id="tipo">Rol de la cuenta
+                  <label class="form-label fw-semibold" for="roles">Tipo de cuenta</label>
+                    <select class="form-select form-select-lg mb-3" name="tipo" id="tipo">Rol de la cuenta
                       <option value="Cliente">Cliente</option>
                       <option value="Propietario">Propietario</option>
-                    </select>
+                    </select>        
               </div>
+
 
               <div class="d-grid gap-2 mt-4">
                 <button type="submit" class="btn btn-primary btn-lg rounded-3">Crear cuenta</button>
                 <button type="button" class="btn btn-outline-primary btn-lg rounded-3" data-bs-dismiss="modal">
                   Cancelar
                 </button>
+                  <div class="col-12 error-div">
+                    <div
+                      id="errorRegistro"
+                      class="alert alert-danger mb-0 text-center"
+                      role="alert"
+                      hidden
+                    ></div>
+                  </div>
               </div>
             </form>
           </div>

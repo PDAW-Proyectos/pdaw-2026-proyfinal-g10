@@ -50,7 +50,10 @@ img {
 .hero-card {
   border-radius: 2rem;
 }
-
+.error-div {
+  min-height: 56px;
+  margin-top: 1rem;
+}
 .hero-image,
 .login-hero-image {
   height: 420px;
