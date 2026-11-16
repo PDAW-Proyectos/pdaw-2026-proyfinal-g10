@@ -6,7 +6,8 @@ import {requireAuth} from './middleware/autentificacion.js'
 import {crearUsuariosRoutes} from './routes/usuariosRoutes.js'
 import { RepositorioUsuarios } from './service/repositorioUsuarios.js';
 import ubicacionRoutes from './routes/ubicacionRoutes.js';
-import publicacionRoutes from './routes/publicacionRoutes.js';
+import { crearPublicacionRoutes } from './routes/publicacionRoutes.js';
+import { crearAlquilerRoutes } from './routes/alquilerRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 
@@ -36,7 +37,8 @@ app.use(express.urlencoded({ extended: true }));
 
   app.use('/usuarios', crearUsuariosRoutes(usuarios));
   app.use('/api/ubicacion', ubicacionRoutes);
-  app.use('/api/publicaciones', publicacionRoutes);
+  app.use('/api/publicaciones', crearPublicacionRoutes(usuarios));
+  app.use('/api/alquileres', crearAlquilerRoutes(usuarios));
 app.use('/me', requireAuth, (req, res) => {
     res.json(usuarios.toPublic(req.user));
   })

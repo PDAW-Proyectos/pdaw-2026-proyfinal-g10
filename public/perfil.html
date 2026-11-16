@@ -41,6 +41,80 @@
         </div>
       </section>
 
+      <section
+        id="solicitudesAlquilerPropietario"
+        class="card border-0 shadow-sm rounded-4 p-4 mb-4"
+        aria-labelledby="solicitudesAlquilerTitulo"
+        hidden
+      >
+        <h2 id="solicitudesAlquilerTitulo" class="h4 fw-bold mb-3">Solicitudes de alquiler</h2>
+        <p id="mensajeSolicitudesAlquiler" class="text-secondary mb-3" role="status" aria-live="polite">
+          Cargando solicitudes...
+        </p>
+        <div id="alquileresPropietario" class="row g-3"></div>
+      </section>
+
+      <section
+        id="misAlquileresCliente"
+        class="card border-0 shadow-sm rounded-4 p-4 mb-4"
+        aria-labelledby="misAlquileresTitulo"
+        hidden
+      >
+        <h2 id="misAlquileresTitulo" class="h4 fw-bold mb-3">Mis alquileres</h2>
+        <p id="mensajeMisAlquileres" class="text-secondary mb-3" role="status" aria-live="polite">
+          Cargando alquileres...
+        </p>
+        <div id="listaMisAlquileres" class="row g-3"></div>
+      </section>
+
+      <section class="row g-4 mb-4">
+        <div class="col-lg-5">
+          <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+              <h3 class="fw-semibold mb-3">Datos personales</h3>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                  <span class="text-secondary">Correo</span>
+                  <strong>maria.costa@mail.com</strong>
+                </li>
+                <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                  <span class="text-secondary">Teléfono</span>
+                  <strong>+54 291 123 4567</strong>
+                </li>
+                <li class="list-group-item px-0 py-3 d-flex justify-content-between">
+                  <span class="text-secondary">Ciudad</span>
+                  <strong>Bahía Blanca</strong>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="stat-card rounded-4 h-100">
+                <div class="stat-icon text-primary"><i class="bi bi-bookmark-heart"></i></div>
+                <h3 class="fw-bold">18</h3>
+                <p class="mb-0 text-secondary">Favoritos</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card rounded-4 h-100">
+                <div class="stat-icon text-success"><i class="bi bi-house-check"></i></div>
+                <h3 class="fw-bold">6</h3>
+                <p class="mb-0 text-secondary">Visitas</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="stat-card rounded-4 h-100">
+                <div class="stat-icon text-warning"><i class="bi bi-chat-square-text"></i></div>
+                <h3 class="fw-bold">9</h3>
+                <p class="mb-0 text-secondary">Mensajes</p>
+              </div>
+            </div>
+          </div>
+        </div>
       <section id="datos" class="row g-2 justify-content-center mb-4">
         
       </section>
@@ -57,6 +131,8 @@
         </div>
       </section>
     </main>
+    <script src="js/perfilPropietario.js"></script>
+    <script src="js/perfilCliente.js"></script>
     <script type="module" src="js/perfil.js"></script>
   </body>
 </html>

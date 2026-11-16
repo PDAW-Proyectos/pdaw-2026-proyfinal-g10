@@ -93,6 +93,12 @@ export function crearPublicaciones(publicaciones, acciones = null) {
 
         summary.append(type, price);
         cardBody.append(summary, title, description);
+        if (publicacion.nombreAutor) {
+            const author = document.createElement("p");
+            author.classList.add("small", "text-secondary", "mb-0");
+            author.textContent = publicacion.nombreAutor;
+            cardBody.appendChild(author);
+        }
 
         if (acciones) {
             const footer = document.createElement("div");
