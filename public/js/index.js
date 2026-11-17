@@ -6,5 +6,4 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-
 inicio

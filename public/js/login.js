@@ -1,6 +1,8 @@
 import { redireccion } from './common.js';
+import { botonSesion } from './common.js';
 
 
+window.addEventListener('load', async () => {
 const formLogin = document.getElementById('loginForm')
 const Registro = document.getElementById('formRegistro')
 
@@ -27,7 +29,8 @@ formLogin.addEventListener('submit', async (event) => {
     }
  })
  
-Registro.addEventListener('submit', async (event) => {
+
+  Registro.addEventListener('submit', async (event) => {
     event.preventDefault();
     errorRegistro.hidden = true;
     errorRegistro.textContent = '';
@@ -54,6 +57,12 @@ Registro.addEventListener('submit', async (event) => {
         handlerRegistro(error.message);}
 });
 
+
+   })
+
+
+  
+  
 
 
 function handlerRegistro(mensaje) {

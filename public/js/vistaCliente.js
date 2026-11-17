@@ -1,6 +1,18 @@
-import {inicio} from './common.js';
+import {botonSesion, inicio, redireccion} from './common.js';
+
+botonSesion
 inicio
 
+import { api } from "./api.js";
+ async function obtenerUsuario(){
+    try{
+    const usuario = await api.buscarUsuario()
+      redireccion()
+}catch{
+    window.location.href = '../index.html'
+}
+}
+obtenerUsuario()
 
 function actualizarMapaEnModal(modal, lat, lon) {
   const iframe = modal.querySelector("iframe");
