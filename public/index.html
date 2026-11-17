@@ -68,30 +68,19 @@
 
       <section class="card border-0 shadow-sm rounded-4 p-3 mb-4">
         <div class="row g-3 align-items-end">
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Tipo</label>
-            <select class="form-select rounded-3">
-              <option selected>Todos</option>
-              <option>Propiedad</option>
-              <option>Habitación</option>
-              <option>Vehículo</option>
-            </select>
+          <div class="col-md-6">
+            <label for="filtroPrecioMaximo" class="form-label fw-semibold">Precio máximo</label>
+            <input id="filtroPrecioMaximo" data-filtro-precio-maximo type="number" min="0" step="0.01"
+              class="form-control rounded-3" placeholder="$" />
           </div>
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Precio máximo</label>
-            <select class="form-select rounded-3">
-              <option selected>$ 1000</option>
-              <option>$ 700</option>
-              <option>$ 900</option>
-              <option>$ 1200</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Orden</label>
-            <select class="form-select rounded-3">
-              <option selected>Más relevantes</option>
-              <option>Menor precio</option>
-              <option>Mayor precio</option>
+          <div class="col-md-6">
+            <label for="filtroOrden" class="form-label fw-semibold">Orden</label>
+            <select id="filtroOrden" data-filtro-orden class="form-select rounded-3">
+              <option value="" selected>Ninguno</option>
+              <option value="menor-precio">Menor precio</option>
+              <option value="mayor-precio">Mayor precio</option>
+              <option value="mayor-calificacion">Mayor calificación</option>
+              <option value="cantidad-valoraciones">Cantidad de valoraciones</option>
             </select>
           </div>
         </div>
