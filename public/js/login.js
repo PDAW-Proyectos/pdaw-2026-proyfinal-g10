@@ -1,3 +1,5 @@
+import { redireccion } from './common.js';
+
 
 const formLogin = document.getElementById('loginForm')
 const Registro = document.getElementById('formRegistro')
@@ -18,7 +20,7 @@ formLogin.addEventListener('submit', async (event) => {
       handlerSesion(res.message);
       return;
     }
-          window.location.href = '../vistaCliente.html';
+        redireccion();
     
   }  catch (error) {
     handlerSesion(error.message);
@@ -45,7 +47,7 @@ Registro.addEventListener('submit', async (event) => {
         method: 'POST',
         body: new URLSearchParams(datos),       
     });
-       window.location.href = '../vistaCliente.html';
+    redireccion();
         
 }
   catch (error) {

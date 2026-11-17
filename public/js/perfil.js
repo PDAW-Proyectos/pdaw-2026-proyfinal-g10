@@ -1,14 +1,18 @@
 
 const datosPersonales = document.getElementById('datos')
 const encabezado = document.getElementById('perfil')
+import {inicio} from './common.js';
+inicio
+
 import { api } from "./api.js";
  async function obtenerUsuario(){
     try{
     const usuario = await api.buscarUsuario()
+
     encabezado.appendChild(crearEncabezado(usuario.nombre,usuario.apellido))
     datosPersonales.appendChild(crearPerfil(usuario))
 }catch{
-    location.href = '../index.html';
+    window.location.href = '../index.html'
 }
 }
 

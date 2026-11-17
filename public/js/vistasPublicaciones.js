@@ -1,5 +1,7 @@
 import { crearPublicaciones } from "./listaPublicaciones.js";
 import { configurarFiltros } from "./filtrosPublicaciones.js";
+import {inicio} from './common.js';
+inicio
 
 var publicaciones = [];
 let actualizarPublicaciones;

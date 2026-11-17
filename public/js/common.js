@@ -1,3 +1,11 @@
+import  {api} from './api.js';
+
+
+export const inicio = document.getElementById('inicio');
+inicio.addEventListener('click', async () => {
+   redireccion();
+   })
+
 const modalRegistro = document.getElementById('registerModal');
 if (modalRegistro && location.hash === '#registerModal' && typeof bootstrap !== 'undefined') {
   bootstrap.Modal.getOrCreateInstance(modalRegistro).show();
@@ -18,4 +26,18 @@ botonSesion?.addEventListener('click', async () => {
   }
 });
 
+export async function redireccion(){
 
+  try{
+  const usuario = await api.buscarUsuario()
+ 
+  if(usuario.tipo === 'Propietario'){
+    location.href = '../vistaPropietario.html';
+  }else{
+    location.href = '../vistaCliente.html';
+  }}
+  catch{
+    location.href = '../index.html';
+  } 
+
+  } 

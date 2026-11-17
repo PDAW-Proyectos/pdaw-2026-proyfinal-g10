@@ -1,3 +1,7 @@
+import {inicio} from './common.js';
+inicio
+
+
 function actualizarMapaEnModal(modal, lat, lon) {
   const iframe = modal.querySelector("iframe");
   if (!iframe) return;

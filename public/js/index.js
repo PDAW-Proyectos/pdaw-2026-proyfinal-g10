@@ -1,3 +1,4 @@
+import {inicio} from './common.js';
 document.addEventListener('DOMContentLoaded', function () {
   const navToggle = document.querySelector('.navbar-toggler');
   if (navToggle) {
@@ -5,3 +6,5 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
+
+inicio
