@@ -1,3 +1,5 @@
+import { configurarFiltros } from "./filtrosPublicaciones.js";
+
 const listaPublicaciones = document.getElementById("publicaciones");
 
 window.addEventListener("load", async () => {
@@ -26,8 +28,10 @@ export async function cargarPublicaciones() {
             throw new Error("La respuesta de publicaciones no tiene un formato válido.");
         }
 
-        const publicacionesEnLista = crearPublicaciones(publicaciones);
-        listaPublicaciones.appendChild(publicacionesEnLista);
+        const actualizarPublicaciones = configurarFiltros(publicaciones, (filtradas) => {
+            listaPublicaciones.replaceChildren(crearPublicaciones(filtradas));
+        });
+        actualizarPublicaciones();
     } catch (error) {
         console.error("Error al cargar las publicaciones:", error);
         listaPublicaciones.textContent = "No se pudieron cargar las publicaciones.";

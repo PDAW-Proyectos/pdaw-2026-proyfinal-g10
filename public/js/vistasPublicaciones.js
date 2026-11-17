@@ -1,6 +1,8 @@
 import { crearPublicaciones } from "./listaPublicaciones.js";
+import { configurarFiltros } from "./filtrosPublicaciones.js";
 
 var publicaciones = [];
+let actualizarPublicaciones;
 
 const listaPublicaciones = document.getElementById("publicaciones");
 const formularioPublicacion = document.getElementById("formCrearPublicacion");
@@ -71,12 +73,17 @@ formularioPublicacion?.addEventListener("submit", async (event) => {
     }
 });
 
-async function cargarPublicacionesVista() {
+function cargarPublicacionesVista() {
     if (!listaPublicaciones) return;
 
     const acciones = listaPublicaciones.dataset.vista === "propietario"
         ? ["Ver", "Reportes"]
         : ["Valorar", "Reportar"];
-    const publicacionesEnLista = crearPublicaciones(publicaciones, acciones);
-    listaPublicaciones.replaceChildren(publicacionesEnLista);
+
+    if (!actualizarPublicaciones) {
+        actualizarPublicaciones = configurarFiltros(publicaciones, (filtradas) => {
+            listaPublicaciones.replaceChildren(crearPublicaciones(filtradas, acciones));
+        });
+    }
+    actualizarPublicaciones();
 }
