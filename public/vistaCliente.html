@@ -25,13 +25,12 @@
   <body class="profile-body">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
       <div class="container py-2">
-        <a class="navbar-brand fw-bold brand-text" href="index.html">
+        <a class="navbar-brand fw-bold brand-text" id="inicio">
           <span class="brand-mark">A</span>lquiYA!
         </a>
         <div class="ms-auto d-flex align-items-center gap-2">
-          <a class="btn btn-outline-primary rounded-pill px-3" href="index.html">Inicio</a>
           <a class="btn btn-outline-primary rounded-pill px-3" href="perfil.html">Perfil</a>
-          <a class="btn btn-primary rounded-pill px-3" href="login.html">Salir</a>
+         <button class="btn btn-primary rounded-pill px-3" id="cerrarSesion">Cerrar sesion</button>
         </div>
       </div>
     </nav>
@@ -42,11 +41,9 @@
           <div class="col-md-8">
             <span class="badge rounded-pill badge-soft mb-2">Cliente</span>
             <h1 class="fw-bold mb-2">Explorar publicaciones</h1>
-            <p class="text-secondary mb-0">Filtrá por tipo, zona y precio para encontrar la mejor opción.</p>
+            <p class="text-secondary mb-0">Filtrá por tipo, valoraciones y precio para encontrar la mejor opción.</p>
           </div>
-          <div class="col-md-4 text-md-end">
-            <button type="button" class="btn btn-primary rounded-pill px-3">Aplicar filtros</button>
-          </div>
+
         </div>
       </section>
 
@@ -133,7 +130,7 @@
       crossorigin="anonymous"
     ></script>
     <script type="module" src="js/vistasPublicaciones.js"></script>
-    <script src="js/vistaCliente.js"></script>
+    <script type="module" src="js/vistaCliente.js"></script>
     <script src="js/alquilar.js"></script>
   </body>
 </html>

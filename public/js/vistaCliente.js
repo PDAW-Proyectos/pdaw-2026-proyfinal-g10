@@ -1,3 +1,12 @@
+import {botonSesion, inicio, redireccion} from './common.js';
+
+window.addEventListener('load', async () => {
+botonSesion
+inicio
+   redireccion()
+  })
+
+
 function actualizarMapaEnModal(modal, lat, lon) {
   const iframe = modal.querySelector("iframe");
   if (!iframe) return;

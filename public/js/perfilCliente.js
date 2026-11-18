@@ -8,7 +8,7 @@ if (seccionMisAlquileres && listaMisAlquileres && mensajeMisAlquileres) {
 
 async function cargarAlquileresCliente() {
   try {
-    const perfilResponse = await fetch('/me', { credentials: 'same-origin' });
+    const perfilResponse = await fetch('/usuarios/me', { credentials: 'same-origin' });
     const perfil = await perfilResponse.json();
     if (!perfilResponse.ok) {
       throw new Error(perfil.error || 'No se pudo consultar el perfil.');

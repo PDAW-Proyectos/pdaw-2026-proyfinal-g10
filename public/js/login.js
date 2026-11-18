@@ -1,6 +1,10 @@
+import { redireccion } from './common.js';
 
+
+window.addEventListener('load', async () => {
 const formLogin = document.getElementById('loginForm')
 const Registro = document.getElementById('formRegistro')
+redireccion()
 
 formLogin.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -18,14 +22,15 @@ formLogin.addEventListener('submit', async (event) => {
       handlerSesion(res.message);
       return;
     }
-          window.location.href = '../vistaCliente.html';
+        redireccion();
     
   }  catch (error) {
     handlerSesion(error.message);
     }
  })
  
-Registro.addEventListener('submit', async (event) => {
+
+  Registro.addEventListener('submit', async (event) => {
     event.preventDefault();
     errorRegistro.hidden = true;
     errorRegistro.textContent = '';
@@ -45,7 +50,7 @@ Registro.addEventListener('submit', async (event) => {
         method: 'POST',
         body: new URLSearchParams(datos),       
     });
-       window.location.href = '../vistaCliente.html';
+    redireccion();
         
 }
   catch (error) {
@@ -53,6 +58,7 @@ Registro.addEventListener('submit', async (event) => {
 });
 
 
+   })
 
 function handlerRegistro(mensaje) {
   errorRegistro.textContent = mensaje || 'No se pudo completar el registro.';
