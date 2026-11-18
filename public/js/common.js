@@ -1,6 +1,6 @@
 import  {api} from './api.js';
 export const inicio = document.getElementById('inicio');
-inicio.addEventListener('click', async () => {
+inicio?.addEventListener('click', async () => {
    redireccion();
    })
 
@@ -37,6 +37,7 @@ export async function redireccion(){
     location.href = '../vistaCliente.html';
   }}
   catch{ 
+    if(location.pathname !== '/index.html' && location.pathname !== '/login.html')
       location.href = '../index.html';
   
   } 

@@ -2,8 +2,12 @@
 const datosPersonales = document.getElementById('datos')
 const encabezado = document.getElementById('perfil')
 import {botonSesion, inicio} from './common.js';
+
+window.addEventListener('load', async () => {
 inicio
 botonSesion
+})
+
 
 import { api } from "./api.js";
  async function obtenerUsuario(){

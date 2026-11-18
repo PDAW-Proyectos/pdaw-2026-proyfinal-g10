@@ -1,10 +1,10 @@
 import { redireccion } from './common.js';
-import { botonSesion } from './common.js';
 
 
 window.addEventListener('load', async () => {
 const formLogin = document.getElementById('loginForm')
 const Registro = document.getElementById('formRegistro')
+redireccion()
 
 formLogin.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -59,11 +59,6 @@ formLogin.addEventListener('submit', async (event) => {
 
 
    })
-
-
-  
-  
-
 
 function handlerRegistro(mensaje) {
   errorRegistro.textContent = mensaje || 'No se pudo completar el registro.';
