@@ -1,10 +1,18 @@
 import { describe, expect, test } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
-import app from '../src/app.js';
+
 import { crearAlquiler, listarAlquileres } from '../src/controllers/alquilerController.js';
 import { Alquiler } from '../src/models/Alquiler.js';
 import { crearAlquilerRoutes } from '../src/routes/alquilerRoutes.js';
+import { createApp } from '../src/app.js';
+import { loadConfig } from '../src/config.js';
+
+const config = loadConfig({
+  NODE_ENV: 'test',
+  SESSION_SECRET: 'test-secret',
+});
+const app = createApp({ config });
 
 describe('API de alquileres', () => {
   test('requiere sesión para consultar o crear alquileres', async () => {

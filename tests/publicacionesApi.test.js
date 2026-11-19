@@ -1,6 +1,13 @@
 import { describe, test, expect } from '@jest/globals';
 import request from 'supertest';
-import app from '../src/app.js';
+import { createApp } from '../src/app.js';
+import { loadConfig } from '../src/config.js';
+
+const config = loadConfig({
+  NODE_ENV: 'test',
+  SESSION_SECRET: 'test-secret',
+});
+const app = createApp({ config });
 
 describe('API de publicaciones', () => {
   test('devuelve las publicaciones como JSON', async () => {
