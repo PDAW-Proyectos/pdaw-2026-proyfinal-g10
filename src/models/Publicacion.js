@@ -1,4 +1,5 @@
 import { Reporte } from "./Reporte.js";
+import { Valoracion } from "./Valoracion.js";
 import { ConflictError, ValidationError } from "./errores.js";
 export class Publicacion {
     constructor(id, titulo, descripcion, direccion, precio, autor, detalles = {}) {
@@ -20,6 +21,12 @@ export class Publicacion {
         this.activa = true;
         this.fechaCreacion = new Date();
         this.reportes = [];
+        this.valoraciones = Array.isArray(detalles.valoraciones)
+            ? detalles.valoraciones
+            : [];
+        if (this.valoraciones.length > 0) {
+            this.calcularCalificacion();
+        }
     }
 
     desactivar() {
@@ -49,4 +56,39 @@ export class Publicacion {
         this.autor.reportes.push(report);
     }
     
+    valorar(puntuacion, comentario, emisor) {
+        if (typeof puntuacion !== "number" || puntuacion < 1 || puntuacion > 5) {
+            throw new ValidationError("La puntuación debe ser un número entre 1 y 5.");
+        }
+        if (typeof emisor !== "string" || !emisor.trim()) {
+            throw new ValidationError("El emisor es obligatorio.");
+        }
+
+        const emisorNormalizado = emisor.trim().toLowerCase();
+        const yaValorada = this.valoraciones.some(
+            (valoracion) => String(valoracion.emisor ?? "").trim().toLowerCase() === emisorNormalizado
+        );
+        if (yaValorada) {
+            throw new ConflictError("Ya valoraste esta publicación.");
+        }
+
+        const valoracion = new Valoracion(puntuacion, comentario, emisor);
+        this.valoraciones.push(valoracion);
+        this.calcularCalificacion();
+        return valoracion;
+    }
+
+    calcularCalificacion() {
+        if (this.valoraciones.length === 0) {
+            this.calificacion = 0;
+            this.cantidadValoraciones = 0;
+            return;
+        }
+        let sumaPuntuaciones = 0;
+        this.valoraciones.forEach((element) => {
+            sumaPuntuaciones += element.puntuacion;
+        });
+        this.calificacion = sumaPuntuaciones / this.valoraciones.length;
+        this.cantidadValoraciones = this.valoraciones.length;
+    }
 }

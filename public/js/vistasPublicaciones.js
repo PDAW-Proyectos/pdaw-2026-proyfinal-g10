@@ -9,6 +9,8 @@ const listaPublicaciones = document.getElementById("publicaciones");
 const formularioPublicacion = document.getElementById("formCrearPublicacion");
 const formularioReporte = document.getElementById("formReportarPublicacion");
 const modalReporte = document.getElementById("reportarPublicacionModal");
+const formularioValoracion = document.getElementById("formValorarPublicacion");
+const modalValoracion = document.getElementById("valorarPublicacionModal");
 let reporteEnviando = false;
 
 window.addEventListener("load", async () => {
@@ -90,7 +92,7 @@ function cargarPublicacionesVista() {
     if (!listaPublicaciones) return;
 
     const acciones = listaPublicaciones.dataset.vista === "propietario"
-        ? ["Ver", "Reportes"]
+        ? ["", "Reportes", "Valoraciones"]
         : ["Valorar", "Reportar"];
 
     if (!actualizarPublicaciones) {
@@ -176,6 +178,149 @@ function crearTarjetaReporte(reporte) {
 
     return tarjeta;
 }
+
+const modalValoraciones = document.getElementById("valoracionesPublicacionModal");
+modalValoraciones?.addEventListener("show.bs.modal", async (event) => {
+    const boton = event.relatedTarget;
+    if (!boton) return;
+
+    modalValoraciones.querySelector("[data-valoraciones-titulo]").textContent =
+        boton.dataset.publicacionTitulo;
+    const lista = modalValoraciones.querySelector("[data-lista-valoraciones]");
+    mostrarMensajeValoraciones(lista, "Cargando valoraciones...");
+
+    try {
+        const response = await fetch(
+            `/api/publicaciones/${encodeURIComponent(boton.dataset.publicacionId)}/valoraciones`
+        );
+        const resultado = await response.json();
+        if (!response.ok) {
+            throw new Error(resultado.error || resultado.message || "No se pudieron cargar las valoraciones.");
+        }
+        if (!Array.isArray(resultado)) {
+            throw new Error("La respuesta de valoraciones no tiene un formato válido.");
+        }
+        if (resultado.length === 0) {
+            mostrarMensajeValoraciones(lista, "Esta publicación todavía no tiene valoraciones.");
+            return;
+        }
+        lista.replaceChildren(...resultado.map(crearTarjetaValoracion));
+    } catch (error) {
+        console.error("Error al cargar las valoraciones:", error);
+        mostrarMensajeValoraciones(lista, error.message || "No se pudieron cargar las valoraciones.", "text-danger");
+    }
+});
+
+function mostrarMensajeValoraciones(lista, texto, clase = "text-secondary") {
+    const mensaje = document.createElement("p");
+    mensaje.className = `${clase} mb-0`;
+    mensaje.textContent = texto;
+    lista.replaceChildren(mensaje);
+}
+
+function crearTarjetaValoracion(valoracion) {
+    const tarjeta = document.createElement("article");
+    tarjeta.className = "border rounded-3 p-3 mb-3";
+
+    const nombre = document.createElement("h3");
+    nombre.className = "h6 fw-bold mb-2";
+    nombre.textContent = valoracion.nombreUsuario || "Usuario";
+
+    const estrellas = document.createElement("div");
+    estrellas.className = "text-warning mb-1";
+    estrellas.setAttribute("aria-label", `${valoracion.puntuacion} de 5 estrellas`);
+    for (let indice = 1; indice <= 5; indice += 1) {
+        const estrella = document.createElement("i");
+        estrella.className = `bi ${indice <= valoracion.puntuacion ? "bi-star-fill" : "bi-star"} me-1`;
+        estrellas.appendChild(estrella);
+    }
+
+    tarjeta.append(nombre, estrellas);
+    if (valoracion.comentario) {
+        const comentario = document.createElement("p");
+        comentario.className = "mb-0";
+        comentario.textContent = valoracion.comentario;
+        tarjeta.appendChild(comentario);
+    }
+    return tarjeta;
+}
+
+modalValoracion?.addEventListener("show.bs.modal", (event) => {
+    const boton = event.relatedTarget;
+    if (!boton) return;
+
+    modalValoracion.querySelector("[data-valoracion-publicacion]").textContent =
+        boton.dataset.publicacionTitulo;
+    formularioValoracion.reset();
+    formularioValoracion.elements.publicacionId.value = boton.dataset.publicacionId;
+    actualizarEstrellasValoracion(0);
+    const mensaje = document.getElementById("mensajeValoracion");
+    mensaje.hidden = true;
+    mensaje.textContent = "";
+    mensaje.className = "alert mt-3 mb-0";
+});
+
+modalValoracion?.querySelectorAll("[data-puntaje]").forEach((boton) => {
+    boton.addEventListener("click", () => {
+        const puntaje = Number(boton.dataset.puntaje);
+        formularioValoracion.elements.puntuacion.value = String(puntaje);
+        actualizarEstrellasValoracion(puntaje);
+    });
+});
+
+function actualizarEstrellasValoracion(puntaje) {
+    modalValoracion?.querySelectorAll("[data-puntaje]").forEach((boton) => {
+        const icono = boton.querySelector("i");
+        icono.className = Number(boton.dataset.puntaje) <= puntaje
+            ? "bi bi-star-fill"
+            : "bi bi-star";
+    });
+}
+
+formularioValoracion?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const botonEnviar = document.getElementById("enviarValoracion");
+    const mensaje = document.getElementById("mensajeValoracion");
+    const datos = new FormData(formularioValoracion);
+    const puntuacion = Number(datos.get("puntuacion"));
+    if (!Number.isInteger(puntuacion) || puntuacion < 1 || puntuacion > 5) {
+        mensaje.className = "alert alert-danger mt-3 mb-0";
+        mensaje.textContent = "Elegí una puntuación de entre 1 y 5 estrellas.";
+        mensaje.hidden = false;
+        return;
+    }
+
+    botonEnviar.disabled = true;
+    mensaje.hidden = true;
+    try {
+        const response = await fetch(
+            `/api/publicaciones/${encodeURIComponent(datos.get("publicacionId"))}/valoraciones`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    puntuacion,
+                    comentario: datos.get("comentario").trim()
+                })
+            }
+        );
+        const resultado = await response.json();
+        if (!response.ok) {
+            throw new Error(resultado.error || resultado.message || "No se pudo enviar la valoración.");
+        }
+        mensaje.className = "alert alert-success mt-3 mb-0";
+        mensaje.textContent = "La valoración se envió correctamente.";
+        mensaje.hidden = false;
+    } catch (error) {
+        console.error("Error al enviar la valoración:", error);
+        mensaje.className = "alert alert-danger mt-3 mb-0";
+        mensaje.textContent = error.message || "No se pudo enviar la valoración.";
+        mensaje.hidden = false;
+    } finally {
+        botonEnviar.disabled = false;
+    }
+});
 
 modalReporte?.addEventListener("show.bs.modal", (event) => {
     const boton = event.relatedTarget;

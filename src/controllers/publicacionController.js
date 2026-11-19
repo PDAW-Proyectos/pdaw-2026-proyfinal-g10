@@ -120,6 +120,68 @@ export async function reportarPublicacion(req, res, next, usuarios) {
   }
 }
 
+let colaValoraciones = Promise.resolve();
+
+export async function valorarPublicacion(req, res, next) {
+  const puntuacion = Number(req.body?.puntuacion);
+  const comentario = typeof req.body?.comentario === "string"
+    ? req.body.comentario.trim()
+    : "";
+
+  if (!Number.isInteger(puntuacion) || puntuacion < 1 || puntuacion > 5) {
+    return res.status(400).json({ error: "La puntuación debe ser un número entero entre 1 y 5." });
+  }
+
+  try {
+    const operacion = colaValoraciones.then(async () => {
+      const publicaciones = JSON.parse(await readFile(archivoPublicaciones, 'utf8'));
+      const indice = publicaciones.findIndex(
+        (publicacion) => String(publicacion.id) === String(req.params.id)
+      );
+      if (indice === -1) {
+        return res.status(404).json({ error: 'No se encontró la publicación.' });
+      }
+
+      const datosPublicacion = publicaciones[indice];
+      const autor = datosPublicacion.autor;
+      const publicacion = new Publicacion(
+        datosPublicacion.id,
+        datosPublicacion.titulo,
+        datosPublicacion.descripcion,
+        datosPublicacion.direccion,
+        datosPublicacion.precio,
+        autor,
+        datosPublicacion
+      );
+      publicacion.reportes = Array.isArray(datosPublicacion.reportes)
+        ? datosPublicacion.reportes
+        : [];
+      publicacion.valoraciones = Array.isArray(datosPublicacion.valoraciones)
+        ? datosPublicacion.valoraciones
+        : [];
+      publicacion.valorar(puntuacion, comentario, req.user.correo);
+
+      publicaciones[indice] = {
+        ...datosPublicacion,
+        valoraciones: publicacion.valoraciones,
+        calificacion: publicacion.calificacion,
+        cantidadValoraciones: publicacion.cantidadValoraciones
+      };
+      await writeFile(archivoPublicaciones, `${JSON.stringify(publicaciones, null, 2)}\n`, 'utf8');
+
+      return res.status(201).json({
+        mensaje: "Valoración creada.",
+        calificacion: publicacion.calificacion,
+        cantidadValoraciones: publicacion.cantidadValoraciones
+      });
+    });
+    colaValoraciones = operacion.catch(() => {});
+    return await operacion;
+  } catch (error) {
+    return next(error);
+  }
+}
+
 export async function listarReportesPublicacion(req, res, next) {
   try {
     const publicaciones = JSON.parse(await readFile(archivoPublicaciones, 'utf8'));
@@ -141,6 +203,37 @@ export async function listarReportesPublicacion(req, res, next) {
       fecha,
       estado
     })));
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function listarValoracionesPublicacion(req, res, next, usuarios) {
+  try {
+    const publicaciones = JSON.parse(await readFile(archivoPublicaciones, 'utf8'));
+    const publicacion = publicaciones.find(
+      (item) => String(item.id) === String(req.params.id)
+    );
+    if (
+      !publicacion ||
+      String(publicacion.autor || '').trim().toLowerCase() !== req.user.correo.trim().toLowerCase()
+    ) {
+      return res.status(404).json({ error: 'No se encontró la publicación.' });
+    }
+
+    const valoraciones = Array.isArray(publicacion.valoraciones)
+      ? publicacion.valoraciones
+      : [];
+    return res.status(200).json(valoraciones.map((valoracion) => {
+      const usuario = usuarios.buscarUsuarioPorCorreo(valoracion.emisor);
+      return {
+        puntuacion: valoracion.puntuacion,
+        comentario: valoracion.comentario || "",
+        nombreUsuario: usuario
+          ? `${usuario.nombre} ${usuario.apellido}`.trim()
+          : valoracion.emisor
+      };
+    }));
   } catch (error) {
     return next(error);
   }
