@@ -28,8 +28,13 @@ botonSesion?.addEventListener('click', async () => {
 
 export async function redireccion(){
 
-  try{
+ try{
   const usuario = await api.buscarUsuario()
+  if (!usuario) {
+    if(location.pathname !== '/index.html' && location.pathname !== '/login.html')
+      location.href = '../index.html';
+    return;
+  }
  
   if(usuario.tipo === 'Propietario' && location.pathname !== '/vistaPropietario.html'){
     location.href = '../vistaPropietario.html';

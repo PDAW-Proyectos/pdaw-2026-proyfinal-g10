@@ -58,7 +58,10 @@ export class UserController {
 
 buscarLogueado =  (req,res,next) => {
     try {
-      res.status(200).json((this.userService.toPublic(req.user)));
+      return res.status(200).json({
+        autenticado: Boolean(req.user),
+        usuario: req.user ? this.userService.toPublic(req.user) : null
+      });
     } catch (error) {
     return next(error);
     }

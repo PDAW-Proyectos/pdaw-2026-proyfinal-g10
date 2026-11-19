@@ -13,7 +13,10 @@ import { api } from "./api.js";
  async function obtenerUsuario(){
     try{
     const usuario = await api.buscarUsuario()
-
+    if (!usuario) {
+        window.location.href = '../index.html'
+        return
+    }
     encabezado.appendChild(crearEncabezado(usuario.nombre,usuario.apellido))
     datosPersonales.appendChild(crearPerfil(usuario))
 }catch{
