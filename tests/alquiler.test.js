@@ -1,12 +1,32 @@
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test, jest } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 
-import { crearAlquiler, listarAlquileres } from '../src/controllers/alquilerController.js';
-import { Alquiler } from '../src/models/Alquiler.js';
-import { crearAlquilerRoutes } from '../src/routes/alquilerRoutes.js';
-import { createApp } from '../src/app.js';
-import { loadConfig } from '../src/config.js';
+const publicacionesMock = [{
+  id: 1,
+  titulo: 'Publicación simulada',
+  descripcion: 'Descripción simulada',
+  direccion: 'Avenida Colón 123',
+  precio: 100,
+  autor: 'propietario@example.com',
+  imagen: 'https://example.test/imagen.jpg',
+  activa: true,
+  disponibilidad: 'disponible'
+}];
+
+jest.unstable_mockModule('node:fs/promises', () => ({
+  readFile: jest.fn(async () => JSON.stringify(publicacionesMock)),
+  writeFile: jest.fn(async (_url, contenido) => {
+    const nuevasPublicaciones = JSON.parse(contenido);
+    publicacionesMock.splice(0, publicacionesMock.length, ...nuevasPublicaciones);
+  })
+}));
+
+const { crearAlquiler, listarAlquileres } = await import('../src/controllers/alquilerController.js');
+const { Alquiler } = await import('../src/models/Alquiler.js');
+const { crearAlquilerRoutes } = await import('../src/routes/alquilerRoutes.js');
+const { createApp } = await import('../src/app.js');
+const { loadConfig } = await import('../src/config.js');
 
 const config = loadConfig({
   NODE_ENV: 'test',
@@ -38,8 +58,7 @@ describe('API de alquileres', () => {
     }).expect(201);
     await cliente.post('/usuarios/login').send({ correo, contrasena }).expect(201);
 
-    const publicaciones = await cliente.get('/api/publicaciones').expect(200);
-    const publicacion = publicaciones.body[0];
+    const publicacion = publicacionesMock[0];
     const fechaInicio = fechaRelativa(1);
     const fechaFin = fechaRelativa(3);
     const solicitud = { publicacionId: publicacion.id, fechaInicio, fechaFin };
@@ -75,7 +94,7 @@ describe('API de alquileres', () => {
     expect(respuesta.codigo).toBe(200);
     expect(respuesta.cuerpo).toEqual([]);
 
-    const publicacion = (await request(app).get('/api/publicaciones').expect(200)).body[0];
+    const publicacion = publicacionesMock[0];
     const solicitud = {
       publicacionId: publicacion.id,
       fechaInicio: fechaRelativa(1),
