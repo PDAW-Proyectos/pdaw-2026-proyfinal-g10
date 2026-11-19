@@ -47,9 +47,6 @@ export function createApp({ config }) {
   app.use("/api/ubicacion", ubicacionRoutes);
   app.use("/api/publicaciones", crearPublicacionRoutes(usuarios));
   app.use("/api/alquileres", crearAlquilerRoutes(usuarios));
-  app.use("/me", requireAuth, (req, res) => {
-    res.json(usuarios.toPublic(req.user));
-  });
 
   app.get("/api/salud", (req, res) => {
     res.json({

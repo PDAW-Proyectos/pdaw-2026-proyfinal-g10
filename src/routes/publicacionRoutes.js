@@ -8,7 +8,7 @@ export function crearPublicacionRoutes(usuarios) {
   router.get('/', (req, res, next) =>
     listarPublicaciones(req, res, next, usuarios)
   );
-  router.post('/', (req, res, next) =>
+  router.post('/',requireAuth,rol('Propietario'), (req, res, next) =>
     crearPublicacion(req, res, next, usuarios)
   );
   router.post('/validar-direccion', validarDireccion);
