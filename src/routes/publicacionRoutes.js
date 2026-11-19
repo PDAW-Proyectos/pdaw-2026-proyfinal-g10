@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { crearPublicacion, listarPublicaciones, listarReportesPublicacion, reportarPublicacion, validarDireccion } from '../controllers/publicacionController.js';
+import { crearPublicacion, listarPublicaciones, listarReportesPublicacion, listarValoracionesPublicacion, reportarPublicacion, validarDireccion, valorarPublicacion } from '../controllers/publicacionController.js';
 import { requireAuth, rol } from '../middleware/autentificacion.js';
 
 export function crearPublicacionRoutes(usuarios) {
@@ -17,6 +17,10 @@ export function crearPublicacionRoutes(usuarios) {
   );
   router.post('/:id/reportes', requireAuth, rol('Cliente'), (req, res, next) =>
     reportarPublicacion(req, res, next, usuarios)
+  );
+  router.post('/:id/valoraciones', requireAuth, rol('Cliente'), valorarPublicacion);
+  router.get('/:id/valoraciones', requireAuth, rol('Propietario'), (req, res, next) =>
+    listarValoracionesPublicacion(req, res, next, usuarios)
   );
 
   return router;

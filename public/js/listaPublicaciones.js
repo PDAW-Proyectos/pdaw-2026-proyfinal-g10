@@ -117,8 +117,16 @@ export function crearPublicaciones(publicaciones, acciones = null, correoUsuario
 
             const actionButtons = document.createElement("div");
             actionButtons.classList.add("d-flex", "gap-2");
-            if (acciones[0] !== "Ver") {
+            if (acciones[0] && acciones[0] !== "Ver") {
                 actionButtons.appendChild(crearBoton(acciones[0], "btn-outline-primary"));
+            }
+            if (acciones[0] === "Valorar") {
+                const botonValorar = actionButtons.querySelector("button");
+                botonValorar.dataset.bsToggle = "modal";
+                botonValorar.dataset.bsTarget = "#valorarPublicacionModal";
+                botonValorar.dataset.publicacionId = publicacion.id;
+                botonValorar.dataset.publicacionTitulo = publicacion.titulo;
+                botonValorar.setAttribute("aria-label", `Valorar ${publicacion.titulo}`);
             }
             if (acciones[1] === "Reportar") {
                 const botonReporte = crearBoton(acciones[1], "btn-outline-secondary");
@@ -128,7 +136,8 @@ export function crearPublicaciones(publicaciones, acciones = null, correoUsuario
                 botonReporte.dataset.publicacionTitulo = publicacion.titulo;
                 botonReporte.setAttribute("aria-label", `Reportar ${publicacion.titulo}`);
                 actionButtons.appendChild(botonReporte);
-            } else if (
+            }
+            if (
                 acciones[1] === "Reportes" &&
                 correoUsuario &&
                 String(publicacion.autor).trim().toLowerCase() === correoUsuario.trim().toLowerCase()
@@ -140,6 +149,19 @@ export function crearPublicaciones(publicaciones, acciones = null, correoUsuario
                 botonReportes.dataset.publicacionTitulo = publicacion.titulo;
                 botonReportes.setAttribute("aria-label", `Ver reportes de ${publicacion.titulo}`);
                 actionButtons.appendChild(botonReportes);
+            }
+            if (
+                acciones[2] === "Valoraciones" &&
+                correoUsuario &&
+                String(publicacion.autor).trim().toLowerCase() === correoUsuario.trim().toLowerCase()
+            ) {
+                const botonValoraciones = crearBoton(acciones[2], "btn-outline-secondary");
+                botonValoraciones.dataset.bsToggle = "modal";
+                botonValoraciones.dataset.bsTarget = "#valoracionesPublicacionModal";
+                botonValoraciones.dataset.publicacionId = publicacion.id;
+                botonValoraciones.dataset.publicacionTitulo = publicacion.titulo;
+                botonValoraciones.setAttribute("aria-label", `Ver valoraciones de ${publicacion.titulo}`);
+                actionButtons.appendChild(botonValoraciones);
             }
             footer.appendChild(actionButtons);
             cardBody.appendChild(footer);

@@ -158,6 +158,46 @@
       </div>
     </div>
 
+    <div class="modal fade" id="valorarPublicacionModal" tabindex="-1" aria-labelledby="valorarPublicacionLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4">
+          <form id="formValorarPublicacion">
+            <div class="modal-header border-0">
+              <div>
+                <h2 class="modal-title fs-5 fw-bold" id="valorarPublicacionLabel">Valorar publicación</h2>
+                <p class="text-secondary small mb-0" data-valoracion-publicacion></p>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-0">
+              <input type="hidden" name="publicacionId" />
+              <input type="hidden" name="puntuacion" required />
+              <fieldset>
+                <legend class="form-label fw-semibold">Puntuación</legend>
+                <div class="d-flex gap-2 fs-3 text-warning" data-estrellas-valoracion aria-label="Elegir puntaje">
+                  <button type="button" class="btn border-0 p-0 text-warning" data-puntaje="1" aria-label="1 estrella"><i class="bi bi-star"></i></button>
+                  <button type="button" class="btn border-0 p-0 text-warning" data-puntaje="2" aria-label="2 estrellas"><i class="bi bi-star"></i></button>
+                  <button type="button" class="btn border-0 p-0 text-warning" data-puntaje="3" aria-label="3 estrellas"><i class="bi bi-star"></i></button>
+                  <button type="button" class="btn border-0 p-0 text-warning" data-puntaje="4" aria-label="4 estrellas"><i class="bi bi-star"></i></button>
+                  <button type="button" class="btn border-0 p-0 text-warning" data-puntaje="5" aria-label="5 estrellas"><i class="bi bi-star"></i></button>
+                </div>
+              </fieldset>
+              <div class="mt-3">
+                <label for="comentarioValoracion" class="form-label fw-semibold">Comentario (opcional)</label>
+                <textarea class="form-control rounded-3" id="comentarioValoracion" name="comentario"
+                  rows="3" maxlength="1000"></textarea>
+              </div>
+              <div id="mensajeValoracion" class="alert mt-3 mb-0" role="status" aria-live="polite" hidden></div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+              <button type="submit" class="btn btn-primary rounded-pill" id="enviarValoracion">Enviar valoración</button>
+              <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
