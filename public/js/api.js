@@ -23,7 +23,8 @@ const JSON_HEADERS = { "Content-Type": "application/json" };
 
 
 export const api = {
-  buscarUsuario: () =>
- solicitar(`/usuarios/me`)
-
+  buscarUsuario: async () => {
+    const sesion = await solicitar(`/usuarios/me`);
+    return sesion.usuario;
+  }
   }

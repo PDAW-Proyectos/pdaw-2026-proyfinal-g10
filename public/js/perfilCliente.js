@@ -13,7 +13,9 @@ async function cargarAlquileresCliente() {
     if (!perfilResponse.ok) {
       throw new Error(perfil.error || 'No se pudo consultar el perfil.');
     }
-    if (perfil.tipo !== 'Cliente') return;
+    if(!perfil.autenticado || !perfil.usuario) return  
+    
+    if (perfil.usuario.tipo !== 'Cliente') return;
 
     seccionMisAlquileres.hidden = false;
     const response = await fetch('/api/alquileres', { credentials: 'same-origin' });
