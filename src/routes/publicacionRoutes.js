@@ -1,8 +1,27 @@
 import { Router } from 'express';
-import { validarDireccion } from '../controllers/publicacionController.js';
+import { crearPublicacion, listarPublicaciones, listarReportesPublicacion, listarValoracionesPublicacion, reportarPublicacion, validarDireccion, valorarPublicacion } from '../controllers/publicacionController.js';
+import { requireAuth, rol } from '../middleware/autentificacion.js';
 
-const router = Router();
+export function crearPublicacionRoutes(usuarios) {
+  const router = Router();
 
-router.post('/validar-direccion', validarDireccion);
+  router.get('/', (req, res, next) =>
+    listarPublicaciones(req, res, next, usuarios)
+  );
+  router.post('/',requireAuth,rol('Propietario'), (req, res, next) =>
+    crearPublicacion(req, res, next, usuarios)
+  );
+  router.post('/validar-direccion', validarDireccion);
+  router.get('/:id/reportes', requireAuth, rol('Propietario'), (req, res, next) =>
+    listarReportesPublicacion(req, res, next)
+  );
+  router.post('/:id/reportes', requireAuth, rol('Cliente'), (req, res, next) =>
+    reportarPublicacion(req, res, next, usuarios)
+  );
+  router.post('/:id/valoraciones', requireAuth, rol('Cliente'), valorarPublicacion);
+  router.get('/:id/valoraciones', requireAuth, rol('Propietario'), (req, res, next) =>
+    listarValoracionesPublicacion(req, res, next, usuarios)
+  );
 
-export default router;
+  return router;
+}

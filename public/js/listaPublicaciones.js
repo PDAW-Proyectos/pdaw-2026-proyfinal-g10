@@ -1,0 +1,236 @@
+import { configurarFiltros } from "./filtrosPublicaciones.js";
+
+const listaPublicaciones = document.getElementById("publicaciones");
+
+window.addEventListener("load", async () => {
+    await cargarPublicaciones();
+});
+
+document.addEventListener("show.bs.modal", (event) => {
+    const publicacion = event.relatedTarget?.dataset.publicacion;
+    if (!publicacion) return;
+
+    actualizarModal(event.target, JSON.parse(publicacion));
+});
+
+export async function cargarPublicaciones() {
+    if (!listaPublicaciones || listaPublicaciones.dataset.vista) return;
+
+    listaPublicaciones.textContent = "";
+    try {
+        const response = await fetch("/api/publicaciones");
+        if (!response.ok) {
+            throw new Error(`Error al obtener publicaciones: ${response.status}`);
+        }
+
+        const publicaciones = await response.json();
+        if (!Array.isArray(publicaciones)) {
+            throw new Error("La respuesta de publicaciones no tiene un formato válido.");
+        }
+
+        const actualizarPublicaciones = configurarFiltros(publicaciones, (filtradas) => {
+            listaPublicaciones.replaceChildren(crearPublicaciones(filtradas));
+        });
+        actualizarPublicaciones();
+    } catch (error) {
+        console.error("Error al cargar las publicaciones:", error);
+        listaPublicaciones.textContent = "No se pudieron cargar las publicaciones.";
+    }
+}
+
+export function crearPublicaciones(publicaciones, acciones = null, correoUsuario = null) {
+    const listado = document.createElement("div");
+    listado.classList.add("row", "g-4");
+
+    publicaciones.forEach((publicacion) => {
+        const card = document.createElement("div");
+        card.classList.add("col-md-6");
+
+        const propertyCard = document.createElement("div");
+        propertyCard.classList.add(
+            "card",
+            "border-0",
+            "shadow-sm",
+            "rounded-4",
+            "overflow-hidden",
+            "h-100",
+            "property-card"
+        );
+
+        const image = document.createElement("img");
+        image.src = publicacion.imagen;
+        image.classList.add("card-img-top");
+        image.alt = publicacion.alt || "Publicación de alquiler";
+
+        const detailsButton = document.createElement("button");
+        detailsButton.type = "button";
+        detailsButton.classList.add("stretched-link", "border-0", "bg-transparent", "p-0");
+        detailsButton.dataset.bsToggle = "modal";
+        detailsButton.dataset.bsTarget = "#detallePublicacion";
+        detailsButton.setAttribute(
+            "aria-label",
+            `Ver detalles de ${publicacion.detalle || publicacion.titulo}`
+        );
+        detailsButton.dataset.publicacion = JSON.stringify(publicacion);
+
+        const cardBody = document.createElement("div");
+        cardBody.classList.add("card-body", "p-4");
+
+        const summary = document.createElement("div");
+        summary.classList.add("d-flex", "justify-content-between", "align-items-center", "mb-2");
+
+        const type = document.createElement("span");
+        type.classList.add("badge", "rounded-pill", "bg-light", "text-primary");
+        type.textContent = publicacion.tipo || "Alquiler";
+
+        const price = document.createElement("strong");
+        price.classList.add("text-primary");
+        price.textContent = `$ ${publicacion.precio}`;
+
+        const title = document.createElement("h4");
+        title.classList.add("fw-semibold", "mb-2");
+        title.textContent = publicacion.titulo;
+
+        const description = document.createElement("p");
+        description.classList.add("text-secondary", "mb-3");
+        description.textContent = publicacion.descripcion;
+
+        summary.append(type, price);
+        cardBody.append(summary, title, description);
+        if (publicacion.nombreAutor) {
+            const author = document.createElement("p");
+            author.classList.add("small", "text-secondary", "mb-0");
+            author.textContent = publicacion.nombreAutor;
+            cardBody.appendChild(author);
+        }
+
+        if (acciones) {
+            const footer = document.createElement("div");
+            footer.classList.add(
+                "d-flex",
+                "justify-content-between",
+                "align-items-center",
+                "position-relative",
+                "z-2"
+            );
+            footer.appendChild(crearEstrellas(publicacion.calificacion));
+
+            const actionButtons = document.createElement("div");
+            actionButtons.classList.add("d-flex", "gap-2");
+            if (acciones[0] && acciones[0] !== "Ver") {
+                actionButtons.appendChild(crearBoton(acciones[0], "btn-outline-primary"));
+            }
+            if (acciones[0] === "Valorar") {
+                const botonValorar = actionButtons.querySelector("button");
+                botonValorar.dataset.bsToggle = "modal";
+                botonValorar.dataset.bsTarget = "#valorarPublicacionModal";
+                botonValorar.dataset.publicacionId = publicacion.id;
+                botonValorar.dataset.publicacionTitulo = publicacion.titulo;
+                botonValorar.setAttribute("aria-label", `Valorar ${publicacion.titulo}`);
+            }
+            if (acciones[1] === "Reportar") {
+                const botonReporte = crearBoton(acciones[1], "btn-outline-secondary");
+                botonReporte.dataset.bsToggle = "modal";
+                botonReporte.dataset.bsTarget = "#reportarPublicacionModal";
+                botonReporte.dataset.publicacionId = publicacion.id;
+                botonReporte.dataset.publicacionTitulo = publicacion.titulo;
+                botonReporte.setAttribute("aria-label", `Reportar ${publicacion.titulo}`);
+                actionButtons.appendChild(botonReporte);
+            }
+            if (
+                acciones[1] === "Reportes" &&
+                correoUsuario &&
+                String(publicacion.autor).trim().toLowerCase() === correoUsuario.trim().toLowerCase()
+            ) {
+                const botonReportes = crearBoton(acciones[1], "btn-outline-secondary");
+                botonReportes.dataset.bsToggle = "modal";
+                botonReportes.dataset.bsTarget = "#reportesPublicacionModal";
+                botonReportes.dataset.publicacionId = publicacion.id;
+                botonReportes.dataset.publicacionTitulo = publicacion.titulo;
+                botonReportes.setAttribute("aria-label", `Ver reportes de ${publicacion.titulo}`);
+                actionButtons.appendChild(botonReportes);
+            }
+            if (
+                acciones[2] === "Valoraciones" &&
+                correoUsuario &&
+                String(publicacion.autor).trim().toLowerCase() === correoUsuario.trim().toLowerCase()
+            ) {
+                const botonValoraciones = crearBoton(acciones[2], "btn-outline-secondary");
+                botonValoraciones.dataset.bsToggle = "modal";
+                botonValoraciones.dataset.bsTarget = "#valoracionesPublicacionModal";
+                botonValoraciones.dataset.publicacionId = publicacion.id;
+                botonValoraciones.dataset.publicacionTitulo = publicacion.titulo;
+                botonValoraciones.setAttribute("aria-label", `Ver valoraciones de ${publicacion.titulo}`);
+                actionButtons.appendChild(botonValoraciones);
+            }
+            footer.appendChild(actionButtons);
+            cardBody.appendChild(footer);
+        } else {
+            const loginLink = document.createElement("a");
+            loginLink.href = "login.html";
+            loginLink.classList.add(
+                "btn",
+                "btn-outline-primary",
+                "btn-sm",
+                "rounded-pill",
+                "position-relative",
+                "z-2"
+            );
+            loginLink.textContent = "Iniciá sesión para consultar";
+            cardBody.appendChild(loginLink);
+        }
+
+        propertyCard.append(image, detailsButton, cardBody);
+        card.appendChild(propertyCard);
+        listado.appendChild(card);
+    });
+
+    return listado;
+}
+
+function actualizarModal(modal, publicacion) {
+    modal.querySelector("[data-publicacion-titulo]").textContent = publicacion.titulo;
+    modal.querySelector("[data-publicacion-imagen]").src = publicacion.imagen;
+    modal.querySelector("[data-publicacion-imagen]").alt = publicacion.alt || publicacion.titulo;
+    modal.querySelector("[data-publicacion-ubicacion]").textContent =
+        publicacion.direccion || publicacion.ubicacion || "";
+    modal.querySelector("[data-publicacion-precio]").textContent = `$ ${publicacion.precio}`;
+    modal.querySelector("[data-publicacion-descripcion]").textContent = publicacion.descripcion;
+    modal.dataset.ubicacion = publicacion.ubicacion || "";
+
+    const calificacion = Number(publicacion.calificacion) || 0;
+    const rating = modal.querySelector("[data-publicacion-calificacion]");
+    const estrellas = crearEstrellas(calificacion);
+    const textoValoracion = document.createElement("span");
+    textoValoracion.classList.add("text-secondary", "ms-2");
+    textoValoracion.textContent =
+        `${calificacion.toLocaleString("es-AR")} (${publicacion.cantidadValoraciones || 0} valoraciones)`;
+    rating.setAttribute("aria-label", `Valoración: ${calificacion.toLocaleString("es-AR")} de 5 estrellas`);
+    rating.replaceChildren(...estrellas.childNodes, textoValoracion);
+}
+
+function crearEstrellas(calificacion = 0) {
+    const estrellas = document.createElement("div");
+    estrellas.classList.add("text-warning");
+
+    for (let indice = 0; indice < 5; indice += 1) {
+        const estrella = document.createElement("i");
+        const clase = calificacion >= indice + 1
+            ? "bi-star-fill"
+            : calificacion >= indice + 0.5
+                ? "bi-star-half"
+                : "bi-star";
+        estrella.classList.add("bi", clase);
+        estrellas.appendChild(estrella);
+    }
+
+    return estrellas;
+}
+
+function crearBoton(texto, estilo) {
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.classList.add("btn", estilo, "btn-sm", "rounded-pill");
+    boton.textContent = texto;
+    return boton;
+}

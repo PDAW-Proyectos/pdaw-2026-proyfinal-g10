@@ -36,3 +36,5 @@ jobs:
 
       - name: Correr tests
         run: npm test
+        env:
+          NODE_ENV: test

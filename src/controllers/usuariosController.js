@@ -1,21 +1,22 @@
 
-
 export class UserController {
   constructor(userService) {
     this.userService =  userService
   }
 
-  agregar = async (req, res) => {
+  agregar = async (req, res,next) => {
     try {
       const usuario = await this.userService.agregarUsuario({
         nombre: req.body.nombre,
+        apellido: req.body.apellido,
         correo: req.body.correo,
+        telefono: req.body.telefono,
         contrasena: req.body.contrasena,
-        tipo: req.body.tipo
+        tipo: req.body.tipo,
       });
       return res.status(201).json(usuario);
     } catch (error) {
-      return res.status(420).json({ error: error.message });
+       return next(error);
     }
   };
   buscarPorCorreo = async (req, res, next) => {
@@ -25,7 +26,7 @@ export class UserController {
       );
       res.status(200).json(usuario);
     } catch (error) {
-    return res.status(400).json({ error: error.message });
+     return next(error);
     }
   };
   listarUsuarios = async (req, res, next) => {
@@ -33,7 +34,7 @@ export class UserController {
       const usuarios = await this.userService.listarUsuarios();
       res.status(200).json(usuarios);
     } catch (error) {
-   return res.status(418).json({ error: error.message });
+     return next(error);
     }
   };
 
@@ -41,18 +42,30 @@ export class UserController {
     try {
       const { correo, contrasena } = req.body;
       const usuario = await this.userService.iniciarSesion(correo, contrasena, req);
-      res.status(200).json(usuario);
+      res.status(201).json(usuario);
     } catch (error) {
-    return res.status(403).json({ error: error.message });
+     return next(error);
     }
   };
   cerrarSesion = async (req, res, next) => {
     try {
       await this.userService.cerrarSesion(req);
-      res.status(200).json({ message: 'Sesión cerrada correctamente' });
+      res.status(204).json({ message: 'Sesión cerrada correctamente' });
     } catch (error) {
-    return res.status(404).json({ error: error.message });
+    return next(error);
     }
+}
+
+buscarLogueado =  (req,res,next) => {
+    try {
+      return res.status(200).json({
+        autenticado: Boolean(req.user),
+        usuario: req.user ? this.userService.toPublic(req.user) : null
+      });
+    } catch (error) {
+    return next(error);
+    }
+
 }
 }
 

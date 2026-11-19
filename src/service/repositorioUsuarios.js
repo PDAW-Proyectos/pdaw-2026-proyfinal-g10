@@ -2,43 +2,45 @@ import { Cliente } from "../models/Cliente.js";
 import { Propietario } from "../models/propietario.js";
 import { hash, compare } from 'bcryptjs';
 import { regenerate, destroy } from "../utils/validacion.js";
-import { Usuario } from "../models/usuario.js";
+import { NotFoundError, UnauthorizedError, ValidationError } from "../models/errores.js";
 
 const ROUNDS = 10;
-const password = 'clase08'
-  const passwordHash = await hash(password, ROUNDS);
 export class RepositorioUsuarios {
 constructor() {
-        this.usuarios = [
-
-  ];
+        this.usuarios = [];
     }
-
     async agregarUsuario(usuario) { 
         if (this.buscarUsuarioPorCorreo(usuario.correo)) {
-            throw new Error(`El correo ${usuario.correo} ya está registrado`);
+            throw new ValidationError(`El correo ${usuario.correo} ya está registrado`);
         }
+        let nuevoUsuario;
         if(usuario.tipo === "Cliente") {
-            await this.agregarCliente(usuario.nombre, usuario.correo, usuario.contrasena);
+            nuevoUsuario = await this.agregarCliente(usuario.nombre,usuario.apellido, usuario.correo, usuario.contrasena,usuario.telefono);
         } else if(usuario.tipo === "Propietario") {
-            await this.agregarPropietario(usuario.nombre, usuario.correo, usuario.contrasena);
+            nuevoUsuario = await this.agregarPropietario(usuario.nombre,usuario.apellido, usuario.correo, usuario.contrasena,usuario.telefono);
+        } else {
+            throw new ValidationError('El tipo de usuario es obligatorio');
         }
+        return nuevoUsuario;
     }
 
-    async agregarCliente(nombre, correo, contrasena) {
-   const cliente = new Cliente(nombre, correo, contrasena);
-  cliente.contrasena = await hash(contrasena, ROUNDS);
-  this.usuarios.push(cliente);
+    async agregarCliente(nombre,apellido, correo, contrasena,telefono) {
+   const cliente = new Cliente(nombre,apellido, correo, contrasena,telefono);
+   cliente.contrasena = await hash(contrasena, ROUNDS);
+   this.usuarios.push(cliente);
+   return cliente;
     }
 
-    async agregarPropietario(nombre, correo, contrasena) {
-   const propietario = new Propietario(nombre, correo, contrasena);
-  propietario.contrasena = await hash(contrasena, ROUNDS);
-  this.usuarios.push(propietario);
+    async agregarPropietario(nombre,apellido, correo, contrasena,telefono)  {
+   const propietario = new Propietario(nombre,apellido, correo, contrasena,telefono);
+   propietario.contrasena = await hash(contrasena, ROUNDS);
+   this.usuarios.push(propietario);
+   return propietario;
     }
 
     buscarUsuarioPorCorreo(correo) {
-        return this.usuarios.find(usuario => usuario.correo.trim().toLowerCase() === correo.trim().toLowerCase());
+        if (!correo) return undefined;
+        return this.usuarios.find(usuario => usuario.correo.trim().toLowerCase() === String(correo).trim().toLowerCase());
     }
 
     buscarUsuarioActivo() {
@@ -64,30 +66,27 @@ constructor() {
       if (!usuario) return null;
       return (await compare(String(contrasena), usuario.contrasena)) ? usuario : null;
     }
-     findById()
-     {return  (id) => this.usuarios.find((u) => u.id === id) ?? null}
 
-    toPublic = ({ id, nombre, correo, role }) => ({ id, nombre, correo, role });
+    toPublic = ({ nombre,apellido, correo, tipo,telefono }) => ({ nombre,apellido, correo, tipo,telefono });
 
  iniciarSesion = async (correo, contrasena, req) => {
     const usuario = this.buscarUsuarioPorCorreo(
       String(correo).trim().toLowerCase()
     );
 
-    if (!usuario) throw new Error('Usuario no encontrado');
+    if (!usuario) throw new NotFoundError('Usuario no encontrado');
     const ok = await this.verify(correo, contrasena);
 
-    if (!ok) throw new Error('Credenciales inválidas');
+    if (!ok) throw new ValidationError('Credenciales inválidas');
     usuario.activo = true
+    await regenerate(req); 
     req.session.userId = usuario.correo;
     return usuario;
   };
 
   cerrarSesion = async (req) => {
-    if (!req.session.userId) throw new Error('No hay sesión iniciada');
     this.buscarUsuarioPorCorreo(req.session.userId).activo = false
-    req.session.destroy();
+    await destroy(req);
   };
-    
 
 }

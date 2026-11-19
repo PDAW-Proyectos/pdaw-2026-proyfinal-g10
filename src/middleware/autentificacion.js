@@ -1,6 +1,16 @@
-
-  
-  
-  
+import { UnauthorizedError,ForbiddenError } from "../models/errores.js";
   export const requireAuth = (req, res, next) =>
-    req.user ? next() : res.status(401).json({ error: 'Es necesario iniciar sesión' });
+  {
+    if(!req.user){
+     throw new UnauthorizedError
+    }
+    next()
+  }
+
+export  const rol = (tipo) => (req, res, next) => {
+if (!req.user) throw new UnauthorizedError
+if (req.user.tipo !== tipo) throw new ForbiddenError ;
+next();
+
+};
+

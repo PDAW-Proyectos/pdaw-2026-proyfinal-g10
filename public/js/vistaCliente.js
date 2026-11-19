@@ -1,5 +1,14 @@
-function actualizarMapaEnModal(modalId, lat, lon) {
-  const iframe = document.querySelector(`#${modalId} iframe`);
+import {botonSesion, inicio, redireccion} from './common.js';
+
+window.addEventListener('load', async () => {
+botonSesion
+inicio
+   redireccion()
+  })
+
+
+function actualizarMapaEnModal(modal, lat, lon) {
+  const iframe = modal.querySelector("iframe");
   if (!iframe) return;
 
   const latMin = Number(lat) - 0.02;
@@ -10,7 +19,7 @@ function actualizarMapaEnModal(modalId, lat, lon) {
   iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lonMin}%2C${latMin}%2C${lonMax}%2C${latMax}&layer=mapnik&marker=${lat}%2C${lon}`;
 }
 
-async function buscarUbicacionEnModal(modalId, direccion) {
+async function buscarUbicacionEnModal(modal, direccion) {
   try {
     const response = await fetch(`/api/ubicacion?q=${encodeURIComponent(direccion)}`);
     const data = await response.json();
@@ -19,22 +28,13 @@ async function buscarUbicacionEnModal(modalId, direccion) {
       throw new Error(data.error || 'No se pudo ubicar la dirección.');
     }
 
-    actualizarMapaEnModal(modalId, data.lat, data.lon);
+    actualizarMapaEnModal(modal, data.lat, data.lon);
   } catch (error) {
     console.error(error);
   }
 }
 
-const modalDepartamento = document.getElementById('detalleDepartamento');
-if (modalDepartamento) {
-  modalDepartamento.addEventListener('shown.bs.modal', () => {
-    buscarUbicacionEnModal('detalleDepartamento', 'Centro, Bahía Blanca');
-  });
-}
-
-const modalCasa = document.getElementById('detalleCasa');
-if (modalCasa) {
-  modalCasa.addEventListener('shown.bs.modal', () => {
-    buscarUbicacionEnModal('detalleCasa', 'Villa Mitre, Bahía Blanca');
-  });
-}
+document.addEventListener('shown.bs.modal', (event) => {
+  const ubicacion = event.target.dataset.ubicacion;
+  if (ubicacion) buscarUbicacionEnModal(event.target, ubicacion);
+});
