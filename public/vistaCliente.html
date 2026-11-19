@@ -124,6 +124,40 @@
       </div>
     </div>
 
+    <div class="modal fade" id="reportarPublicacionModal" tabindex="-1" aria-labelledby="reportarPublicacionLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4">
+          <form id="formReportarPublicacion">
+            <div class="modal-header border-0">
+              <div>
+                <h2 class="modal-title fs-5 fw-bold" id="reportarPublicacionLabel">Reportar publicación</h2>
+                <p class="text-secondary small mb-0" data-reporte-publicacion></p>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-0">
+              <input type="hidden" name="publicacionId" />
+              <div class="mb-3">
+                <label for="motivoReporte" class="form-label fw-semibold">Motivo</label>
+                <input type="text" class="form-control rounded-3" id="motivoReporte" name="motivo"
+                  maxlength="120" required />
+              </div>
+              <div class="mb-3">
+                <label for="descripcionReporte" class="form-label fw-semibold">Descripción (opcional)</label>
+                <textarea class="form-control rounded-3" id="descripcionReporte" name="descripcion"
+                  rows="3" maxlength="1000"></textarea>
+              </div>
+              <div id="mensajeReporte" class="alert mb-0" role="status" aria-live="polite" hidden></div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+              <button type="submit" class="btn btn-primary rounded-pill" id="enviarReporte">Enviar reporte</button>
+              <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

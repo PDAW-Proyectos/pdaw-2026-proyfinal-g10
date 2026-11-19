@@ -3,6 +3,7 @@ import { Publicacion } from '../models/Publicacion.js';
 import { validarDireccionPublicacion } from '../service/publicacionesService.js';
 
 const archivoPublicaciones = new URL('../repositories/Publicaciones.json', import.meta.url);
+let colaReportes = Promise.resolve();
 
 export async function listarPublicaciones(req, res, next, usuarios) {
   try {
@@ -69,6 +70,82 @@ export async function crearPublicacion(req, res, next, usuarios) {
   }
 }
 
+export async function reportarPublicacion(req, res, next, usuarios) {
+  const { motivo, descripcion = '' } = req.body || {};
+  if (typeof motivo !== 'string' || !motivo.trim()) {
+    return res.status(400).json({ error: 'El motivo del reporte es obligatorio.' });
+  }
+  if (typeof descripcion !== 'string') {
+    return res.status(400).json({ error: 'La descripción del reporte debe ser texto.' });
+  }
+
+  try {
+    const operacion = colaReportes.then(async () => {
+      const publicaciones = JSON.parse(await readFile(archivoPublicaciones, 'utf8'));
+      const indice = publicaciones.findIndex(
+        (publicacion) => String(publicacion.id) === String(req.params.id)
+      );
+      if (indice === -1) {
+        return res.status(404).json({ error: 'No se encontró la publicación.' });
+      }
+
+      const datosPublicacion = publicaciones[indice];
+      const autor = usuarios.buscarUsuarioPorCorreo(datosPublicacion.autor);
+      if (!autor) {
+        return res.status(400).json({ error: 'No se puede reportar una publicación sin autor registrado.' });
+      }
+
+      const publicacion = new Publicacion(
+        datosPublicacion.id,
+        datosPublicacion.titulo,
+        datosPublicacion.descripcion,
+        datosPublicacion.direccion,
+        datosPublicacion.precio,
+        autor,
+        datosPublicacion
+      );
+      publicacion.reportes = Array.isArray(datosPublicacion.reportes)
+        ? datosPublicacion.reportes
+        : [];
+      publicacion.reportar(motivo.trim(), descripcion.trim(), req.user.correo);
+      publicaciones[indice] = { ...datosPublicacion, reportes: publicacion.reportes };
+      await writeFile(archivoPublicaciones, `${JSON.stringify(publicaciones, null, 2)}\n`, 'utf8');
+
+      return res.status(201).json({ mensaje: 'Reporte creado.' });
+    });
+    colaReportes = operacion.catch(() => {});
+    return await operacion;
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function listarReportesPublicacion(req, res, next) {
+  try {
+    const publicaciones = JSON.parse(await readFile(archivoPublicaciones, 'utf8'));
+    const publicacion = publicaciones.find(
+      (item) => String(item.id) === String(req.params.id)
+    );
+    if (
+      !publicacion ||
+      String(publicacion.autor || '').trim().toLowerCase() !== req.user.correo.trim().toLowerCase()
+    ) {
+      return res.status(404).json({ error: 'No se encontró la publicación.' });
+    }
+
+    const reportes = Array.isArray(publicacion.reportes) ? publicacion.reportes : [];
+    return res.status(200).json(reportes.map(({ id, motivo, descripcion, fecha, estado }) => ({
+      id,
+      motivo,
+      descripcion,
+      fecha,
+      estado
+    })));
+  } catch (error) {
+    return next(error);
+  }
+}
+
 export async function validarDireccion(req, res, next) {
   try {
     const resultado = await validarDireccionPublicacion(req.body?.direccion || req.query?.direccion);
@@ -85,7 +162,9 @@ function agregarNombreAutor(publicacion, usuarios) {
   const autor = publicacion.autor
     ? usuarios?.buscarUsuarioPorCorreo(publicacion.autor)
     : null;
-  return { ...publicacion, nombreAutor: autor?.nombre ?? null };
+  const datosPublicos = { ...publicacion };
+  delete datosPublicos.reportes;
+  return { ...datosPublicos, nombreAutor: autor?.nombre ?? null };
 }
 
 function responderErrorDireccion(error, res, next) {

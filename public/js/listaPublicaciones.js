@@ -38,7 +38,7 @@ export async function cargarPublicaciones() {
     }
 }
 
-export function crearPublicaciones(publicaciones, acciones = null) {
+export function crearPublicaciones(publicaciones, acciones = null, correoUsuario = null) {
     const listado = document.createElement("div");
     listado.classList.add("row", "g-4");
 
@@ -117,14 +117,30 @@ export function crearPublicaciones(publicaciones, acciones = null) {
 
             const actionButtons = document.createElement("div");
             actionButtons.classList.add("d-flex", "gap-2");
-            const botonPrincipal = crearBoton(acciones[0], "btn-outline-primary");
-            if (acciones[0] === "Ver") {
-                botonPrincipal.dataset.bsToggle = "modal";
-                botonPrincipal.dataset.bsTarget = "#detallePublicacion";
-                botonPrincipal.dataset.publicacion = JSON.stringify(publicacion);
-                botonPrincipal.setAttribute("aria-label", `Ver detalles de ${publicacion.titulo}`);
+            if (acciones[0] !== "Ver") {
+                actionButtons.appendChild(crearBoton(acciones[0], "btn-outline-primary"));
             }
-            actionButtons.append(botonPrincipal, crearBoton(acciones[1], "btn-outline-secondary"));
+            if (acciones[1] === "Reportar") {
+                const botonReporte = crearBoton(acciones[1], "btn-outline-secondary");
+                botonReporte.dataset.bsToggle = "modal";
+                botonReporte.dataset.bsTarget = "#reportarPublicacionModal";
+                botonReporte.dataset.publicacionId = publicacion.id;
+                botonReporte.dataset.publicacionTitulo = publicacion.titulo;
+                botonReporte.setAttribute("aria-label", `Reportar ${publicacion.titulo}`);
+                actionButtons.appendChild(botonReporte);
+            } else if (
+                acciones[1] === "Reportes" &&
+                correoUsuario &&
+                String(publicacion.autor).trim().toLowerCase() === correoUsuario.trim().toLowerCase()
+            ) {
+                const botonReportes = crearBoton(acciones[1], "btn-outline-secondary");
+                botonReportes.dataset.bsToggle = "modal";
+                botonReportes.dataset.bsTarget = "#reportesPublicacionModal";
+                botonReportes.dataset.publicacionId = publicacion.id;
+                botonReportes.dataset.publicacionTitulo = publicacion.titulo;
+                botonReportes.setAttribute("aria-label", `Ver reportes de ${publicacion.titulo}`);
+                actionButtons.appendChild(botonReportes);
+            }
             footer.appendChild(actionButtons);
             cardBody.appendChild(footer);
         } else {
