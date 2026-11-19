@@ -7,7 +7,6 @@ const router = Router();
 const userController = new UserController(usuarios);
 
 
-    router.get("/",requireAuth, userController.listarUsuarios)
     router.get("/me", userController.buscarLogueado)
     router.post("/", userController.agregar);
     router.get("/correo/:correo",requireAuth, userController.buscarPorCorreo);

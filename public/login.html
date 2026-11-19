@@ -45,12 +45,12 @@
               <form id="loginForm" action="#" method="get">
                 <div class="mb-3">
                   <label for="email" class="form-label fw-semibold">Correo electrónico</label>
-                  <input type="email" class="form-control form-control-lg rounded-3" name="correo" id="email" placeholder="tuemail@ejemplo.com" />
+                  <input type="email" class="form-control form-control-lg rounded-3" required name="correo" id="email" placeholder="tuemail@ejemplo.com" />
                 </div>
 
                 <div class="mb-3">
                   <label for="password" class="form-label fw-semibold">Contraseña</label>
-                  <input type="password" name="contrasena" class="form-control form-control-lg rounded-3" id="password" placeholder="••••••••" />
+                  <input type="password" name="contrasena" class="form-control form-control-lg rounded-3" required id="password" placeholder="••••••••" />
                 </div>
 
 
@@ -97,28 +97,29 @@
               <div class="row g-3">
                 <div class="col-md-6">
                   <label for="nombre" class="form-label fw-semibold">Nombre</label>
-                  <input type="text" class="form-control form-control-lg rounded-3" name="nombre" id="nombre" placeholder="Tu nombre" />
+                  <input type="text" class="form-control form-control-lg  rounded-3"required maxlength="30"   minlength="3" name="nombre" id="nombre" placeholder="Tu nombre" />
                 </div>
                 <div class="col-md-6">
                   <label for="apellido" class="form-label fw-semibold">Apellido</label>
-                  <input type="text" class="form-control form-control-lg rounded-3" name="apellido" placeholder="Tu apellido" required />
+                  <input type="text" class="form-control form-control-lg rounded-3" required maxlength="15"   minlength="3" required name="apellido" placeholder="Tu apellido" required />
                 </div>
                 <div class="col-md-6">
                   <label for="registro-email" class="form-label fw-semibold">Correo electrónico</label>
-                  <input type="email" class="form-control form-control-lg rounded-3" name="correo" id="registro-email" placeholder="tuemail@ejemplo.com" />
+                  <input type="email" class="form-control form-control-lg rounded-3" required name="correo" id="registro-email" placeholder="tuemail@ejemplo.com" />
                 </div>
                 <div class="col-md-6">
                   <label for="telefono" class="form-label fw-semibold">Número de teléfono</label>
-                  <input type="tel" class="form-control form-control-lg rounded-3" id="telefono" name="telefono" placeholder="54 9 291 1234567" />
+                  <input type="tel" class="form-control form-control-lg rounded-3"required  id="telefono" name="telefono" placeholder="291 1234567" />
                 </div>
                 <div class="col-md-6">
                   <label for="registro-password" class="form-label fw-semibold">Contraseña</label>
-                  <input type="password" class="form-control form-control-lg rounded-3" name="contrasena" id="registro-password" placeholder="••••••••" />
+                  <input type="password" class="form-control form-control-lg rounded-3"  autocomplete="new-password"  required name="contrasena" id="registro-password" placeholder="••••••••" />
                 </div>
 
                  <div class="col-md-6">
                   <label class="form-label fw-semibold" for="roles">Tipo de cuenta</label>
-                    <select class="form-select form-select-lg mb-3" name="tipo" id="tipo">Rol de la cuenta
+                    <select class="form-select form-select-lg mb-3" name="tipo" id="tipo" required>
+                      <option value="" disabled selected>Seleccionar tipo de cuenta</option>||
                       <option value="Cliente">Cliente</option>
                       <option value="Propietario">Propietario</option>
                     </select>        

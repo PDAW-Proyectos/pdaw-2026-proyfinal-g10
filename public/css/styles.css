@@ -59,7 +59,9 @@ img {
   height: 420px;
   object-fit: cover;
 }
-
+#publicaciones {
+  min-height: 30rem;
+}
 .price-tag {
   display: inline-flex;
   align-items: center;
