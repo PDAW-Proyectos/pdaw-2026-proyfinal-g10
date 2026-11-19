@@ -7,7 +7,7 @@
 > 1. **Tabla de estado actual:** describe el comportamiento del endpoint
 > 2. **Ejemplos:** solicitud y respuesta
 >
-> Los endpoints no implementados se marcan con **⏳ Pendiente** y se describe el contrato esperado. Los endpoints implementados cuyo diseño interno aún está concentrado en el controlador se identifican en sus notas arquitectónicas.
+> Los endpoints no implementados se marcan con **⏳ Pendiente** y se describe el contrato esperado. Las operaciones que existen en un controlador pero no están montadas en una ruta se identifican como **No expuestas**.
 
 ---
 
@@ -76,7 +76,7 @@ Varios controladores responden directamente con `{ "error": "mensaje legible" }`
 | `204 No Content`            | Operación exitosa sin cuerpo (cierre de sesión).                                        |
 | `400 Bad Request`           | Parámetros inválidos, JSON mal formado o validación de negocio fallida.                 |
 | `401 Unauthorized`          | Falta sesión en una ruta protegida (`requireAuth`) o el rol no está autenticado.        |
-| `403 Forbidden`             | Usuario autenticado sin permisos para la operación (rol incorrecto o falta de autoría). |
+| `403 Forbidden`             | Usuario autenticado sin permisos para la operación (por ejemplo, rol incorrecto).        |
 | `404 Not Found`             | Recurso inexistente (usuario, publicación, alquiler, reporte).                          |
 | `409 Conflict`              | Alquiler activo/pendiente, publicación no disponible, reporte o valoración duplicados. |
 | `500 Internal Server Error` | Error inesperado del servidor, sin exponer detalles internos.                           |
@@ -88,12 +88,12 @@ Varios controladores responden directamente con `{ "error": "mensaje legible" }`
 
 | Campo                       | Definición                                                                                                                                                                                                                                                            |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Exposición de usuarios      | `toPublic()` proyecta `{ nombre, apellido, correo, tipo, telefono }` en `GET /me` y dentro de `usuario` en `GET /usuarios/me`. El registro, login, listado y búsqueda por correo devuelven el objeto de usuario completo, incluido el hash de `contrasena`. |
+| Exposición de usuarios      | `toPublic()` proyecta `{ nombre, apellido, correo, tipo, telefono }` dentro de `usuario` en `GET /usuarios/me`. El registro, login y búsqueda por correo devuelven el objeto de usuario completo, incluido el hash de `contrasena`. `GET /usuarios` no está expuesto. |
 | Exposición de publicaciones | El listado devuelve las propiedades del objeto persistido excepto `reportes`, y añade `nombreAutor`. Si existe `valoraciones`, también se expone el arreglo con el correo de cada emisor. |
 | Formato de error            | `errorHandler` responde `{ "status": "error", "message": "..." }`; varios errores validados directamente responden `{ "error": "..." }`. |
 | Identidad pública           | El correo es el identificador de usuario.                                                                                                                                                                                                                             |
 | Normalización de correo     | La búsqueda y el login normalizan con `trim().toLowerCase()`. El constructor de `usuario.js` **no** normaliza al almacenar.                                                                                                                                           |
-| Autenticación               | `requireAuth` protege `GET /usuarios`, `GET /usuarios/correo/:correo`, `POST /usuarios/logout`, `/me`, todos los endpoints de alquileres y las rutas de reportes/valoraciones. `GET /usuarios/me` es público y consulta el estado de sesión. |
+| Autenticación               | `requireAuth` protege `GET /usuarios/correo/:correo`, `POST /usuarios/logout`, todos los endpoints de alquileres y las rutas de reportes/valoraciones. `POST /api/publicaciones` también requiere `requireAuth` y el rol `Propietario`. `GET /usuarios/me` es público y consulta el estado de sesión. |
 | Autorización por rol        | `rol('Cliente')` protege crear reportes/valoraciones; `rol('Propietario')` protege listarlos. Los controladores de alquileres verifican el rol manualmente. |
 | Sesión                      | Cookie `Alquiya.sid`, secreto `SESSION_SECRET` (obligatorio en producción; `solo-para-desarrollo` por defecto), TTL 1 hora, `httpOnly`, `sameSite=lax`; `secure` en producción. |
 | Persistencia                | Usuarios y alquileres en memoria; publicaciones, reportes y valoraciones en archivo JSON. |
@@ -106,15 +106,13 @@ Varios controladores responden directamente con `{ "error": "mensaje legible" }`
 
 # 2. Resumen general
 
-| Sección | Endpoints implementados | Endpoints pendientes |
-| ------- | ----------------------- | -------------------- |
+| Sección | Endpoints implementados | Pendientes o no expuestos |
+| ------- | ----------------------- | ------------------------- |
 | **Salud** | 1 | — |
-| **Usuarios y sesión** | 7 | — |
+| **Usuarios y sesión** | 5 | No expuestos: `GET /usuarios`, `GET /me` |
 | **Publicaciones, reportes y valoraciones** | 7 | 3 (`GET /:id`, `PATCH /:id`, `DELETE /:id`) |
 | **Ubicación** | 1 | — |
 | **Alquileres** | 5 | — |
-
-`GET /me` es una ruta adicional montada en la aplicación, además de los seis endpoints del router `/usuarios`.
 
 **Endpoint de salud:**
 
@@ -124,13 +122,16 @@ Varios controladores responden directamente con `{ "error": "mensaje legible" }`
 
 **Endpoints de Usuarios:**
 
-- `GET /usuarios`
 - `POST /usuarios`
 - `GET /usuarios/correo/:correo`
 - `POST /usuarios/login`
 - `POST /usuarios/logout`
 - `GET /usuarios/me` (consulta pública del estado de sesión)
-- `GET /me` (perfil autenticado)
+
+**Operaciones de usuarios no expuestas por una ruta:**
+
+- `GET /usuarios`: `listarUsuarios()` existe en el controlador, pero el router no registra este método.
+- `GET /me`: no existe una ruta montada para este endpoint; el estado de sesión se consulta en `GET /usuarios/me`.
 
 **Endpoints de Publicaciones (implementados):**
 
@@ -225,39 +226,39 @@ GET /api/salud
 
 | Operación | Método y ruta | Cuerpo de entrada | Cuerpo de respuesta | Autenticación |
 | --------- | ------------- | ----------------- | ------------------- | ------------- |
-| Listar usuarios | `GET /usuarios` | — | Arreglo de modelos de usuario | `requireAuth` |
 | Crear usuario | `POST /usuarios` | `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `tipo` | Modelo de usuario creado | Pública |
 | Buscar por correo | `GET /usuarios/correo/:correo` | Path: `correo` | Modelo de usuario, si existe | `requireAuth` |
 | Iniciar sesión | `POST /usuarios/login` | `correo`, `contrasena` | Modelo de usuario + cookie `Alquiya.sid` | Pública |
 | Cerrar sesión | `POST /usuarios/logout` | Cookie `Alquiya.sid` | Sin cuerpo (`204`) | `requireAuth` |
 | Consultar estado de sesión | `GET /usuarios/me` | Cookie `Alquiya.sid` (opcional) | `{ autenticado, usuario }` | Pública |
-| Consultar perfil autenticado | `GET /me` | Cookie `Alquiya.sid` | Proyección `toPublic` | `requireAuth` |
 
 ---
 
 <br>
 
-## 3.2 Listar usuarios — GET /usuarios
+## 3.2 Listar usuarios — GET /usuarios (no expuesto)
 
 <br>
 
-### Tabla de estado actual
+### Contrato esperado (no expuesto)
 
-| Campo                    | Valor actual                                                 |
+**No existe una ruta `GET /usuarios`.** `UserController.listarUsuarios()` y `RepositorioUsuarios.listarUsuarios()` existen, pero `usuariosRoutes.js` no conecta el controlador a este método. El resto de esta sección describe el contrato esperado si se expone.
+
+| Campo                    | Contrato esperado                                            |
 | ------------------------ | ------------------------------------------------------------ |
 | Recurso                  | Colección de usuarios                                        |
 | Propósito                | Listar todos los usuarios registrados                        |
-| Método HTTP              | GET                                                          |
-| Endpoint                 | `/usuarios`                                                  |
+| Método HTTP              | GET (no registrado)                                          |
+| Endpoint                 | No expuesto; el router no registra `GET /`                   |
 | Parámetros de ruta       | No utiliza                                                   |
 | Query string             | No utiliza                                                   |
 | Encabezados de solicitud | `Accept: application/json` (opcional)                        |
 | Cuerpo JSON              | No utiliza                                                   |
 | Reglas de validación     | Ninguna                                                      |
-| Autenticación            | `requireAuth`                                                |
-| Respuesta exitosa        | `200 OK` con arreglo de modelos de usuario                    |
+| Autenticación            | Esperada: `requireAuth`                                      |
+| Respuesta exitosa        | Esperada: `200 OK` con arreglo de modelos de usuario         |
 | Encabezados de respuesta | `Content-Type: application/json`                             |
-| Respuestas de error      | `401 Unauthorized` (sin sesión), `500 Internal Server Error` |
+| Respuestas de error      | Esperadas: `401 Unauthorized` (sin sesión), `500 Internal Server Error` |
 
 <br>
 
@@ -271,11 +272,11 @@ GET /api/salud
 | `tipo`     | string | `"Cliente"` o `"Propietario"`      |
 | `telefono` | string | Teléfono del usuario               |
 
-La respuesta contiene los objetos de usuario completos. Actualmente incluye `contrasena` (hash) y propiedades del modelo como `reportes`, `activo` y, según el rol, `historial` o `publicaciones`.
+Si se expusiera, devolvería objetos de usuario completos, con `contrasena` (hash) y propiedades del modelo como `reportes`, `activo` y, según el rol, `historial` o `publicaciones`.
 
 <br>
 
-### Ejemplo de solicitud
+### Ejemplo de solicitud (esperado)
 
 ```http
 GET /usuarios
@@ -284,7 +285,7 @@ Cookie: Alquiya.sid=s%3A...
 
 <br>
 
-### Ejemplo de respuesta exitosa
+### Ejemplo de respuesta exitosa (esperado)
 
 ```json
 [
@@ -304,7 +305,7 @@ Cookie: Alquiya.sid=s%3A...
 
 <br>
 
-### Ejemplo de error (sin sesión)
+### Ejemplo de error (esperado, sin sesión)
 
 ```json
 { "status": "error", "message": "No estás autenticado" }
@@ -314,7 +315,7 @@ Cookie: Alquiya.sid=s%3A...
 
 ### Notas
 
-- Este endpoint devuelve el modelo completo, incluido el hash de contraseña. `toPublic` no se aplica en `listarUsuarios`.
+- Si se expone, devolvería el modelo completo, incluido el hash de contraseña. `toPublic` no se aplica en `listarUsuarios`.
 
 ---
 
@@ -650,27 +651,29 @@ Cookie: Alquiya.sid=s%3A...
 
 <br>
 
-## 3.7 Obtener perfil autenticado — GET /me
+## 3.7 Obtener perfil autenticado — GET /me (pendiente)
 
 <br>
 
-### Tabla de estado actual
+### Contrato esperado (pendiente)
 
-| Campo | Valor actual |
-| ----- | ------------ |
+**No existe una ruta `GET /me` en la aplicación.** La consulta pública del estado de sesión está disponible en `GET /usuarios/me`; esta sección conserva solo el contrato esperado para una posible ruta independiente.
+
+| Campo | Contrato esperado |
+| ----- | ----------------- |
 | Recurso | Perfil del usuario autenticado |
 | Propósito | Devolver los datos públicos del usuario de la sesión |
-| Método HTTP | GET |
-| Endpoint | `/me` |
+| Método HTTP | GET (no registrado) |
+| Endpoint | No expuesto |
 | Parámetros de ruta | No utiliza |
 | Query string | No utiliza |
 | Encabezados de solicitud | Cookie `Alquiya.sid` |
 | Cuerpo JSON | No utiliza |
 | Reglas de validación | Requiere una sesión válida |
 | Autenticación | `requireAuth` |
-| Respuesta exitosa | `200 OK` con el resultado de `toPublic` |
+| Respuesta exitosa | Esperada: `200 OK` con el resultado de `toPublic` |
 | Encabezados de respuesta | `Content-Type: application/json` |
-| Respuestas de error | `401 Unauthorized` si no hay usuario autenticado |
+| Respuestas de error | Esperadas: `401 Unauthorized` si no hay usuario autenticado |
 
 <br>
 
@@ -686,7 +689,7 @@ Cookie: Alquiya.sid=s%3A...
 
 <br>
 
-### Ejemplo de solicitud
+### Ejemplo de solicitud (esperado)
 
 ```http
 GET /me
@@ -695,7 +698,7 @@ Cookie: Alquiya.sid=s%3A...
 
 <br>
 
-### Ejemplo de respuesta exitosa
+### Ejemplo de respuesta exitosa (esperado)
 
 ```json
 {
@@ -709,7 +712,7 @@ Cookie: Alquiya.sid=s%3A...
 
 <br>
 
-### Ejemplo de error
+### Ejemplo de error (esperado)
 
 ```json
 { "status": "error", "message": "No estás autenticado" }
@@ -719,8 +722,7 @@ Cookie: Alquiya.sid=s%3A...
 
 ### Notas
 
-- Está montado directamente en `src/app.js` y aplica `requireAuth`.
-- La proyección excluye `contrasena` y otras propiedades internas del modelo.
+- Si se implementara con este contrato, requeriría `requireAuth` y devolvería una proyección que excluye `contrasena` y otras propiedades internas del modelo.
 
 ---
 
@@ -823,7 +825,7 @@ La cookie puede omitirse. Sin una sesión reconocida, la respuesta exitosa infor
 | Operación | Método y ruta | Autenticación | Entrada | Cuerpo de respuesta | Códigos |
 | --------- | ------------- | ------------- | ------- | ------------------- | ------- |
 | Listar publicaciones | `GET /api/publicaciones` | Pública | — | Arreglo (+ `nombreAutor`) | `200`, `500` |
-| Crear publicación | `POST /api/publicaciones` | Pública | `titulo`, `descripcion`, `direccion`, `precio`, `imagen` | Publicación creada (+ `nombreAutor`) | `201`, `400`, `503`, `500` |
+| Crear publicación | `POST /api/publicaciones` | `requireAuth` + `rol('Propietario')` | `titulo`, `descripcion`, `direccion`, `precio`, `imagen` | Publicación creada (+ `nombreAutor`) | `201`, `400`, `401`, `403`, `503`, `500` |
 | Validar dirección | `POST /api/publicaciones/validar-direccion` | Pública | `direccion` en body o query | `{ valido, direccion, ubicacion }` | `200`, `400`, `503`, `500` |
 | Consultar publicación | `GET /api/publicaciones/:id` | Pública | Path: `id` | Publicación | ⏳ Pendiente |
 | Editar publicación | `PATCH /api/publicaciones/:id` | Contrato esperado: propietario autenticado y autor | Path: `id`; JSON parcial | Publicación actualizada | ⏳ Pendiente |
@@ -953,10 +955,10 @@ GET /api/publicaciones
 | Encabezados de solicitud | `Content-Type: application/json` o `application/x-www-form-urlencoded`                                                                                                      |
 | Cuerpo JSON              | `titulo`, `descripcion`, `direccion`, `precio`, `imagen`                                                               |
 | Reglas de validación     | `titulo`, `imagen`, `descripcion` y `direccion` obligatorios (strings no vacíos); `precio` numérico positivo           |
-| Autenticación            | ❌ **Pública** (no se aplica `requireAuth` ni `rol('Propietario')`)                                                    |
+| Autenticación            | `requireAuth` + `rol('Propietario')`                                                                                   |
 | Respuesta exitosa        | `201 Created` con la publicación creada (incluye `nombreAutor`)                                                        |
 | Encabezados de respuesta | `Content-Type: application/json`                                                                                       |
-| Respuestas de error      | `400 Bad Request` (datos inválidos), `503 Service Unavailable` (fallo de geocodificación), `500 Internal Server Error` |
+| Respuestas de error      | `400 Bad Request` (datos inválidos o dirección no encontrada), `401 Unauthorized`, `403 Forbidden`, `503 Service Unavailable` (fallo de geocodificación), `500 Internal Server Error` |
 
 <br>
 
@@ -977,6 +979,7 @@ GET /api/publicaciones
 ```http
 POST /api/publicaciones
 Content-Type: application/json
+Cookie: Alquiya.sid=s%3A...
 ```
 
 ```json
@@ -1004,7 +1007,7 @@ Content-Type: application/json
   "descripcion": "2 ambientes, luminoso",
   "direccion": "Av. Siempre Viva 123",
   "precio": 50000,
-  "autor": null,
+  "autor": "ana@example.com",
   "imagen": "/img/depto.jpg",
   "alt": "Publicación de alquiler",
   "tipo": "",
@@ -1017,7 +1020,7 @@ Content-Type: application/json
   "estado": "pendiente",
   "activa": true,
   "fechaCreacion": "2026-11-12T10:00:00.000Z",
-  "nombreAutor": null
+  "nombreAutor": "Ana"
 }
 ```
 
@@ -1041,7 +1044,7 @@ Content-Type: application/json
 
 ### Notas
 
-- La ruta es pública. Si la petición incluye una sesión reconocida, `autor` toma el correo de `req.user`; sin sesión queda en `null`.
+- La ruta requiere una sesión de un usuario `Propietario`; `autor` toma el correo de `req.user`.
 - El controlador habla directamente con el sistema de archivos (`readFile`/`writeFile`), salteando la capa de servicio. La validación de dirección sí se delega a `publicacionesService.js`.
 
 ---
@@ -1649,7 +1652,7 @@ Cookie: Alquiya.sid=s%3A...
 | Autenticación            | `requireAuth`                                                                                 |
 | Respuesta exitosa        | `200 OK` con el alquiler actualizado (estado `"cancelado"`)                                   |
 | Encabezados de respuesta | `Content-Type: application/json`                                                              |
-| Respuestas de error      | `404 Not Found`, `403 Forbidden`, `409 Conflict` (estado no cancelable)                       |
+| Respuestas de error      | `401 Unauthorized`, `403 Forbidden` (rol incorrecto), `404 Not Found`, `409 Conflict` (estado no cancelable) |
 
 <br>
 
@@ -2126,8 +2129,9 @@ Cookie: Alquiya.sid=s%3A...
 
 | Área | Estado y observación |
 | ---- | -------------------- |
-| **Autenticación de publicaciones** | `POST /api/publicaciones` es público y puede crear publicaciones anónimas. |
-| **Exposición de usuarios** | Registro, login, listado y búsqueda por correo devuelven el modelo completo, incluido el hash de `contrasena`. |
+| **Autenticación de publicaciones** | `POST /api/publicaciones` requiere `requireAuth` y el rol `Propietario`; el autor se toma de la sesión. |
+| **Rutas de usuarios no expuestas** | `GET /usuarios` tiene una operación en el controlador pero no está registrado en el router; `GET /me` no está implementado. El estado de sesión se consulta en `GET /usuarios/me`. |
+| **Exposición de usuarios** | Registro, login y búsqueda por correo devuelven el modelo completo, incluido el hash de `contrasena`. `GET /usuarios/me` devuelve la proyección pública. |
 | **Códigos de login** | Login responde `201`; usuario inexistente produce `404` y contraseña incorrecta `400`. |
 | **Cierre de sesión** | El controlador invoca `res.status(204).json(...)`; la respuesta HTTP `204` no incluye cuerpo. |
 | **Endpoints pendientes** | No existen `GET /api/publicaciones/:id`, `PATCH /api/publicaciones/:id` ni `DELETE /api/publicaciones/:id`. |

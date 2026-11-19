@@ -4,7 +4,7 @@ Para visualizar el preview del archivo en VSCode es requerida una extension Merm
 
 Recomendamos seleccionar el tema de visualizacion "Redux-Color" o "Redux-Dark-Color" para la extension Mermaid, ya que es la que mayor visibilidad ofrece.
 
-El diagrama representa las capas y elementos implementados actualmente; omite las operaciones de publicaciones que todavía no tienen ruta.
+El diagrama representa los módulos y comportamientos presentes actualmente en el código. Distingue las clases implementadas de los módulos que acceden directamente a los datos.
 
 ```mermaid
 ---
@@ -32,9 +32,16 @@ classDef utils fill:#455A64,stroke:#263238,stroke-width:3px,color:#ffffff,font-w
 %% ===================================================================
 namespace Entry {
     class server_js["server.js"]:::entry {
-        +loadConfig()
         +createApp(config)
         +listen(config.port)
+    }
+    class config_js["config.js"]:::entry {
+        +loadConfig(env)
+        +nominatimBaseUrl
+        +env
+        +port
+        +sessionSecret
+        +version
     }
     class app_js["app.js"]:::entry {
         +Express app
@@ -42,12 +49,11 @@ namespace Entry {
         +use(express.urlencoded)
         +use(express.json)
         +use(session)
-        +use(hidratarUsuario)
+        +use(middleware inline de hidratación)
         +use("/usuarios", crearUsuariosRoutes)
         +use("/api/ubicacion", ubicacionRoutes)
         +use("/api/publicaciones", crearPublicacionRoutes)
         +use("/api/alquileres", crearAlquilerRoutes)
-        +get("/me", requireAuth)
         +get("/api/salud")
         +use(express.static)
         +use(errorHandler)
@@ -58,8 +64,8 @@ namespace Entry {
 %% LAYER 2: MIDDLEWARE (Transversal)
 %% ===================================================================
 namespace Middleware {
-    class hidratacion["Hidratación inline req.user"]:::middleware {
-        +hidratarUsuario(req, res, next)
+    class hidratacion["Middleware inline de hidratación"]:::middleware {
+        +asigna req.user desde req.session.userId
         +busca usuario por req.session.userId
     }
     class requireAuth["requireAuth"]:::middleware {
@@ -84,9 +90,8 @@ namespace Middleware {
 namespace Routes {
     class crearUsuariosRoutes["crearUsuariosRoutes (factory)"]:::routes {
         +Router
-        -router.get("/", requireAuth, listarUsuarios)
-        -router.get("/me", buscarLogueado)
         -router.post("/", agregar)
+        -router.get("/me", buscarLogueado)
         -router.get("/correo/:correo", requireAuth, buscarPorCorreo)
         -router.post("/login", iniciarSesion)
         -router.post("/logout", requireAuth, cerrarSesion)
@@ -94,7 +99,7 @@ namespace Routes {
     class crearPublicacionRoutes["crearPublicacionRoutes (factory)"]:::routes {
         +Router
         -router.get("/", listarPublicaciones)
-        -router.post("/", crearPublicacion)
+        -router.post("/", requireAuth, rol(Propietario), crearPublicacion)
         -router.post("/validar-direccion", validarDireccion)
         -router.get("/:id/reportes", requireAuth, rol(Propietario))
         -router.post("/:id/reportes", requireAuth, rol(Cliente))
@@ -138,7 +143,7 @@ namespace Controllers {
         +listarValoracionesPublicacion(req, res, next, usuarios)
     }
     class alquilerController["alquilerController.js"]:::controllers {
-        <<mezcla lógica + acceso a datos>>
+        <<lógica de negocio + acceso directo a datos>>
         +listarAlquileres(req, res)
         +crearAlquiler(req, res, next)
         +cancelarAlquiler(req, res)
@@ -161,6 +166,10 @@ namespace Services {
         +agregarCliente(...)
         +agregarPropietario(...)
         +buscarUsuarioPorCorreo(correo)
+        +buscarUsuarioActivo()
+        +listarUsuarios()
+        +cargar()
+        +cargarDesde(datos)
         +iniciarSesion(correo, contrasena, req)
         +cerrarSesion(req)
         +verify(correo, contrasena)
@@ -182,15 +191,14 @@ namespace Repositories {
     class RepositorioPublicaciones:::repositories {
         -publicaciones: Publicacion[]
         -proximoId: number
-        +crearPublicacion(...)
+        +crearPublicacion(titulo, descripcion, direccion, precio, autor)
         +buscarPublicacionPorId(id)
         +buscarActivas()
         +cargarDesde(publicaciones)
     }
     class PublicacionesJson["Publicaciones.json (datos persistidos)"]:::repositories {
-        +Publicacion[] publicaciones
-        +Reporte[] reportesPorPublicacion
-        +Valoracion[] valoracionesPorPublicacion
+        +Object[] publicaciones
+        +reportes y valoraciones dentro de cada publicación
     }
 }
 
@@ -206,6 +214,8 @@ namespace Models {
         +String telefono
         +boolean activo
         +Reporte[] reportes
+        +mostrarPerfil()
+        +Reportar(motivo, descripcion)
     }
     class Cliente:::models {
         +String tipo = "Cliente"
@@ -222,7 +232,7 @@ namespace Models {
         +String direccion
         +String ubicacion
         +Number precio
-        +String autor
+        +Object autor
         +String imagen
         +String alt
         +String tipo
@@ -238,6 +248,7 @@ namespace Models {
         +reportar(motivo, descripcion, correo)
         +valorar(puntuacion, comentario, emisor)
         +calcularCalificacion()
+        +desactivar()
     }
     class Alquiler:::models {
         +String id (UUID)
@@ -322,6 +333,7 @@ namespace Utils {
 
 %% --- Entry / composicion ---
 server_js "1" --> "1" app_js : carga config, crea app y abre el puerto
+server_js "1" --> "1" config_js : carga la configuración del servidor
 app_js "1" --> "1" bodyParsers : registra express.urlencoded y express.json
 app_js "1" --> "1" sessionMiddleware : registra express-session
 app_js "1" --> "1" hidratacion : asigna req.user antes de los routers
@@ -329,16 +341,15 @@ app_js "1" --> "1" crearUsuariosRoutes : invoca factory, inyecta repo, monta /us
 app_js "1" --> "1" crearPublicacionRoutes : invoca factory, inyecta usuarios, monta /api/publicaciones
 app_js "1" --> "1" crearAlquilerRoutes : invoca factory, inyecta usuarios, monta /api/alquileres
 app_js "1" --> "1" ubicacionRoutes : importa router, monta /api/ubicacion
-app_js "1" --> "1" requireAuth : protege GET /me
 app_js "1" --> "1" errorHandler : registra al final para errores delegados
 app_js "1" --> "1" RepositorioUsuarios : crea (new) al arrancar, consulta en hidratacion
 
 %% --- Routes -> Middleware / Controllers ---
-crearUsuariosRoutes "1" --> "1" requireAuth : protege listado, búsqueda por correo y cierre de sesión
+crearUsuariosRoutes "1" --> "1" requireAuth : protege búsqueda por correo y cierre de sesión
 crearUsuariosRoutes "1" --> "1" UserController : crea (new) por factory, inyecta repo
 crearPublicacionRoutes "1" --> "1" publicacionController : importa y asigna a rutas
-crearPublicacionRoutes "1" --> "1" requireAuth : protege reportes y valoraciones
-crearPublicacionRoutes "1" --> "1" rol : requiere Cliente o Propietario según la ruta
+crearPublicacionRoutes "1" --> "1" requireAuth : protege alta, reportes y valoraciones
+crearPublicacionRoutes "1" --> "1" rol : restringe alta/reportes/valoraciones por tipo de usuario
 crearAlquilerRoutes "1" --> "1" requireAuth : aplica en todas las rutas
 crearAlquilerRoutes "1" --> "1" alquilerController : importa y asigna a rutas
 ubicacionRoutes "1" --> "1" ubicacionController : importa y asigna a ruta
@@ -350,9 +361,13 @@ publicacionController "1" --> "1" PublicacionesJson : lee y escribe publicacione
 publicacionController "1" --> "1" RepositorioUsuarios : busca autores y nombres para respuestas
 publicacionController "1" ..> "0..*" Publicacion : crea publicaciones y aplica reportar/valorar
 alquilerController "1" --> "1" PublicacionesJson : lee publicaciones para crear alquileres
+alquilerController "1" --> "1" RepositorioUsuarios : consulta clientes para las vistas del propietario
 alquilerController "1" --> "1" Cliente : usa req.user e historial en memoria
 alquilerController "1" ..> "0..*" Alquiler : crea y actualiza alquileres
 ubicacionController "1" --> "1" ubicacionService : busca ubicación
+ubicacionService "1" --> "1" config_js : usa la URL base de Nominatim
+ubicacionService "1" ..> "0..*" Direccion : crea resultados de búsqueda
+publicacionesService "1" --> "1" ubicacionService : valida direcciones mediante geocodificación
 
 %% --- Middleware -> Errors ---
 requireAuth "1" ..> "0..*" UnauthorizedError : crea (new) y lanza si falta user
@@ -367,22 +382,23 @@ RepositorioUsuarios "1" ..> "0..*" ValidationError : crea (new) y lanza si dupli
 RepositorioUsuarios "1" ..> "0..*" NotFoundError : crea (new) y lanza si no existe
 RepositorioUsuarios "1" --> "1" validacion_js : usa regenerate/destroy en auth
 
-RepositorioPublicaciones "1" ..> "0..*" Publicacion : administra un arreglo en memoria
-PublicacionesJson "1" --> "0..*" Publicacion : datos guardados en el archivo
+RepositorioPublicaciones "1" ..> "0..*" Publicacion : administra un arreglo en memoria (no inyectado en controladores)
+PublicacionesJson "1" --> "0..*" Publicacion : serializa instancias y objetos planos en el archivo
 
 %% --- Domain relations ---
 Usuario <|-- Propietario
 Usuario <|-- Cliente
 Producto <|-- Propiedad
-Usuario "1" --> "0..*" Reporte : conserva reportes asociados a sus publicaciones
-Cliente "1" --> "0..*" Valoracion : emisor identificado por correo
+Usuario "1" --> "0..*" Reporte : acumula reportes en memoria
 Publicacion "1" --> "0..*" Reporte : recibe reportes
 Publicacion "1" --> "0..*" Valoracion : recibe valoraciones
+Publicacion "1" ..> "0..*" ConflictError : evita reportes o valoraciones duplicados
+Publicacion "1" ..> "0..*" ValidationError : valida reportes y valoraciones
 
 RepositorioUsuarios "1" --> "0..*" Usuario : almacena en memoria
 Propietario "1" --> "0..*" Publicacion : autor (referencia por correo)
 Cliente "1" --> "0..*" Alquiler : solicita
-Publicacion "1" --> "0..*" Alquiler : referencia guardada en producto
+Publicacion "1" --> "0..*" Alquiler : producto contiene el objeto leído del JSON
 
 %% --- Error hierarchy ---
 AppError <|-- ConflictError
@@ -396,8 +412,15 @@ AppError <|-- ForbiddenError
 
 ## NOTAS
 
-- `RepositorioUsuarios` vive en `src/service/` y combina reglas de negocio, sesión y almacenamiento en memoria.
-- `RepositorioPublicaciones` existe en `src/service/repositorioPublicaciones.js`, pero los controladores no lo utilizan.
-- `publicacionController` lee y escribe directamente `src/repositories/Publicaciones.json`; allí también se guardan reportes y valoraciones.
-- `alquilerController` gestiona las reglas y el historial de alquileres directamente en memoria.
-- `GET /api/publicaciones/:id`, `PATCH /api/publicaciones/:id` y `DELETE /api/publicaciones/:id` no aparecen porque todavía no están implementados.
+- `GET /usuarios/me` está implementado en la ruta de usuarios; no existe una ruta `GET /me`.
+- `UserController.listarUsuarios()` y `RepositorioUsuarios.listarUsuarios()` existen, pero no hay una ruta HTTP que liste usuarios.
+- `RepositorioUsuarios` vive en `src/service/`, guarda usuarios en memoria y también gestiona registro, autenticación y sesiones. `cargar()` está vacío y `cargarDesde()` no espera las altas asíncronas.
+- `Usuario.contrasena` contiene el hash bcrypt después del registro; `Propietario.publicaciones` se inicializa vacío y no se sincroniza con las publicaciones persistidas.
+- `RepositorioPublicaciones` existe en `src/service/repositorioPublicaciones.js`, pero no se inyecta ni es utilizado por los controladores.
+- `publicacionController` lee y escribe directamente `src/repositories/Publicaciones.json`; cada registro contiene publicaciones y puede incluir sus reportes y valoraciones. Los reportes acumulados en `Usuario.reportes` no se persisten en el usuario.
+- `Valoracion.emisor` guarda el correo como texto; no mantiene una referencia al objeto `Cliente`.
+- `alquilerController` lee publicaciones de ese JSON y guarda el historial en `Cliente.historial` en memoria. Comprueba los roles dentro del controlador; las rutas solo aplican `requireAuth`.
+- El middleware que asigna `req.user` está definido inline en `src/app.js`; no es un módulo exportado.
+- `src/models/Propiedad.js` intenta importar `Producto` como default, pero `Producto.js` solo exporta `Producto` con nombre; ese módulo falla al cargarse. La herencia dibujada representa la declaración del código, no una clase utilizable actualmente.
+- `src/repositories/historial.js` está vacío y no participa en el flujo actual.
+- `GET /api/publicaciones/:id`, `PATCH /api/publicaciones/:id` y `DELETE /api/publicaciones/:id` no están implementados.
