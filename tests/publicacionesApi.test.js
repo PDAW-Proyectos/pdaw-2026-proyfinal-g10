@@ -10,6 +10,19 @@ const config = loadConfig({
 const app = createApp({ config });
 
 describe('API de publicaciones', () => {
+  test('requiere sesión de propietario para crear publicaciones', async () => {
+    await request(app)
+      .post('/api/publicaciones')
+      .send({})
+      .expect(401);
+
+    const cliente = await crearUsuarioAutenticado('Cliente');
+    await cliente
+      .post('/api/publicaciones')
+      .send({})
+      .expect(403);
+  });
+
   test('devuelve las publicaciones como JSON', async () => {
     const response = await request(app).get('/api/publicaciones');
 
@@ -47,7 +60,8 @@ describe('API de publicaciones', () => {
   });
 
   test('rechaza la creación si faltan campos requeridos', async () => {
-    const response = await request(app)
+    const propietario = await crearUsuarioAutenticado('Propietario');
+    const response = await propietario
       .post('/api/publicaciones')
       .send({ titulo: 'Publicación incompleta' });
 
@@ -56,7 +70,8 @@ describe('API de publicaciones', () => {
   });
 
   test('valida una publicación usando solo los cinco campos del formulario', async () => {
-    const response = await request(app)
+    const propietario = await crearUsuarioAutenticado('Propietario');
+    const response = await propietario
       .post('/api/publicaciones')
       .send({
         titulo: 'Publicación de prueba',
@@ -71,7 +86,8 @@ describe('API de publicaciones', () => {
   });
 
   test('indica específicamente cuando falta la dirección', async () => {
-    const response = await request(app)
+    const propietario = await crearUsuarioAutenticado('Propietario');
+    const response = await propietario
       .post('/api/publicaciones')
       .send({
         titulo: 'Publicación de prueba',
@@ -84,3 +100,21 @@ describe('API de publicaciones', () => {
     expect(response.body).toEqual({ error: 'La dirección es obligatoria.' });
   });
 });
+
+async function crearUsuarioAutenticado(tipo) {
+  const agente = request.agent(app);
+  const correo = `${tipo.toLowerCase()}-${Date.now()}-${Math.random()}@example.com`;
+  const contrasena = 'ClaveSegura123!';
+
+  await agente.post('/usuarios').send({
+    nombre: 'Usuario de prueba',
+    apellido: 'Prueba',
+    correo,
+    contrasena,
+    telefono: '1123456789',
+    tipo
+  }).expect(201);
+  await agente.post('/usuarios/login').send({ correo, contrasena }).expect(201);
+
+  return agente;
+}
