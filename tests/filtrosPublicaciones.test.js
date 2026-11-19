@@ -27,4 +27,17 @@ describe("filtros de publicaciones", () => {
   test("conserva el orden original si no se selecciona un criterio", () => {
     expect(filtrarPublicaciones(publicaciones).map(({ titulo }) => titulo)).toEqual(["A", "B", "C"]);
   });
+
+  test("filtra las publicaciones propias junto con el precio máximo", () => {
+    const conAutores = [
+      { titulo: "Propia económica", precio: 200, autor: "dueño@example.com" },
+      { titulo: "Propia cara", precio: 600, autor: "DUEÑO@example.com" },
+      { titulo: "Ajena", precio: 100, autor: "otra@example.com" }
+    ];
+
+    expect(
+      filtrarPublicaciones(conAutores, "500", "", true, " dueño@example.com ")
+        .map(({ titulo }) => titulo)
+    ).toEqual(["Propia económica"]);
+  });
 });

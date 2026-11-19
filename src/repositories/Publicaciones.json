@@ -35,7 +35,32 @@
     "disponibilidad": "disponible",
     "estado": "pendiente",
     "activa": true,
-    "fechaCreacion": "2026-11-15T16:47:31.355Z"
+    "fechaCreacion": "2026-11-15T16:47:31.355Z",
+    "reportes": [
+      {
+        "id": 1,
+        "motivo": "Huele mal",
+        "descripcion": "lel",
+        "fecha": "2026-11-19T11:20:34.407Z",
+        "estado": "pendiente"
+      },
+      {
+        "id": 1,
+        "motivo": "A",
+        "descripcion": "",
+        "reportante": "andresnressia1@gmail.com",
+        "fecha": "2026-11-19T11:30:42.091Z",
+        "estado": "pendiente"
+      },
+      {
+        "id": 2,
+        "motivo": "Huele mal",
+        "descripcion": "",
+        "reportante": "andresnressia3@gmail.com",
+        "fecha": "2026-11-19T11:35:18.389Z",
+        "estado": "pendiente"
+      }
+    ]
   },
   {
     "id": 4,
@@ -54,6 +79,24 @@
     "disponibilidad": "disponible",
     "estado": "pendiente",
     "activa": true,
-    "fechaCreacion": "2026-11-15T16:51:22.704Z"
+    "fechaCreacion": "2026-11-15T16:51:22.704Z",
+    "reportes": [
+      {
+        "id": 1,
+        "motivo": "Huele mal",
+        "descripcion": "",
+        "reportante": "andresnressia1@gmail.com",
+        "fecha": "2026-11-19T11:33:25.710Z",
+        "estado": "pendiente"
+      },
+      {
+        "id": 2,
+        "motivo": "A",
+        "descripcion": "",
+        "reportante": "andresnressia3@gmail.com",
+        "fecha": "2026-11-19T11:35:23.298Z",
+        "estado": "pendiente"
+      }
+    ]
   }
 ]

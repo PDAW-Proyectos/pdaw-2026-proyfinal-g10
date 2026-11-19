@@ -1,25 +1,44 @@
-export function configurarFiltros(publicaciones, renderizarPublicaciones) {
+export function configurarFiltros(publicaciones, renderizarPublicaciones, correoUsuario = null) {
     const filtroPrecio = document.querySelector("[data-filtro-precio-maximo]");
     const filtroOrden = document.querySelector("[data-filtro-orden]");
+    const filtroSoloPropias = document.querySelector("[data-filtro-solo-propias]");
 
     const actualizarPublicaciones = () => {
         const publicacionesFiltradas = filtrarPublicaciones(
             publicaciones,
             filtroPrecio?.value ?? "",
-            filtroOrden?.value ?? ""
+            filtroOrden?.value ?? "",
+            filtroSoloPropias?.checked ?? false,
+            correoUsuario
         );
         renderizarPublicaciones(publicacionesFiltradas);
     };
 
     filtroPrecio?.addEventListener("keyup", actualizarPublicaciones);
     filtroOrden?.addEventListener("change", actualizarPublicaciones);
+    filtroSoloPropias?.addEventListener("change", actualizarPublicaciones);
 
     return actualizarPublicaciones;
 }
 
-export function filtrarPublicaciones(publicaciones, precioMaximo = "", orden = "") {
+export function filtrarPublicaciones(
+    publicaciones,
+    precioMaximo = "",
+    orden = "",
+    soloPropias = false,
+    correoUsuario = null
+) {
     let resultado = [...publicaciones];
     const limitePrecio = precioMaximo.trim() === "" ? NaN : Number(precioMaximo);
+
+    if (soloPropias) {
+        const correoNormalizado = String(correoUsuario ?? "").trim().toLowerCase();
+        resultado = correoNormalizado
+            ? resultado.filter(
+                (publicacion) => String(publicacion.autor ?? "").trim().toLowerCase() === correoNormalizado
+            )
+            : [];
+    }
 
     if (Number.isFinite(limitePrecio)) {
         resultado = resultado.filter((publicacion) => Number(publicacion.precio) <= limitePrecio);

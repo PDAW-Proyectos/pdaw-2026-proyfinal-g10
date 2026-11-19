@@ -60,6 +60,14 @@
               <option value="cantidad-valoraciones">Cantidad de valoraciones</option>
             </select>
           </div>
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" id="filtroSoloPropias" data-filtro-solo-propias type="checkbox" checked />
+              <label class="form-check-label fw-semibold" for="filtroSoloPropias">
+                Mostrar solo mis publicaciones
+              </label>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -145,6 +153,25 @@
           <p class="text-secondary" data-publicacion-descripcion></p>
           <div class="text-warning mt-3" data-publicacion-calificacion></div>
         </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="reportesPublicacionModal" tabindex="-1"
+    aria-labelledby="reportesPublicacionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 rounded-4">
+        <div class="modal-header border-0">
+          <div>
+            <h2 class="modal-title fs-5 fw-bold" id="reportesPublicacionLabel">Reportes de publicación</h2>
+            <p class="text-secondary small mb-0" data-reportes-titulo></p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body pt-0" data-lista-reportes aria-live="polite"></div>
         <div class="modal-footer border-0">
           <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
         </div>
