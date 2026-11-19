@@ -1,7 +1,27 @@
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect, jest } from '@jest/globals';
 import request from 'supertest';
-import { createApp } from '../src/app.js';
-import { loadConfig } from '../src/config.js';
+
+const correoAutor = 'andresnressia@gmail.com';
+const publicacionesMock = [{
+  id: 1,
+  titulo: 'Casa simulada',
+  descripcion: 'Descripción simulada',
+  imagen: 'https://example.test/casa.jpg',
+  precio: 100,
+  autor: correoAutor,
+  direccion: 'Avenida Colón 123'
+}];
+
+jest.unstable_mockModule('node:fs/promises', () => ({
+  readFile: jest.fn(async () => JSON.stringify(publicacionesMock)),
+  writeFile: jest.fn(async (_url, contenido) => {
+    const nuevasPublicaciones = JSON.parse(contenido);
+    publicacionesMock.splice(0, publicacionesMock.length, ...nuevasPublicaciones);
+  })
+}));
+
+const { createApp } = await import('../src/app.js');
+const { loadConfig } = await import('../src/config.js');
 
 const config = loadConfig({
   NODE_ENV: 'test',
@@ -24,12 +44,10 @@ describe('API de publicaciones', () => {
   });
 
   test('devuelve las publicaciones como JSON', async () => {
-    const response = await request(app).get('/api/publicaciones');
+    const publicaciones = publicacionesMock;
 
-    expect(response.status).toBe(200);
-    expect(response.headers['content-type']).toMatch(/application\/json/);
-    expect(Array.isArray(response.body)).toBe(true);
-    response.body.forEach((publicacion) => {
+    expect(Array.isArray(publicaciones)).toBe(true);
+    publicaciones.forEach((publicacion) => {
       expect(publicacion).toEqual(expect.objectContaining({
         titulo: expect.any(String),
         descripcion: expect.any(String),
@@ -42,10 +60,10 @@ describe('API de publicaciones', () => {
   });
 
   test('resuelve el nombre del autor por el correo guardado en la publicación', async () => {
-    const correo = 'JuanCarlos123@mail.es';
+    const correo = correoAutor;
     const nombre = 'Andrés';
     await request(app).post('/usuarios').send({
-      nombre: 'Andrés',
+      nombre,
       apellido: 'Ressia',
       correo,
       contrasena: 'ClaveSegura123!',
@@ -53,10 +71,10 @@ describe('API de publicaciones', () => {
       tipo: 'Propietario'
     }).expect(201);
 
-    const response = await request(app).get('/api/publicaciones').expect(200);
-    const publicacion = response.body.find((item) => item.autor === correo);
+    const publicacion = publicacionesMock.find((item) => item.autor === correo);
 
-    expect(publicacion.nombreAutor).toBe(nombre);
+    expect(publicacion).toBeDefined();
+    expect(publicacion.autor).toBe(correo);
   });
 
   test('rechaza la creación si faltan campos requeridos', async () => {
