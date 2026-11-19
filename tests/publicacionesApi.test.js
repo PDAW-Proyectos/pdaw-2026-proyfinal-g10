@@ -42,7 +42,7 @@ describe('API de publicaciones', () => {
   });
 
   test('resuelve el nombre del autor por el correo guardado en la publicación', async () => {
-    const correo = 'andresnressia@gmail.com';
+    const correo = 'JuanCarlos123@mail.es';
     const nombre = 'Andrés';
     await request(app).post('/usuarios').send({
       nombre: 'Andrés',
