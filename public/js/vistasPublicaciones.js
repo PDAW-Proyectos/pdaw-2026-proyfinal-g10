@@ -1,8 +1,7 @@
 import { crearPublicaciones } from "./listaPublicaciones.js";
-import { configurarFiltros } from "./filtrosPublicaciones.js";
+import { crearPaginadorPublicaciones } from "./paginacionPublicaciones.js";
 
-var publicaciones = [];
-let actualizarPublicaciones;
+let paginadorPublicaciones;
 let correoUsuario = null;
 
 const listaPublicaciones = document.getElementById("publicaciones");
@@ -15,16 +14,6 @@ let reporteEnviando = false;
 
 window.addEventListener("load", async () => {
     try {
-        const response = await fetch("/api/publicaciones");
-        if (!response.ok) {
-            throw new Error(`Error al obtener publicaciones: ${response.status}`);
-        }
-
-        const resultado = await response.json();
-        if (!Array.isArray(resultado)) {
-            throw new Error("La respuesta de publicaciones no tiene un formato válido.");
-        }
-
         if (listaPublicaciones?.dataset.vista === "propietario") {
             const sesionResponse = await fetch("/usuarios/me");
             const sesion = await sesionResponse.json();
@@ -34,7 +23,6 @@ window.addEventListener("load", async () => {
             correoUsuario = sesion.usuario.correo;
         }
 
-        publicaciones = resultado;
         await cargarPublicacionesVista();
     } catch (error) {
         console.error("Error al cargar las publicaciones:", error);
@@ -73,7 +61,6 @@ formularioPublicacion?.addEventListener("submit", async (event) => {
             throw new Error(resultado.error || `Error al crear la publicación: ${response.status}`);
         }
 
-        publicaciones.push(resultado);
         await cargarPublicacionesVista();
         formularioPublicacion.reset();
         window.bootstrap.Modal.getOrCreateInstance(
@@ -95,16 +82,13 @@ function cargarPublicacionesVista() {
         ? ["", "Reportes", "Valoraciones"]
         : ["Valorar", "Reportar"];
 
-    if (!actualizarPublicaciones) {
-        actualizarPublicaciones = configurarFiltros(
-            publicaciones,
-            (filtradas) => {
-                listaPublicaciones.replaceChildren(crearPublicaciones(filtradas, acciones, correoUsuario));
-            },
-            correoUsuario
+    if (!paginadorPublicaciones) {
+        paginadorPublicaciones = crearPaginadorPublicaciones(
+            listaPublicaciones,
+            (filtradas) => crearPublicaciones(filtradas, acciones, correoUsuario)
         );
     }
-    actualizarPublicaciones();
+    return paginadorPublicaciones.cargar(1);
 }
 
 const modalReportes = document.getElementById("reportesPublicacionModal");

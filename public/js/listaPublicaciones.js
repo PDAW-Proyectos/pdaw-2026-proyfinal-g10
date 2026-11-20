@@ -1,6 +1,7 @@
-import { configurarFiltros } from "./filtrosPublicaciones.js";
+import { crearPaginadorPublicaciones } from "./paginacionPublicaciones.js";
 
 const listaPublicaciones = document.getElementById("publicaciones");
+let paginadorPublicaciones;
 
 window.addEventListener("load", async () => {
     await cargarPublicaciones();
@@ -16,26 +17,13 @@ document.addEventListener("show.bs.modal", (event) => {
 export async function cargarPublicaciones() {
     if (!listaPublicaciones || listaPublicaciones.dataset.vista) return;
 
-    listaPublicaciones.textContent = "";
-    try {
-        const response = await fetch("/api/publicaciones");
-        if (!response.ok) {
-            throw new Error(`Error al obtener publicaciones: ${response.status}`);
-        }
-
-        const publicaciones = await response.json();
-        if (!Array.isArray(publicaciones)) {
-            throw new Error("La respuesta de publicaciones no tiene un formato válido.");
-        }
-
-        const actualizarPublicaciones = configurarFiltros(publicaciones, (filtradas) => {
-            listaPublicaciones.replaceChildren(crearPublicaciones(filtradas));
-        });
-        actualizarPublicaciones();
-    } catch (error) {
-        console.error("Error al cargar las publicaciones:", error);
-        listaPublicaciones.textContent = "No se pudieron cargar las publicaciones.";
+    if (!paginadorPublicaciones) {
+        paginadorPublicaciones = crearPaginadorPublicaciones(
+            listaPublicaciones,
+            (publicaciones) => crearPublicaciones(publicaciones)
+        );
     }
+    await paginadorPublicaciones.cargar(1);
 }
 
 export function crearPublicaciones(publicaciones, acciones = null, correoUsuario = null) {
