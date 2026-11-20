@@ -9,7 +9,82 @@ export async function listarPublicaciones(req, res, next, usuarios) {
   try {
     const archivo = await readFile(archivoPublicaciones, 'utf8');
     const publicaciones = JSON.parse(archivo);
-    return res.status(200).json(publicaciones.map((publicacion) => agregarNombreAutor(publicacion, usuarios)));
+    if (!Array.isArray(publicaciones)) {
+      throw new Error('El archivo de publicaciones no contiene una lista válida.');
+    }
+
+    const paginaSolicitada = Number(req.query.page ?? 1);
+    const limiteSolicitado = Number(req.query.limit ?? 6);
+    if (
+      !Number.isSafeInteger(paginaSolicitada) ||
+      paginaSolicitada < 1 ||
+      !Number.isSafeInteger(limiteSolicitado) ||
+      limiteSolicitado < 1
+    ) {
+      return res.status(400).json({ error: 'La página y el límite deben ser números enteros positivos.' });
+    }
+
+    const limite = Math.min(limiteSolicitado, 6);
+    const { maxPrice = '', order = '', onlyMine = 'false' } = req.query;
+    if (
+      (maxPrice !== '' && !Number.isFinite(Number(maxPrice))) ||
+      !['', 'menor-precio', 'mayor-precio', 'mayor-calificacion', 'cantidad-valoraciones'].includes(order) ||
+      !['true', 'false'].includes(onlyMine)
+    ) {
+      return res.status(400).json({ error: 'Los filtros de publicaciones no son válidos.' });
+    }
+    if (onlyMine === 'true' && req.user?.tipo !== 'Propietario') {
+      return res.status(403).json({ error: 'Solo un propietario puede filtrar sus publicaciones.' });
+    }
+
+    let resultado = publicaciones;
+    if (onlyMine === 'true') {
+      const correoPropietario = req.user.correo.trim().toLowerCase();
+      resultado = resultado.filter(
+        (publicacion) => String(publicacion.autor || '').trim().toLowerCase() === correoPropietario
+      );
+    }
+    if (maxPrice !== '') {
+      const precioMaximo = Number(maxPrice);
+      resultado = resultado.filter((publicacion) => Number(publicacion.precio) <= precioMaximo);
+    }
+
+    const obtenerNumero = (valor) => {
+      const numero = Number(valor);
+      return Number.isFinite(numero) ? numero : 0;
+    };
+    switch (order) {
+      case 'menor-precio':
+        resultado = [...resultado].sort((a, b) => obtenerNumero(a.precio) - obtenerNumero(b.precio));
+        break;
+      case 'mayor-precio':
+        resultado = [...resultado].sort((a, b) => obtenerNumero(b.precio) - obtenerNumero(a.precio));
+        break;
+      case 'mayor-calificacion':
+        resultado = [...resultado].sort((a, b) => obtenerNumero(b.calificacion) - obtenerNumero(a.calificacion));
+        break;
+      case 'cantidad-valoraciones':
+        resultado = [...resultado].sort(
+          (a, b) => obtenerNumero(b.cantidadValoraciones) - obtenerNumero(a.cantidadValoraciones)
+        );
+        break;
+    }
+
+    const total = resultado.length;
+    const totalPaginas = Math.ceil(total / limite);
+    const pagina = Math.min(paginaSolicitada, Math.max(totalPaginas, 1));
+    const inicio = (pagina - 1) * limite;
+    const publicacionesPaginadas = resultado
+      .slice(inicio, inicio + limite)
+      .map((publicacion) => agregarNombreAutor(publicacion, usuarios));
+
+    return res.status(200).json({
+      publicaciones: publicacionesPaginadas,
+      pagina,
+      limite,
+      total,
+      totalPaginas
+    });
   } catch (error) {
     return next(error);
   }

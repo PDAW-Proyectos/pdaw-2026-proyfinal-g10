@@ -59,6 +59,50 @@ describe('API de publicaciones', () => {
     });
   });
 
+  test('limita el GET a seis publicaciones y pagina los resultados filtrados', async () => {
+    const originales = [...publicacionesMock];
+    publicacionesMock.splice(0, publicacionesMock.length, ...Array.from({ length: 8 }, (_, indice) => ({
+      id: indice + 1,
+      titulo: `Casa ${indice + 1}`,
+      descripcion: 'Descripción',
+      imagen: 'https://example.test/casa.jpg',
+      precio: (indice + 1) * 100,
+      autor: correoAutor,
+      direccion: 'Avenida Colón 123'
+    })));
+
+    try {
+      const primeraPagina = await request(app)
+        .get('/api/publicaciones?limit=20&page=1')
+        .expect(200);
+      expect(primeraPagina.body).toEqual(expect.objectContaining({
+        pagina: 1,
+        limite: 6,
+        total: 8,
+        totalPaginas: 2
+      }));
+      expect(primeraPagina.body.publicaciones).toHaveLength(6);
+
+      const segundaPagina = await request(app)
+        .get('/api/publicaciones?limit=6&page=2')
+        .expect(200);
+      expect(segundaPagina.body.publicaciones).toHaveLength(2);
+      expect(segundaPagina.body.publicaciones[0].titulo).toBe('Casa 7');
+
+      const filtradas = await request(app)
+        .get('/api/publicaciones?limit=6&maxPrice=300&order=mayor-precio')
+        .expect(200);
+      expect(filtradas.body.publicaciones.map(({ titulo }) => titulo)).toEqual([
+        'Casa 3',
+        'Casa 2',
+        'Casa 1'
+      ]);
+      expect(filtradas.body.total).toBe(3);
+    } finally {
+      publicacionesMock.splice(0, publicacionesMock.length, ...originales);
+    }
+  });
+
   test('resuelve el nombre del autor por el correo guardado en la publicación', async () => {
     const correo = correoAutor;
     const nombre = 'Andrés';
